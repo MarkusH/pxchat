@@ -1,0 +1,14 @@
+Kundenspezifikation
+==================
+ * wir sind das Bundesministerium für Umwelt, Naturschutz und
+   Reaktorsicherheit
+ * Ausstellungsmesse zum Thema "Umwelt"
+ * interaktive Pflanzensimulation und Wetter-/Zeitsimulation zum Thema
+   Umweltschutz
+ * als potenzielle Kunden kommen alle Messebesucher in Frage
+ * durch eine perfekte Visualisierung soll die Aufmerksamkeit der
+   Besucher auf den Stand gelenkt werden
+ * dabei soll der Besucher verschiedene Arten von Pflanzen sähen und
+   diesen beim Wachsen zusehen können
+ * metereologische Einflüsse sollen ebenfalls visuell dargestellt
+   werden.
