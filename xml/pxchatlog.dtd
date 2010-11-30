@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- all elements -->
+<!ELEMENT pxchatlog (participants, start, end, chat)>
+<!ELEMENT participants (name)+>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT start (#PCDATA)>
+<!ELEMENT end EMPTY>
+<!ELEMENT chat (message)*>
+<!ELEMENT message (#PCDATA|i|b|img)*>
+<!ELEMENT i ANY> <!-- italic -->
+<!ELEMENT b ANY> <!-- bold -->
+<!ELEMENT img EMPTY>
+
+<!-- all attributes -->
+<!ATTLIST name
+	date	CDATA	#REQUIRED
+	time	CDATA	#REQUIRED
+>
+<!ATTLIST start
+	date	CDATA	#REQUIRED
+	time	CDATA	#REQUIRED
+>
+<!ATTLIST end
+	date	CDATA	#REQUIRED
+	time	CDATA	#REQUIRED
+>
+<!ATTLIST img 
+	src		CDATA	#REQUIRED
+	alt		CDATA	#IMPLIED
+>
+<!ATTLIST message
+	author	CDATA	#REQUIRED
+	date	CDATA	#REQUIRED
+	time	CDATA	#REQUIRED
+>
