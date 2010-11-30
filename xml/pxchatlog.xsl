@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	
+
 	<xsl:template match="/">
 		<html>
 			<head>
@@ -36,9 +36,12 @@
 	</xsl:template>
 
 	<xsl:template match="message">
-		<xsl:value-of select="@author" /><xsl:text> (</xsl:text>
-		<xsl:value-of select="@date" /><xsl:text> </xsl:text>
-		<xsl:value-of select="@time" /><xsl:text>): </xsl:text>
+		<xsl:value-of select="@author" />
+		<xsl:text> (</xsl:text>
+		<xsl:value-of select="@date" />
+		<xsl:text> </xsl:text>
+		<xsl:value-of select="@time" />
+		<xsl:text>): </xsl:text>
 		<xsl:apply-templates />
 		<br />
 	</xsl:template>
@@ -54,7 +57,7 @@
 			<xsl:value-of select="." />
 		</xsl:copy>
 	</xsl:template>
-	
+
 	<xsl:template match="img">
 		<img src="{@src}" />
 	</xsl:template>
