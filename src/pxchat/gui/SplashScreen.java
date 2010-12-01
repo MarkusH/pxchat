@@ -11,22 +11,22 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 
-public class SplashScreen extends JFrame {
-	public SplashScreen () {
-		super("pxchat");
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+public class SplashScreen extends JDialog {
+	public SplashScreen (JFrame parent) {
+		super(parent,"pxchat", true);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLayout(new BorderLayout());
 		JButton startButton = new JButton("pxchat betreten");
 		startButton.setPreferredSize(new Dimension(200,30));
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SplashScreen.this.dispose();
-				ClientMain.mainWindow.setVisible(true);
 			}
 		});
 		JLabel imageLabel = new JLabel("",new ImageIcon("testbild.png"), SwingConstants.LEFT);

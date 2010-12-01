@@ -4,14 +4,15 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 
 public class ClientMain extends JFrame{
-	public static ClientMain mainWindow = null;
 	public ClientMain() {
 		super("pxchat");
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -29,15 +30,24 @@ public class ClientMain extends JFrame{
 		this.setSize(500, 320);
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(size.width/2-this.getWidth()/2, size.height/2-this.getHeight()/2);
+		
+		new SplashScreen(this).setVisible(true);
 	}
 
 	/**
 	 * @param args
+	 * @throws InvocationTargetException 
+	 * @throws InterruptedException 
 	 */
-	public static void main(String[] args) {
-		mainWindow = new ClientMain();
-		new SplashScreen().setVisible(true);
+	public static void main(String[] args) throws InterruptedException, InvocationTargetException {
 		
+		//new SplashScreen().setVisible(true);
+		//SwingUtilities.invokeAndWait(new Runnable() {
+		//	public void run() {
+		//		new SplashScreen().setVisible(true);
+		//	}
+		//});
+		new ClientMain().setVisible(true);
 	}
 
 }
