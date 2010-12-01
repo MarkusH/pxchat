@@ -21,13 +21,10 @@
 	date	CDATA	#REQUIRED
 	time	CDATA	#REQUIRED
 >
-<!ATTLIST img 
-	src		CDATA	#REQUIRED
-	alt		CDATA	#IMPLIED
->
+
 <!ATTLIST message
 	author	CDATA	#REQUIRED
 	date	CDATA	#REQUIRED
 	time	CDATA	#REQUIRED
-	type	(text|system)	text
+	type	(text|system)	#IMPLIED
 >
