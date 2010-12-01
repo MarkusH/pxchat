@@ -5,7 +5,11 @@
 	<xsl:template match="/">
 		<html>
 			<head>
-				<title>chat log</title>
+				<title>
+					chat log
+					<xsl:text> from </xsl:text>
+					<xsl:value-of select="pxchatlog/start/@date" />
+				</title>
 			</head>
 			<body>
 				<xsl:apply-templates />
@@ -16,6 +20,7 @@
 			</body>
 		</html>
 	</xsl:template>
+
 
 	<xsl:template match="participants">
 		<b>Participants of this chat.</b>

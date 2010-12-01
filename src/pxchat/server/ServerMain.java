@@ -55,8 +55,8 @@ public class ServerMain {
 				}
 				
 				@Override
-				public void error(SAXParseException arg0) throws SAXException {
-					throw new RuntimeException("oO");
+				public void error(SAXParseException e) throws SAXException {
+					throw e;
 				}
 			});
 			doc = builder.parse(file);
