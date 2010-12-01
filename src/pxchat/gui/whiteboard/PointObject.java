@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Ellipse2D;
 
-import pxchat.net.frames.Frame;
+import pxchat.net.protocol.frames.Frame;
 
 public class PointObject extends PrimitiveObject {
 

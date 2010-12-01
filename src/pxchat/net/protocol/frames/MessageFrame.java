@@ -1,4 +1,4 @@
-package pxchat.net.frames;
+package pxchat.net.protocol.frames;
 
 public class MessageFrame extends Frame {
 
