@@ -6,11 +6,15 @@ package pxchat.server;
 import java.io.File;
 import java.util.HashMap;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import pxchat.util.XMLUtil;
 
@@ -31,7 +35,31 @@ public class ServerMain {
 		File file = new File("xml/server.xml");
 		Document doc = null;
 		try {
-			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setValidating(true);
+			DocumentBuilder builder = factory.newDocumentBuilder();
+
+			builder.setErrorHandler(new ErrorHandler() {
+				
+				@Override
+				public void warning(SAXParseException e) throws SAXException {
+					System.out.println("Warning validating the config file:");
+					e.printStackTrace();
+				}
+				
+				@Override
+				public void fatalError(SAXParseException e) throws SAXException {
+					System.out.println("Fatal error validating the config file:");
+					e.printStackTrace();
+					System.exit(0);
+				}
+				
+				@Override
+				public void error(SAXParseException arg0) throws SAXException {
+					throw new RuntimeException("oO");
+				}
+			});
+			doc = builder.parse(file);
 			Node node = doc.getDocumentElement();
 
 			Node config = XMLUtil.getChildByName(node, "config");
