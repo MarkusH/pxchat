@@ -1,4 +1,5 @@
 bin
+log
 .metadata
 .project
 .classpath

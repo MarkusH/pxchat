@@ -34,13 +34,13 @@
 	<xsl:template match="chat">
 		<xsl:apply-templates />
 	</xsl:template>
-	
+
 	<xsl:template match="message[@type='system']">
-			<i>
-				<xsl:apply-templates />
-			</i>
-			<br />
-		</xsl:template>
+		<i>
+			<xsl:apply-templates />
+		</i>
+		<br />
+	</xsl:template>
 
 	<xsl:template match="message">
 		<xsl:value-of select="@author" />
