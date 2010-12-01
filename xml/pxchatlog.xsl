@@ -34,6 +34,13 @@
 	<xsl:template match="chat">
 		<xsl:apply-templates />
 	</xsl:template>
+	
+	<xsl:template match="message[@type='system']">
+			<i>
+				<xsl:apply-templates />
+			</i>
+			<br />
+		</xsl:template>
 
 	<xsl:template match="message">
 		<xsl:value-of select="@author" />
@@ -45,5 +52,6 @@
 		<xsl:apply-templates />
 		<br />
 	</xsl:template>
+
 
 </xsl:stylesheet>
