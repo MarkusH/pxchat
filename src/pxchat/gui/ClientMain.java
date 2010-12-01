@@ -1,8 +1,6 @@
 package pxchat.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,7 +22,9 @@ public class ClientMain extends JFrame{
 		
 		//Create Menu Bar
 		JMenuBar mBar = new JMenuBar();
-		JMenu mFile = new JMenu("Datei");
+		JMenu mFile = new JMenu("pxchat");
+		JMenuItem mNewChat = new JMenuItem("Mit Chat verbinden…");
+		mFile.add(mNewChat);
 		JMenuItem mExit = new JMenuItem("Beenden");
 		mExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -36,43 +36,44 @@ public class ClientMain extends JFrame{
 		this.setJMenuBar(mBar);
 		
 		//Layout
-		getContentPane().setLayout(new BorderLayout(5, 5));
+		getContentPane().setLayout(null);
 		JTextArea chatLog = new JTextArea("Log", 1, 30);
 		chatLog.setLineWrap(true);
 		chatLog.setEditable(false);
 		JScrollPane chatLogPane = new JScrollPane(chatLog,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		getContentPane().add(chatLogPane, BorderLayout.WEST);
+		chatLogPane.setBounds(10, 10, 400, 300);
+		getContentPane().add(chatLogPane);
 
 		JTextArea inputArea = new JTextArea("Input", 3, 30);
-		inputArea.setSize(50, 200);
-		chatLog.setLineWrap(true);
-		chatLog.setEditable(true);
+		inputArea.setLineWrap(true);
+		inputArea.setEditable(true);
 		JScrollPane inputAreaPane = new JScrollPane(inputArea,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		getContentPane().add(inputAreaPane, BorderLayout.SOUTH);
+		inputAreaPane.setBounds(10, 320, 400, 100);
+		getContentPane().add(inputAreaPane);
 		
 		JList userList = new JList(new String[] {"User", "User2"});
-		chatLog.setLineWrap(true);
-		chatLog.setEditable(false);
 		JScrollPane userListPane = new JScrollPane(userList,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		getContentPane().add(userListPane, BorderLayout.EAST);
-		
-		JButton sendButton = new JButton("Senden");
-		sendButton.setSize(200, 30);
-		getContentPane().add(sendButton, BorderLayout.CENTER);
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		userListPane.setBounds(420, 10, 150, 300);
+		getContentPane().add(userListPane);
 		
 		JButton whiteBoardButton = new JButton("Whiteboard");
-		whiteBoardButton.setSize(200, 30);
-		getContentPane().add(whiteBoardButton, BorderLayout.NORTH);
+		whiteBoardButton.setBounds(420, 320, 150, 30);
+		getContentPane().add(whiteBoardButton);
 		
-		this.setSize(700, 450);
+		JButton sendButton = new JButton("Senden");
+		sendButton.setBounds(420, 360, 150, 30);
+		getContentPane().add(sendButton);
+		
+		this.setSize(580, 480);
+		this.setResizable(false);
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setLocation(size.width/2-this.getWidth()/2, size.height/2-this.getHeight()/2);
+		this.setLocation(size.width/3-this.getWidth()/2, size.height/2-this.getHeight()/2);
 		
 		new SplashScreen(this).setVisible(true);
 	}
@@ -82,14 +83,7 @@ public class ClientMain extends JFrame{
 	 * @throws InvocationTargetException 
 	 * @throws InterruptedException 
 	 */
-	public static void main(String[] args) throws InterruptedException, InvocationTargetException {
-		
-		//new SplashScreen().setVisible(true);
-		//SwingUtilities.invokeAndWait(new Runnable() {
-		//	public void run() {
-		//		new SplashScreen().setVisible(true);
-		//	}
-		//});
+	public static void main(String[] args) {
 		new ClientMain().setVisible(true);
 	}
 
