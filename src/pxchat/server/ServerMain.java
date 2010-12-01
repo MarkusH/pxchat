@@ -4,6 +4,7 @@
 package pxchat.server;
 
 import java.io.File;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -18,6 +19,8 @@ import pxchat.util.XMLUtil;
  *
  */
 public class ServerMain {
+	
+	private static HashMap<String, String> authList = new HashMap<String, String>();
 
 	/**
 	 * @param args
@@ -33,17 +36,29 @@ public class ServerMain {
 
 			Node config = XMLUtil.getChildByName(node, "config");
 			
-//			int port = 
-//			
-//			NodeList list = node.getChildNodes();
-//			if (list != null) {
-//				for (int i = 0; i < list.getLength(); i++) {
-//					System.out.println(list.item(i).getNodeName());
-//				}
-//			}
+			int port = Integer.valueOf(
+					XMLUtil.getAttributeValue(XMLUtil.getChildByName(config, "port"), "number"));
+			
+			System.out.println(port);
+			
+			Node auth = XMLUtil.getChildByName(node, "auth");
+			
+			NodeList list = auth.getChildNodes();
+			if (list != null) {
+				for (int i = 0; i < list.getLength(); i++) {
+					if (list.item(i).getNodeName().equals("user")) {
+						authList.put(XMLUtil.getAttributeValue(list.item(i), "name"),
+								XMLUtil.getAttributeValue(list.item(i), "password"));
+					}
+				}
+			}
+			
+			System.out.println(authList);
 
 		} catch (Exception e) {
+			System.out.println("An error ocurred loading the config file");
 			e.printStackTrace();
+			return;
 		}
 	}
 
