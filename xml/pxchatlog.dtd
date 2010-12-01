@@ -3,7 +3,7 @@
 <!ELEMENT pxchatlog (participants, start, end, chat)>
 <!ELEMENT participants (name)+>
 <!ELEMENT name (#PCDATA)>
-<!ELEMENT start (#PCDATA)>
+<!ELEMENT start EMPTY>
 <!ELEMENT end EMPTY>
 <!ELEMENT chat (message)*>
 <!ELEMENT message (#PCDATA|i|b|img)*>
