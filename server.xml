@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server>
+	<config>
+		<port number="12345" />
+	</config>
+	<auth>
+		<user name="Robert Waury" password="waury" />
+		<user name="Markus Holtermann" password="holtermann" />
+		<user name="Florian Bausch" password="bausch" />
+		<user name="Alexander Tenberge" password="tenberge" />
+		<user name="Markus Döllinger" password="döllinger" />
+	</auth>
+</server>
