@@ -6,10 +6,7 @@
 <!ELEMENT start (#PCDATA)>
 <!ELEMENT end EMPTY>
 <!ELEMENT chat (message)*>
-<!ELEMENT message (#PCDATA|i|b|img)*>
-<!ELEMENT i ANY> <!-- italic -->
-<!ELEMENT b ANY> <!-- bold -->
-<!ELEMENT img EMPTY>
+<!ELEMENT message (#PCDATA)>
 
 <!-- all attributes -->
 <!ATTLIST name
@@ -32,4 +29,5 @@
 	author	CDATA	#REQUIRED
 	date	CDATA	#REQUIRED
 	time	CDATA	#REQUIRED
+	type	(text|system)	text
 >

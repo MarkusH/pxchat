@@ -21,16 +21,10 @@
 		</message>
 		<message author="Jane Doe" date="01/04/2010" time="10:23:54">Check this
 			out</message>
-		<message author="Jane Doe" date="01/04/2010" time="10:24:05">
-			<img src="pics/Cunningplan.jpg" />
-		</message>
-		<message author="John Doe" date="01/04/2010" time="10:24:53">
-			<i>John Doe invited Joe Everybody</i>
+		<message author="John Doe" date="01/04/2010" time="10:24:53" type="system">
+			John Doe invited Joe Everybody
 		</message>
 		<message author="Joe Everybody" date="01/04/2010" time="10:25:23">Sup
-		</message>
-		<message author="Joe Everybody" date="01/04/2010" time="10:25:56">
-			<img src="pics/128762466598925797.jpg" />
 		</message>
 	</chat>
 </pxchatlog>

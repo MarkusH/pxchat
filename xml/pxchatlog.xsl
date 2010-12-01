@@ -46,20 +46,4 @@
 		<br />
 	</xsl:template>
 
-	<xsl:template match="i">
-		<xsl:copy>
-			<xsl:value-of select="." />
-		</xsl:copy>
-	</xsl:template>
-
-	<xsl:template match="b">
-		<xsl:copy>
-			<xsl:value-of select="." />
-		</xsl:copy>
-	</xsl:template>
-
-	<xsl:template match="img">
-		<img src="{@src}" />
-	</xsl:template>
-
 </xsl:stylesheet>
