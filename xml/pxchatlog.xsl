@@ -5,11 +5,12 @@
 	<xsl:template match="/">
 		<html>
 			<head>
-				<title>chat log
-				<xsl:text> from </xsl:text>
-				<xsl:value-of select="pxchatlog/start/@date" />
+				<title>
+					chat log
+					<xsl:text> from </xsl:text>
+					<xsl:value-of select="pxchatlog/start/@date" />
 				</title>
-			</head>	
+			</head>
 			<body>
 				<xsl:apply-templates />
 				<hr />
@@ -19,8 +20,8 @@
 			</body>
 		</html>
 	</xsl:template>
-	
-	
+
+
 	<xsl:template match="participants">
 		<b>Participants of this chat.</b>
 		<br />
@@ -38,13 +39,13 @@
 	<xsl:template match="chat">
 		<xsl:apply-templates />
 	</xsl:template>
-	
+
 	<xsl:template match="message[@type='system']">
-			<i>
-				<xsl:apply-templates />
-			</i>
-			<br />
-		</xsl:template>
+		<i>
+			<xsl:apply-templates />
+		</i>
+		<br />
+	</xsl:template>
 
 	<xsl:template match="message">
 		<xsl:value-of select="@author" />
