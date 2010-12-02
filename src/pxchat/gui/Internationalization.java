@@ -1,5 +1,8 @@
 package pxchat.gui;
 
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -29,7 +32,8 @@ public final class Internationalization {
 			locale = Locale.getDefault();
 		this.locale = locale;
 		try {
-			this.bundle = ResourceBundle.getBundle("Messages", this.locale);
+			this.bundle = ResourceBundle.getBundle("Messages", this.locale,
+				new URLClassLoader(new URL[] { new File("./languages/").toURI().toURL() }));
 		} catch (Exception e) {
 			this.bundle = null;
 			this.locale = null;
