@@ -21,7 +21,11 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import pxchat.util.Logging;
+
 public class ClientMain extends JFrame{
+	private Logging log = new Logging();
+	
 	private JMenuBar mBar;
 	private JMenu mFile;
 	private JMenuItem mNewChat, mExit;
@@ -137,14 +141,15 @@ public class ClientMain extends JFrame{
 		new SplashScreen(this).setVisible(true);
 	}
 	
-	public void writeMessage(String name, String msg, String time) {
+	public void writeMessage(String author, String msg, String time) {
 		try {
-			chatLog.getDocument().insertString(chatLog.getDocument().getLength(), "[" + time + "] " + name, FOREIGNNAME);
+			chatLog.getDocument().insertString(chatLog.getDocument().getLength(), "[" + time + "] " + author, FOREIGNNAME);
 			chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n", FOREIGN);
-		
 		} catch(BadLocationException e) {
       		System.err.println("Could not write to JTextPane \"chatLog\".");
 		}
+		
+		//log.logMessage(msg, author);
 	}
 	
 	public void writeNotification(String msg, String time) {
@@ -171,6 +176,8 @@ public class ClientMain extends JFrame{
 	      		System.err.println("Could not write to JTextPane \"chatLog\".");
 			}
 			inputArea.setText("");
+			
+			//log.logMessage(msg, "Sie");
 		}
 	}
 

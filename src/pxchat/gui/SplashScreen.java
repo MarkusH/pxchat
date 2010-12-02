@@ -14,18 +14,22 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 public class SplashScreen extends JDialog {
+	private JButton startButton;
+	private JLabel imageLabel;
+	
 	public SplashScreen (JFrame parent) {
 		super(parent,"pxchat", true);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLayout(new BorderLayout());
-		JButton startButton = new JButton("pxchat betreten");
+		startButton = new JButton("pxchat betreten");
 		startButton.setPreferredSize(new Dimension(200,30));
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SplashScreen.this.dispose();
 			}
 		});
-		JLabel imageLabel = new JLabel("",new ImageIcon("testbild.png"), SwingConstants.LEFT);
+		
+		imageLabel = new JLabel(new ImageIcon("testbild.png"), SwingConstants.LEFT);
 		imageLabel.setToolTipText("Prüfen Sie mittels dieses Bildes, ob Ihre Bildschirmeinstellungen stimmen.");
 		this.getContentPane().add(imageLabel, BorderLayout.CENTER);
 		this.getContentPane().add(startButton, BorderLayout.SOUTH);
