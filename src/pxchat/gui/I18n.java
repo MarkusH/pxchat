@@ -6,20 +6,20 @@ import java.net.URLClassLoader;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public final class Internationalization {
+public final class I18n {
 
 	private Locale locale;
 	private ResourceBundle bundle;
 
-	private Internationalization() {
+	private I18n() {
 		setLocale(Locale.getDefault());
 	}
 
 	private static class Holder { 
-		public static final Internationalization INSTANCE = new Internationalization();
+		public static final I18n INSTANCE = new I18n();
 	}
 
-	public static Internationalization getInstance() {
+	public static I18n getInstance() {
 		return Holder.INSTANCE;
 	}
 

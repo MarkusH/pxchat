@@ -40,7 +40,7 @@ public class WhiteBoard extends JFrame {
 	private Tool tool = Tool.Pencil;
 
 	public WhiteBoard() {
-		super(Internationalization.getInstance().getString("wbTitle"));
+		super(I18n.getInstance().getString("wbTitle"));
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(new BorderLayout());
 		
@@ -51,7 +51,7 @@ public class WhiteBoard extends JFrame {
 		paintBoard.setPreferredSize(new Dimension(sizeX, sizeY));
 		
 		final JPopupMenu popup = new JPopupMenu();
-		JMenuItem backgroundMenuItem = new JMenuItem(Internationalization.getInstance().getString("wbBackground"));
+		JMenuItem backgroundMenuItem = new JMenuItem(I18n.getInstance().getString("wbBackground"));
 		backgroundMenuItem.addActionListener(new ActionListener() {
 			
 			@Override
@@ -64,8 +64,8 @@ public class WhiteBoard extends JFrame {
 			}
 		});
 		popup.add(backgroundMenuItem);
-		popup.add(new JMenuItem(Internationalization.getInstance().getString("wbSaveToFile")));
-		popup.add(new JMenuItem(Internationalization.getInstance().getString("wbClear")));
+		popup.add(new JMenuItem(I18n.getInstance().getString("wbSaveToFile")));
+		popup.add(new JMenuItem(I18n.getInstance().getString("wbClear")));
 		
 
 		paintBoard.addMouseListener(new MouseAdapter() {
@@ -94,7 +94,7 @@ public class WhiteBoard extends JFrame {
 
 		ButtonGroup tools = new ButtonGroup();
 
-		JRadioButton pencil = new JRadioButton(Internationalization.getInstance().getString("wbPencil"), true);
+		JRadioButton pencil = new JRadioButton(I18n.getInstance().getString("wbPencil"), true);
 		pencil.addActionListener(new ActionListener() {
 
 			@Override
@@ -103,7 +103,7 @@ public class WhiteBoard extends JFrame {
 			}
 		});
 
-		JRadioButton rectangle = new JRadioButton(Internationalization.getInstance().getString("wbRectangle"));
+		JRadioButton rectangle = new JRadioButton(I18n.getInstance().getString("wbRectangle"));
 		rectangle.addActionListener(new ActionListener() {
 
 			@Override
@@ -112,7 +112,7 @@ public class WhiteBoard extends JFrame {
 			}
 		});
 
-		JRadioButton circle = new JRadioButton(Internationalization.getInstance().getString("wbCircle"));
+		JRadioButton circle = new JRadioButton(I18n.getInstance().getString("wbCircle"));
 		circle.addActionListener(new ActionListener() {
 
 			@Override

@@ -69,9 +69,9 @@ public class ClientMain extends JFrame{
 		//Create Menu Bar
 		mBar = new JMenuBar();
 		mFile = new JMenu("pxchat");
-		mNewChat = new JMenuItem(Internationalization.getInstance().getString("connectToChat"));
+		mNewChat = new JMenuItem(I18n.getInstance().getString("connectToChat"));
 		mFile.add(mNewChat);
-		mExit = new JMenuItem(Internationalization.getInstance().getString("quitProgram"));
+		mExit = new JMenuItem(I18n.getInstance().getString("quitProgram"));
 		mExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ClientMain.this.dispose();
@@ -134,7 +134,7 @@ public class ClientMain extends JFrame{
 		userListPane.setBounds(420, 10, 150, 300);
 		getContentPane().add(userListPane);
 		
-		whiteBoardButton = new JButton(Internationalization.getInstance().getString("whiteBoardButton"));
+		whiteBoardButton = new JButton(I18n.getInstance().getString("whiteBoardButton"));
 		whiteBoardButton.setBounds(420, 320, 150, 30);
 		whiteBoardButton.addActionListener(new ActionListener() {
 			
@@ -145,7 +145,7 @@ public class ClientMain extends JFrame{
 		});
 		getContentPane().add(whiteBoardButton);
 		
-		sendButton = new JButton(Internationalization.getInstance().getString("sendButton"));
+		sendButton = new JButton(I18n.getInstance().getString("sendButton"));
 		sendButton.setBounds(420, 360, 150, 30);
 		sendButton.addActionListener(new ActionListener() {
 			
@@ -193,7 +193,7 @@ public class ClientMain extends JFrame{
 		if(!msg.trim().equals("")) {
 			try {
 				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), "[" + df.format(dt) + "] "
-						+ Internationalization.getInstance().getString("you") + ": ", OWNNAME);
+						+ I18n.getInstance().getString("you") + ": ", OWNNAME);
 				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n", OWN);
 				// TODO msg über Netzwerk versenden
 			
@@ -209,7 +209,7 @@ public class ClientMain extends JFrame{
 	 * @param args
 	 */
 	public static void main(String[] args) {
-//		Internationalization.getInstance().setLocale(new Locale("de", "DE"));
+//		I18n.getInstance().setLocale(new Locale("de", "DE"));
 		new ClientMain().setVisible(true);
 	}
 
