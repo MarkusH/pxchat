@@ -5,6 +5,7 @@ package pxchat.server;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -84,6 +85,7 @@ public class ServerMain {
 			
 			System.out.println(authList);
 			
+			Internationalization.getInstance().setLocale(new Locale("de", "DE"));
 			System.out.println(Internationalization.getInstance().getString("enterChat"));
 
 		} catch (Exception e) {

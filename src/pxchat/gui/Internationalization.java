@@ -9,13 +9,7 @@ public final class Internationalization {
 	private ResourceBundle bundle;
 
 	private Internationalization() {
-		locale = Locale.getDefault();
-		try {
-			bundle = ResourceBundle.getBundle("Messages", locale);
-		} catch (Exception e) {
-			bundle = null;
-			locale = null;
-		}
+		setLocale(Locale.getDefault());
 	}
 
 	private static class Holder { 
@@ -30,4 +24,15 @@ public final class Internationalization {
 		return (bundle == null) ? "!!" + key + "!!" : bundle.getString(key);
 	}
 	
+	public void setLocale(Locale locale) {
+		if (locale == null)
+			locale = Locale.getDefault();
+		this.locale = locale;
+		try {
+			this.bundle = ResourceBundle.getBundle("Messages", this.locale);
+		} catch (Exception e) {
+			this.bundle = null;
+			this.locale = null;
+		}
+	}
 }
