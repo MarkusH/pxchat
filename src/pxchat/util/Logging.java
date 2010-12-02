@@ -41,8 +41,10 @@ public class Logging {
 			else if (!file.isDirectory())
 				throw new IOException(file.getAbsolutePath() + " is not a directory");
 			FileWriter fw = new FileWriter(filename);
-			fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE pxchatlog SYSTEM \"../xml/pxchatlog.dtd\">\n<pxchatlog/>");
-			//<?xml-stylesheet type=\"text/xsl\" href=\"pxchatlog.xsl\"?>\n
+			fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+			fw.write("<!DOCTYPE pxchatlog SYSTEM \"../xml/pxchatlog.dtd\">\n");
+			fw.write("<?xml-stylesheet type=\"text/xsl\" href=\"pxchatlog.xsl\"?>\n");
+			fw.write("<pxchatlog></pxchatlog>");
 			fw.close();
 			file = new File(filename);
 			if (!file.exists())
