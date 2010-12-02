@@ -61,7 +61,7 @@
 			<xsl:text> - </xsl:text>
 			<xsl:value-of select="@time" />
 			<xsl:text>]: </xsl:text>
-			<xsl:value-of select="@user1" />
+			<xsl:value-of select="@user" />
 			<xsl:text> has joined the chat</xsl:text>
 		</i>
 		<br />
@@ -74,7 +74,7 @@
 			<xsl:text> - </xsl:text>
 			<xsl:value-of select="@time" />
 			<xsl:text>]: </xsl:text>
-			<xsl:value-of select="@user1" />
+			<xsl:value-of select="@user" />
 			<xsl:text> has left the chat</xsl:text>
 		</i>
 		<br />
