@@ -85,7 +85,7 @@ public class Logging {
 					+ "\"?>\n");
 			oswLog.write("<!DOCTYPE pxchatlog SYSTEM \"../xml/pxchatlog.dtd\">\n");
 			oswLog
-					.write("<?xml-stylesheet type=\"text/xsl\" href=\"../xml/pxchatlog.xsl\"?>\n");
+					.write("<?xml-stylesheet href=\"pxchatlog.xsl\" type=\"text/xsl\" ?>\n");
 			oswLog.write("<pxchatlog>\n");
 			oswLog.flush();
 
