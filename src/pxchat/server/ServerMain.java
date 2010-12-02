@@ -16,6 +16,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import pxchat.gui.Internationalization;
 import pxchat.util.XMLUtil;
 
 /**
@@ -82,6 +83,8 @@ public class ServerMain {
 			}
 			
 			System.out.println(authList);
+			
+			System.out.println(Internationalization.getInstance().getString("enterChat"));
 
 		} catch (Exception e) {
 			System.out.println("An error ocurred loading the config file");
