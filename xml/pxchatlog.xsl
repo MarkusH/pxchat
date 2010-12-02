@@ -40,20 +40,56 @@
 		<xsl:apply-templates />
 	</xsl:template>
 
-	<xsl:template match="message[@type='system']">
+	<xsl:template match="invite">
 		<i>
-			<xsl:apply-templates />
+			<xsl:text>[</xsl:text>
+			<xsl:value-of select="@date" />
+			<xsl:text> - </xsl:text>
+			<xsl:value-of select="@time" />
+			<xsl:text>]: </xsl:text>
+			<xsl:value-of select="@user1" />
+			<xsl:text> has invited </xsl:text>
+			<xsl:value-of select="@user2" />
+		</i>
+		<br />
+	</xsl:template>
+
+	<xsl:template match="join">
+		<i>
+			<xsl:text>[</xsl:text>
+			<xsl:value-of select="@date" />
+			<xsl:text> - </xsl:text>
+			<xsl:value-of select="@time" />
+			<xsl:text>]: </xsl:text>
+			<xsl:value-of select="@user1" />
+			<xsl:text> has joined the chat</xsl:text>
+		</i>
+		<br />
+	</xsl:template>
+
+	<xsl:template match="leave">
+		<i>
+			<xsl:text>[</xsl:text>
+			<xsl:value-of select="@date" />
+			<xsl:text> - </xsl:text>
+			<xsl:value-of select="@time" />
+			<xsl:text>]: </xsl:text>
+			<xsl:value-of select="@user1" />
+			<xsl:text> has left the chat</xsl:text>
 		</i>
 		<br />
 	</xsl:template>
 
 	<xsl:template match="message">
-		<xsl:value-of select="@author" />
-		<xsl:text> (</xsl:text>
+		<xsl:text>[</xsl:text>
 		<xsl:value-of select="@date" />
-		<xsl:text> </xsl:text>
+		<xsl:text> - </xsl:text>
 		<xsl:value-of select="@time" />
-		<xsl:text>): </xsl:text>
+		<xsl:text>]: </xsl:text>
+		<b>
+			<xsl:value-of select="@author" />
+		</b>
+		<xsl:text>: </xsl:text>
 		<xsl:apply-templates />
 		<br />
 	</xsl:template>

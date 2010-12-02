@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pxchatlog SYSTEM "pxchatlog.dtd">
-<?xml-stylesheet type="text/xsl" href="pxchatlog.xsl" ?>
+<?xml-stylesheet type="text/xsl" href="pxchatlog-new.xsl" ?>
 <pxchatlog>
 	<!-- all participants of the chat -->
 	<participants>
@@ -13,18 +13,15 @@
 	<end date="01/04/2010" time="10:33:44" />
 	<!-- the chat -->
 	<chat>
-		<message author="Jane Doe" date="01/04/2010" time="10:21:14">Hi!
-		</message>
-		<message author="Jane Doe" date="01/04/2010" time="10:21:23">What's up?
-		</message>
-		<message author="John Doe" date="01/04/2010" time="10:23:12">Not much
-		</message>
-		<message author="Jane Doe" date="01/04/2010" time="10:23:54">Check this
-			out</message>
-		<message author="John Doe" date="01/04/2010" time="10:24:53" type="system">
-			John Doe invited Joe Everybody
-		</message>
-		<message author="Joe Everybody" date="01/04/2010" time="10:25:23">Sup
-		</message>
+		<message author="Jane Doe" date="01/04/2010" time="10:21:14">Hi!</message>
+		<message author="Jane Doe" date="01/04/2010" time="10:21:23">What's up?</message>
+		<message author="John Doe" date="01/04/2010" time="10:23:12">Not much</message>
+		<invite date="01/04/2010" time="10:23:25" user1="John Doe" user2="Joe Everybody" />
+		<message author="Jane Doe" date="01/04/2010" time="10:23:54">Check thisout</message>
+		<join user="Joe Everybody" date="01/04/2010" time="10:23:25" />
+		<message author="Joe Everybody" date="01/04/2010" time="10:25:23">Sup</message>
+		<join user="Joe Everybody" date="01/04/2010" time="10:23:25" />
+		<message author="Jane Doe" date="01/04/2010" time="10:25:59">Bye!</message>
+		<leave user="Jane Doe" date="01/04/2010" time="10:26:03" />
 	</chat>
 </pxchatlog>
