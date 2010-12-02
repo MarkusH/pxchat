@@ -1,5 +1,6 @@
 bin
-log
+log/log*
+log/.*
 .metadata
 .project
 .classpath
