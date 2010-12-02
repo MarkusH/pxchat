@@ -84,9 +84,6 @@ public class ServerMain {
 			}
 			
 			System.out.println(authList);
-			
-//			Internationalization.getInstance().setLocale(new Locale("de", "DE"));
-			System.out.println(Internationalization.getInstance().getString("enterChat"));
 
 		} catch (Exception e) {
 			System.out.println("An error ocurred loading the config file");

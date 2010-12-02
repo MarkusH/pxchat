@@ -21,7 +21,7 @@ public class SplashScreen extends JDialog {
 		super(parent,"pxchat", true);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLayout(new BorderLayout());
-		startButton = new JButton("pxchat betreten");
+		startButton = new JButton(Internationalization.getInstance().getString("ssEnterChat"));
 		startButton.setPreferredSize(new Dimension(200,30));
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -30,7 +30,7 @@ public class SplashScreen extends JDialog {
 		});
 		
 		imageLabel = new JLabel(new ImageIcon("testbild.png"), SwingConstants.LEFT);
-		imageLabel.setToolTipText("Prüfen Sie mittels dieses Bildes, ob Ihre Bildschirmeinstellungen stimmen.");
+		imageLabel.setToolTipText(Internationalization.getInstance().getString("ssInfoText"));
 		this.getContentPane().add(imageLabel, BorderLayout.CENTER);
 		this.getContentPane().add(startButton, BorderLayout.SOUTH);
 		this.pack();

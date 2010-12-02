@@ -23,10 +23,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
-import pxchat.util.Logging;
-
 public class ClientMain extends JFrame{
-	//private Logging log = new Logging();
+//	private Logging log = new Logging();
 	
 	private JMenuBar mBar;
 	private JMenu mFile;
@@ -71,9 +69,9 @@ public class ClientMain extends JFrame{
 		//Create Menu Bar
 		mBar = new JMenuBar();
 		mFile = new JMenu("pxchat");
-		mNewChat = new JMenuItem("Mit Chat verbinden…");
+		mNewChat = new JMenuItem(Internationalization.getInstance().getString("connectToChat"));
 		mFile.add(mNewChat);
-		mExit = new JMenuItem("Beenden");
+		mExit = new JMenuItem(Internationalization.getInstance().getString("quitProgram"));
 		mExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ClientMain.this.dispose();
@@ -136,7 +134,7 @@ public class ClientMain extends JFrame{
 		userListPane.setBounds(420, 10, 150, 300);
 		getContentPane().add(userListPane);
 		
-		whiteBoardButton = new JButton("Whiteboard");
+		whiteBoardButton = new JButton(Internationalization.getInstance().getString("whiteBoardButton"));
 		whiteBoardButton.setBounds(420, 320, 150, 30);
 		whiteBoardButton.addActionListener(new ActionListener() {
 			
@@ -147,7 +145,7 @@ public class ClientMain extends JFrame{
 		});
 		getContentPane().add(whiteBoardButton);
 		
-		sendButton = new JButton("Senden");
+		sendButton = new JButton(Internationalization.getInstance().getString("sendButton"));
 		sendButton.setBounds(420, 360, 150, 30);
 		sendButton.addActionListener(new ActionListener() {
 			
@@ -175,7 +173,7 @@ public class ClientMain extends JFrame{
       		System.err.println("Could not write to JTextPane \"chatLog\".");
 		}
 		
-		//log.logMessage(msg, author);
+//		log.logMessage(msg, author);
 	}
 	
 	public void writeNotification(String msg, String time) {
@@ -194,14 +192,15 @@ public class ClientMain extends JFrame{
 
 		if(!msg.trim().equals("")) {
 			try {
-				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), "[" + df.format(dt) + "] Sie: ", OWNNAME);
+				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), "[" + df.format(dt) + "] "
+						+ Internationalization.getInstance().getString("you") + ": ", OWNNAME);
 				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n", OWN);
 				// TODO msg über Netzwerk versenden
 			
 			} catch(BadLocationException e) {
 	      		System.err.println("Could not write to JTextPane \"chatLog\".");
 			}
-			//log.logMessage(msg, "Sie");
+//			log.logMessage(msg, "Sie");
 		}
 		inputArea.setText("");
 	}
@@ -210,6 +209,7 @@ public class ClientMain extends JFrame{
 	 * @param args
 	 */
 	public static void main(String[] args) {
+//		Internationalization.getInstance().setLocale(new Locale("de", "DE"));
 		new ClientMain().setVisible(true);
 	}
 
