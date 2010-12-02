@@ -4,173 +4,238 @@
 package pxchat.util;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+import java.util.Scanner;
 
 /**
  * @author Markus H.
- *
+ * 
  */
 public class Logging {
-	
-	private File file;
-	private Document doc;
-	private Node node;
-	private Element participants, start, end, chat;
-	String filename;
+
+	private File fUser, fMessages;
+	private String start, end;
+	private Writer oswLog, oswUser, oswMessage;
+	private String logfilename, userfilename, msgfilename;
+	private static final String encoding = "UTF-8";
+
+	private Calendar cal = Calendar.getInstance();
+	private SimpleDateFormat sdf;
 
 	/**
 	 * 
 	 */
 	public Logging() {
-		filename = "log/log" + getFilenameDateTime() + ".xml";
+		String time = getFilenameDateTime();
+		logfilename = "log/log" + time + ".xml";
+		userfilename = "log/.usr" + time;
+		msgfilename = "log/.msg" + time;
+
+		start = "\t<start date=\"" + getLogDate() + "\" time=\"" + getLogTime()
+				+ "\" />\n";
+
 		try {
-			file = new File("log/");
+			File file = new File("log/");
 			if (!file.exists())
 				file.mkdir();
 			else if (!file.isDirectory())
-				throw new IOException(file.getAbsolutePath() + " is not a directory");
-			FileWriter fw = new FileWriter(filename);
-			fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-			fw.write("<!DOCTYPE pxchatlog SYSTEM \"../xml/pxchatlog.dtd\">\n");
-			fw.write("<?xml-stylesheet type=\"text/xsl\" href=\"pxchatlog.xsl\"?>\n");
-			fw.write("<pxchatlog></pxchatlog>");
-			fw.close();
-			file = new File(filename);
-			if (!file.exists())
-				throw new IOException("cannot open log file!");
-			/**
-			 * doc is a reference to the whole document. Used to create elements.
-			 */
-			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
-			/**
-			 * node contains the root-element of `doc`
-			 */
-			node = doc.getDocumentElement();
-			/**
-			 * directly create a participants tag. Participants are stored when they join
-			 */
-			participants = doc.createElement("participants");
-			node.appendChild(participants);
-			/**
-			 * setting the log start
-			 */
-			start = doc.createElement("start");
-			start.setAttribute("date", getLogDate());
-			start.setAttribute("time", getLogTime());
-			node.appendChild(start);
-			/**
-			 * all log messages are stored in <chat>
-			 */
-			chat = doc.createElement("chat");
-			node.appendChild(chat);
+				throw new IOException(file.getAbsolutePath()
+						+ " is not a directory");
+
+			fUser = new File(userfilename);
+			if (!fUser.exists())
+				fUser.createNewFile();
+			oswUser = new OutputStreamWriter(new FileOutputStream(fUser),
+					encoding);
+
+			fMessages = new File(msgfilename);
+			if (!fMessages.exists())
+				fMessages.createNewFile();
+			oswMessage = new OutputStreamWriter(
+					new FileOutputStream(fMessages), encoding);
+
 		} catch (Exception e) {
-			System.out.println("An error ocurred loading the log file " + filename);
 			e.printStackTrace();
 			return;
 		}
 	}
-	
+
 	/**
 	 * endLog finishes the logging and stores the document
 	 */
 	public void endLog() {
-		end = doc.createElement("end");
-		end.setAttribute("date", getLogDate());
-		end.setAttribute("time", getLogTime());
-		node.insertBefore(end, chat);
-		XMLSerializer serializer = new XMLSerializer();
-	    try {
-			serializer.setOutputCharStream(new java.io.FileWriter(filename));
-		    serializer.serialize(doc);
-		} catch (IOException e) {
+		end = "\t<end date=\"" + getLogDate() + "\" time=\"" + getLogTime()
+				+ "\" />\n";
+		try {
+			File fLog = new File(logfilename);
+			if (!fLog.exists())
+				fLog.createNewFile();
+			oswLog = new OutputStreamWriter(new FileOutputStream(fLog),
+					encoding);
+			/**
+			 * build the basic header of a log file
+			 */
+			oswLog.write("<?xml version=\"1.0\" encoding=\"" + encoding
+					+ "\"?>\n");
+			oswLog.write("<!DOCTYPE pxchatlog SYSTEM \"../xml/pxchatlog.dtd\">\n");
+			oswLog
+					.write("<?xml-stylesheet type=\"text/xsl\" href=\"../xml/pxchatlog.xsl\"?>\n");
+			oswLog.write("<pxchatlog>\n");
+			oswLog.flush();
+
+			/**
+			 * put all participants in the log This needs a closing of oswUser
+			 * first!
+			 */
+			oswUser.close();
+			Scanner scanner;
+			oswLog.write("\t<participants>\n");
+			scanner = new Scanner(new FileInputStream(fUser), encoding);
+			while (scanner.hasNextLine()) {
+				oswLog.write(scanner.nextLine() + "\n");
+			}
+			scanner.close();
+			oswLog.write("\t</participants>\n");
+			oswLog.flush();
+			fUser.delete();
+
+			/**
+			 * let us write the duration of this chat
+			 */
+			oswLog.write(start);
+			oswLog.write(end);
+			oswLog.flush();
+
+			/**
+			 * we can now append the temporary message log. again, we have to
+			 * close that OutputStreamWriter first.
+			 */
+			oswMessage.close();
+			oswLog.write("\t<chat>\n");
+			scanner = new Scanner(new FileInputStream(fMessages), encoding);
+			while (scanner.hasNextLine()) {
+				oswLog.write(scanner.nextLine() + "\n");
+			}
+			scanner.close();
+			oswLog.write("\t</chat>\n");
+
+			oswLog.flush();
+			fMessages.delete();
+			
+			/**
+			 * finish the complete log
+			 */
+			oswLog.write("</pxchatlog>\n");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (oswLog != null)
+					oswLog.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * Add a simple log message to the history
+	 * 
+	 * @param message
+	 *            the message to store
+	 * @param author
+	 *            the author of the message
+	 */
+	public void logMessage(String message, String author) {
+		try {
+			oswMessage.write("\t\t<message author=\"" + author + "\" date=\""
+					+ getLogDate() + "\" time=\"" + getLogTime() + "\">"
+					+ message + "</message>\n");
+			oswMessage.flush();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	/**
-	 * Add a simple log message to the history
-	 * @param message the message to store
-	 * @param author the author of the message
-	 */
-	public void logMessage(String message, String author) {
-		Element msg = doc.createElement("message");
-		msg.setAttribute("author", author);
-		msg.setAttribute("date", getLogDate());
-		msg.setAttribute("time", getLogTime());
-		msg.appendChild(doc.createTextNode(message));
-		chat.appendChild(msg);
-	}
-	
-	private void logSystemMessage(String message) {
-		Element msg = doc.createElement("message");
-		msg.setAttribute("author", "System");
-		msg.setAttribute("date", getLogDate());
-		msg.setAttribute("time", getLogTime());
-		msg.setAttribute("type", "system");
-		msg.appendChild(doc.createTextNode(message));
-		chat.appendChild(msg);
-	}
-	
+
 	private void logParticipant(String user) {
-		Element name = doc.createElement("name");
-		name.setAttribute("date", getLogDate());
-		name.setAttribute("time", getLogTime());
-		name.appendChild(doc.createTextNode(user));
-		participants.appendChild(name);
+		try {
+			oswUser.write("\t\t<name date=\"" + getLogDate() + "\" time=\""
+					+ getLogTime() + "\">" + user + "</name>\n");
+			oswUser.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	/**
 	 * Call this function when a user joins the chat
+	 * 
 	 * @param user
 	 */
 	public void logJoin(String user) {
-		logSystemMessage(user + " hast joined the chat!");
+		try {
+			oswMessage.write("\t\t<join user=\"" + user + "\" date=\""
+					+ getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
+			oswMessage.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		logParticipant(user);
 	}
-	
+
 	/**
 	 * Call this function when a user leaves the chat
+	 * 
 	 * @param user
 	 */
 	public void logLeave(String user) {
-		logSystemMessage(user + " has left the chat!");
+		try {
+			oswMessage.write("\t\t<leave user=\"" + user + "\" date=\""
+					+ getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
+			oswMessage.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	/**
 	 * Call this function when a <invitor> has invited <user>
+	 * 
 	 * @param user
 	 */
 	public void logInvite(String invitor, String user) {
-		logSystemMessage(invitor + " has invited " + user + "!");
+		try {
+			oswMessage.write("\t\t<invite user1=\"" + invitor + "\" user2=\""
+					+ user + "\" date=\"" + getLogDate() + "\" time=\""
+					+ getLogTime() + "\" />\n");
+			oswMessage.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	private String formatDateTime(String format) {
-		Calendar cal = Calendar.getInstance();
-	    SimpleDateFormat sdf = new SimpleDateFormat(format);
-	    return sdf.format(cal.getTime());
+		sdf = new SimpleDateFormat(format);
+		return sdf.format(cal.getTime());
 	}
 
 	private String getFilenameDateTime() {
-	    return formatDateTime("yyyyMMddHHmmss");
+		return formatDateTime("yyyyMMddHHmmss");
 	}
 
 	private String getLogDate() {
-	    return formatDateTime("dd/MM/yyyy");
+		return formatDateTime("dd/MM/yyyy");
 	}
 
 	private String getLogTime() {
-	    return formatDateTime("HH:mm:ss");
+		return formatDateTime("HH:mm:ss");
 	}
 
 }
