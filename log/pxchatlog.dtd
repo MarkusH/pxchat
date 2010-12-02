@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- all elements -->
+<!ELEMENT pxchatlog (participants, start, end, chat)>
+<!ELEMENT participants (name)+>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT start EMPTY>
+<!ELEMENT end EMPTY>
+<!ELEMENT chat (message|invite|join|leave)*>
+<!ELEMENT message (#PCDATA)>
+<!ELEMENT invite EMPTY>
+<!ELEMENT join EMPTY>
+<!ELEMENT leave EMPTY>
+
+<!-- all attributes -->
+<!ATTLIST name
+	date	CDATA	#REQUIRED
+	time	CDATA	#REQUIRED
+>
+
+<!ATTLIST start
+	date	CDATA	#REQUIRED
+	time	CDATA	#REQUIRED
+>
+
+<!ATTLIST end
+	date	CDATA	#REQUIRED
+	time	CDATA	#REQUIRED
+>
+
+<!ATTLIST message
+	author  CDATA   #REQUIRED
+	date    CDATA   #REQUIRED
+	time    CDATA   #REQUIRED
+>
+
+<!ATTLIST invite
+	date    CDATA   #REQUIRED
+	time    CDATA   #REQUIRED
+	user1   CDATA   #REQUIRED
+	user2   CDATA   #REQUIRED
+>
+
+<!ATTLIST join
+	date    CDATA   #REQUIRED
+	time    CDATA   #REQUIRED
+	user    CDATA   #REQUIRED
+>
+
+<!ATTLIST leave
+	date    CDATA   #REQUIRED
+	time    CDATA   #REQUIRED
+	user    CDATA   #REQUIRED
+>

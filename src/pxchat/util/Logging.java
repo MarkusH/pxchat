@@ -83,7 +83,7 @@ public class Logging {
 			 */
 			oswLog.write("<?xml version=\"1.0\" encoding=\"" + encoding
 					+ "\"?>\n");
-			oswLog.write("<!DOCTYPE pxchatlog SYSTEM \"../xml/pxchatlog.dtd\">\n");
+			oswLog.write("<!DOCTYPE pxchatlog SYSTEM \"pxchatlog.dtd\">\n");
 			oswLog
 					.write("<?xml-stylesheet href=\"pxchatlog.xsl\" type=\"text/xsl\" ?>\n");
 			oswLog.write("<pxchatlog>\n");
