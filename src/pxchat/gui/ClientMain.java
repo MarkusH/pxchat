@@ -39,6 +39,7 @@ public class ClientMain extends JFrame{
 		getContentPane().setLayout(null);
 		JTextArea chatLog = new JTextArea("Log", 1, 30);
 		chatLog.setLineWrap(true);
+		chatLog.setWrapStyleWord(true);
 		chatLog.setEditable(false);
 		JScrollPane chatLogPane = new JScrollPane(chatLog,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -48,16 +49,18 @@ public class ClientMain extends JFrame{
 
 		JTextArea inputArea = new JTextArea("Input", 3, 30);
 		inputArea.setLineWrap(true);
+		inputArea.setWrapStyleWord(true);
 		inputArea.setEditable(true);
 		JScrollPane inputAreaPane = new JScrollPane(inputArea,
-				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		inputAreaPane.setBounds(10, 320, 400, 100);
 		getContentPane().add(inputAreaPane);
 		
 		JList userList = new JList(new String[] {"User", "User2"});
+		userList.setEnabled(false);
 		JScrollPane userListPane = new JScrollPane(userList,
-				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		userListPane.setBounds(420, 10, 150, 300);
 		getContentPane().add(userListPane);
@@ -80,8 +83,6 @@ public class ClientMain extends JFrame{
 
 	/**
 	 * @param args
-	 * @throws InvocationTargetException 
-	 * @throws InterruptedException 
 	 */
 	public static void main(String[] args) {
 		new ClientMain().setVisible(true);
