@@ -5,6 +5,7 @@ package pxchat.server;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -16,6 +17,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import pxchat.gui.Internationalization;
 import pxchat.util.XMLUtil;
 
 /**
@@ -82,6 +84,9 @@ public class ServerMain {
 			}
 			
 			System.out.println(authList);
+			
+			Internationalization.getInstance().setLocale(new Locale("de", "DE"));
+			System.out.println(Internationalization.getInstance().getString("enterChat"));
 
 		} catch (Exception e) {
 			System.out.println("An error ocurred loading the config file");
