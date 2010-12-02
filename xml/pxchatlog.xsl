@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:output method="xhtml" omit-xml-declaration="yes" media-type="xml" indent="yes" />
 
 	<xsl:template match="/">
 		<html>
@@ -61,7 +62,7 @@
 			<xsl:text> - </xsl:text>
 			<xsl:value-of select="@time" />
 			<xsl:text>]: </xsl:text>
-			<xsl:value-of select="@user1" />
+			<xsl:value-of select="@user" />
 			<xsl:text> has joined the chat</xsl:text>
 		</i>
 		<br />
@@ -74,7 +75,7 @@
 			<xsl:text> - </xsl:text>
 			<xsl:value-of select="@time" />
 			<xsl:text>]: </xsl:text>
-			<xsl:value-of select="@user1" />
+			<xsl:value-of select="@user" />
 			<xsl:text> has left the chat</xsl:text>
 		</i>
 		<br />
