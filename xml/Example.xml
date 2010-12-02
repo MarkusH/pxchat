@@ -18,9 +18,8 @@
 		<message author="John Doe" date="01/04/2010" time="10:23:12">Not much</message>
 		<invite date="01/04/2010" time="10:23:25" user1="John Doe" user2="Joe Everybody" />
 		<message author="Jane Doe" date="01/04/2010" time="10:23:54">Check thisout</message>
-		<join user="Joe Everybody" date="01/04/2010" time="10:23:25" />
+		<join user="Joe Everybody" date="01/04/2010" time="10:23:57" />
 		<message author="Joe Everybody" date="01/04/2010" time="10:25:23">Sup</message>
-		<join user="Joe Everybody" date="01/04/2010" time="10:23:25" />
 		<message author="Jane Doe" date="01/04/2010" time="10:25:59">Bye!</message>
 		<leave user="Jane Doe" date="01/04/2010" time="10:26:03" />
 	</chat>
