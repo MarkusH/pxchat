@@ -19,31 +19,31 @@ public class TCPServer {
 	private boolean listening = false;
 
 //	private IServerCallbacks serverCallbacks = null;
-//	
-//	private IClientCallbacks clientCallbacks = new IClientCallbacks() {
-//
-//		@Override
-//		public void clientDisconnect(CustomSocket client) {
-//			clients.remove(client);
-//			System.out.println("Server> Removing client due to disconnect: " + client);
+	
+	private ClientListener clientListener = new ClientListener() {
+
+		@Override
+		public void clientDisconnect(CustomSocket client) {
+			clients.remove(client);
+			System.out.println("Server> Removing client due to disconnect: " + client);
 //			serverCallbacks.clientDisconnect(client);
-//		}
-//
-//		@Override
-//		public void clientRead(CustomSocket client, Object object) {
-//			System.out.println("Server> Message received from " + client + ": " + object);
+		}
+
+		@Override
+		public void clientRead(CustomSocket client, Object data) {
+			System.out.println("Server> Message received from " + client + ": " + data);
 //			serverCallbacks.clientRead(client, object);
-//		}
-//
-//		@Override
-//		public void clientConnect(CustomSocket client) {
-//			throw new IllegalStateException("Server> A already connected socket of the server reconnected.");
-//		}
-//
-//		@Override
-//		public void clientConnecting(CustomSocket client) {
-//		}
-//	};
+		}
+
+		@Override
+		public void clientConnect(CustomSocket client) {
+			throw new IllegalStateException("Server> A already connected socket of the server reconnected.");
+		}
+
+		@Override
+		public void clientConnecting(CustomSocket client) {
+		}
+	};
 
 
 	public TCPServer(/*IServerCallbacks serverCallbacks*/) {
@@ -127,7 +127,7 @@ public class TCPServer {
 		@Override
 		public void run() {
 			try {
-				socket = new CustomSocket(serverSocket.accept()/*, server.clientCallbacks*/);
+				socket = new CustomSocket(serverSocket.accept(), clientListener);
 
 			} catch (IOException e) {
 				acceptCallback(e);
