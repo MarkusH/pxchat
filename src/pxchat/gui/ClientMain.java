@@ -10,6 +10,7 @@ import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -36,11 +37,11 @@ public class ClientMain extends JFrame{
 	private JList userList;
 	private JButton whiteBoardButton, sendButton;
 	
-	private static SimpleAttributeSet OWN = new SimpleAttributeSet();
-	private static SimpleAttributeSet FOREIGN = new SimpleAttributeSet();
-	private static SimpleAttributeSet OWNNAME = new SimpleAttributeSet();
-	private static SimpleAttributeSet FOREIGNNAME = new SimpleAttributeSet();
-	private static SimpleAttributeSet NOTIFY = new SimpleAttributeSet();
+	private WhiteBoard wb = new WhiteBoard();
+	
+	private static SimpleAttributeSet OWN = new SimpleAttributeSet(), FOREIGN = new SimpleAttributeSet(),
+		OWNNAME = new SimpleAttributeSet(), FOREIGNNAME = new SimpleAttributeSet(),
+		NOTIFY = new SimpleAttributeSet();
 	static {
 		StyleConstants.setForeground(OWN, Color.blue);
 		StyleConstants.setFontSize(OWN, 12);
@@ -58,22 +59,24 @@ public class ClientMain extends JFrame{
 		
 		StyleConstants.setForeground(NOTIFY, Color.gray);
 		StyleConstants.setFontSize(NOTIFY, 12);
-		StyleConstants.setBold(NOTIFY, false);
 		StyleConstants.setItalic(NOTIFY, true);
 	}
 	
 	public ClientMain() {
 		super("pxchat");
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage("./data/img/icon/whiteboard.png"));
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		ClientMain.this.enableInputMethods(true);
 		
 		//Create Menu Bar
 		mBar = new JMenuBar();
 		mFile = new JMenu("pxchat");
 		mNewChat = new JMenuItem(I18n.getInstance().getString("connectToChat"));
 		mFile.add(mNewChat);
-		mExit = new JMenuItem(I18n.getInstance().getString("quitProgram"));
+		mExit = new JMenuItem(I18n.getInstance().getString("quitProgram"), new ImageIcon("./data/img/icon/quit.png"));
 		mExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				ClientMain.this.wb.dispose();
 				ClientMain.this.dispose();
 			}
 		});
@@ -110,8 +113,6 @@ public class ClientMain extends JFrame{
 				// TODO Auto-generated method stub
 				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 					if(e.isControlDown()) {
-						//TODO find better solution for this problem:
-						//	If CTRL and Return are pressed it should have the effect of only pressing Return.
 						ClientMain.this.inputArea.append("\n");
 						return;
 					}
@@ -140,7 +141,7 @@ public class ClientMain extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new WhiteBoard().setVisible(true);
+				wb.setVisible(!wb.isVisible());
 			}
 		});
 		getContentPane().add(whiteBoardButton);
@@ -179,7 +180,6 @@ public class ClientMain extends JFrame{
 	public void writeNotification(String msg, String time) {
 		try {
 			chatLog.getDocument().insertString(chatLog.getDocument().getLength(), "[" + time + "] " + msg + "\n", NOTIFY);
-		
 		} catch(BadLocationException e) {
       		System.err.println("Could not write to JTextPane \"chatLog\".");
 		}
@@ -187,12 +187,11 @@ public class ClientMain extends JFrame{
 	
 	private void sendMessage() {
 		String msg = inputArea.getText();
-		Date dt = new Date();
 		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
 
 		if(!msg.trim().equals("")) {
 			try {
-				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), "[" + df.format(dt) + "] "
+				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), "[" + df.format(new Date()) + "] "
 						+ I18n.getInstance().getString("you") + ": ", OWNNAME);
 				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n", OWN);
 				// TODO msg über Netzwerk versenden
@@ -201,8 +200,8 @@ public class ClientMain extends JFrame{
 	      		System.err.println("Could not write to JTextPane \"chatLog\".");
 			}
 //			log.logMessage(msg, "Sie");
+			inputArea.setText("");
 		}
-		inputArea.setText("");
 	}
 
 	/**

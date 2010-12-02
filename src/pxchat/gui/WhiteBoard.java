@@ -41,7 +41,8 @@ public class WhiteBoard extends JFrame {
 
 	public WhiteBoard() {
 		super(I18n.getInstance().getString("wbTitle"));
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage("./data/img/icon/whiteboard.png"));
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setLayout(new BorderLayout());
 		
 
