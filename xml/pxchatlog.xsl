@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:output method="xhtml" omit-xml-declaration="yes" media-type="xml" indent="yes" />
+	<xsl:output method="html" omit-xml-declaration="yes" media-type="xml" indent="yes" />
 
 	<xsl:template match="/">
 		<html>
