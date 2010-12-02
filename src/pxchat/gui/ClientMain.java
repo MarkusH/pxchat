@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -24,7 +26,7 @@ import javax.swing.text.StyleConstants;
 import pxchat.util.Logging;
 
 public class ClientMain extends JFrame{
-	private Logging log = new Logging();
+	//private Logging log = new Logging();
 	
 	private JMenuBar mBar;
 	private JMenu mFile;
@@ -96,6 +98,30 @@ public class ClientMain extends JFrame{
 		inputArea.setLineWrap(true);
 		inputArea.setWrapStyleWord(true);
 		inputArea.setEditable(true);
+		inputArea.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+			}
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					if(e.isControlDown()) {
+						//TODO find better solution for this problem:
+						//	If CTRL and Return are pressed it should have the effect of only pressing Return.
+						ClientMain.this.inputArea.append("\n");
+						return;
+					}
+					ClientMain.this.sendMessage();
+					e.setKeyCode(0);
+				}
+			}
+		});
 		inputAreaPane = new JScrollPane(inputArea,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -175,10 +201,9 @@ public class ClientMain extends JFrame{
 			} catch(BadLocationException e) {
 	      		System.err.println("Could not write to JTextPane \"chatLog\".");
 			}
-			inputArea.setText("");
-			
 			//log.logMessage(msg, "Sie");
 		}
+		inputArea.setText("");
 	}
 
 	/**
