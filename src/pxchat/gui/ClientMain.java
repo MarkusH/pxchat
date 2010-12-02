@@ -1,9 +1,12 @@
 package pxchat.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -13,16 +16,47 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 public class ClientMain extends JFrame{
 	private JMenuBar mBar;
 	private JMenu mFile;
 	private JMenuItem mNewChat, mExit;
 	
-	private JTextArea chatLog, inputArea;
+	private JTextArea inputArea;
+	private JTextPane chatLog;
 	private JScrollPane chatLogPane, inputAreaPane, userListPane;
 	private JList userList;
 	private JButton whiteBoardButton, sendButton;
+	
+	private static SimpleAttributeSet OWN = new SimpleAttributeSet();
+	private static SimpleAttributeSet FOREIGN = new SimpleAttributeSet();
+	private static SimpleAttributeSet OWNNAME = new SimpleAttributeSet();
+	private static SimpleAttributeSet FOREIGNNAME = new SimpleAttributeSet();
+	private static SimpleAttributeSet NOTIFY = new SimpleAttributeSet();
+	static {
+		StyleConstants.setForeground(OWN, Color.blue);
+		StyleConstants.setFontSize(OWN, 12);
+		
+		StyleConstants.setForeground(FOREIGN, Color.black);
+		StyleConstants.setFontSize(FOREIGN, 12);
+		
+		StyleConstants.setForeground(OWNNAME, Color.blue);
+		StyleConstants.setFontSize(OWNNAME, 12);
+		StyleConstants.setBold(OWNNAME, true);
+		
+		StyleConstants.setForeground(FOREIGNNAME, Color.black);
+		StyleConstants.setFontSize(FOREIGNNAME, 12);
+		StyleConstants.setBold(FOREIGNNAME, true);
+		
+		StyleConstants.setForeground(NOTIFY, Color.gray);
+		StyleConstants.setFontSize(NOTIFY, 12);
+		StyleConstants.setBold(NOTIFY, false);
+		StyleConstants.setItalic(NOTIFY, true);
+	}
 	
 	public ClientMain() {
 		super("pxchat");
@@ -45,9 +79,8 @@ public class ClientMain extends JFrame{
 		
 		//Layout
 		getContentPane().setLayout(null);
-		chatLog = new JTextArea("Log", 1, 30);
-		chatLog.setLineWrap(true);
-		chatLog.setWrapStyleWord(true);
+		
+		chatLog = new JTextPane();
 		chatLog.setEditable(false);
 		chatLogPane = new JScrollPane(chatLog,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -55,7 +88,7 @@ public class ClientMain extends JFrame{
 		chatLogPane.setBounds(10, 10, 400, 300);
 		getContentPane().add(chatLogPane);
 
-		inputArea = new JTextArea("Input", 3, 30);
+		inputArea = new JTextArea("", 3, 30);
 		inputArea.setLineWrap(true);
 		inputArea.setWrapStyleWord(true);
 		inputArea.setEditable(true);
@@ -104,10 +137,39 @@ public class ClientMain extends JFrame{
 		new SplashScreen(this).setVisible(true);
 	}
 	
-	public void sendMessage() {
-		// TODO sinnvolle Methode schreiben
-		if(!inputArea.getText().equals("")) {
-			chatLog.append("\nYou:" + inputArea.getText());
+	public void writeMessage(String name, String msg, String time) {
+		try {
+			chatLog.getDocument().insertString(chatLog.getDocument().getLength(), "[" + time + "] " + name, FOREIGNNAME);
+			chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n", FOREIGN);
+		
+		} catch(BadLocationException e) {
+      		System.err.println("Could not write to JTextPane \"chatLog\".");
+		}
+	}
+	
+	public void writeNotification(String msg, String time) {
+		try {
+			chatLog.getDocument().insertString(chatLog.getDocument().getLength(), "[" + time + "] " + msg + "\n", NOTIFY);
+		
+		} catch(BadLocationException e) {
+      		System.err.println("Could not write to JTextPane \"chatLog\".");
+		}
+	}
+	
+	private void sendMessage() {
+		String msg = inputArea.getText();
+		Date dt = new Date();
+		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+
+		if(!msg.trim().equals("")) {
+			try {
+				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), "[" + df.format(dt) + "] Sie: ", OWNNAME);
+				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n", OWN);
+				// TODO msg über Netzwerk versenden
+			
+			} catch(BadLocationException e) {
+	      		System.err.println("Could not write to JTextPane \"chatLog\".");
+			}
 			inputArea.setText("");
 		}
 	}
