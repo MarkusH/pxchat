@@ -67,6 +67,13 @@ public class ClientMain extends JFrame{
 		
 		JButton whiteBoardButton = new JButton("Whiteboard");
 		whiteBoardButton.setBounds(420, 320, 150, 30);
+		whiteBoardButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				new WhiteBoard().setVisible(true);
+			}
+		});
 		getContentPane().add(whiteBoardButton);
 		
 		JButton sendButton = new JButton("Senden");
