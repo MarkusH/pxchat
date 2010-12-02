@@ -33,7 +33,7 @@ public final class I18n {
 		this.locale = locale;
 		try {
 			this.bundle = ResourceBundle.getBundle("Messages", this.locale,
-				new URLClassLoader(new URL[] { new File("./languages/").toURI().toURL() }));
+				new URLClassLoader(new URL[] { new File("./data/lang/").toURI().toURL() }));
 		} catch (Exception e) {
 			this.bundle = null;
 			this.locale = null;

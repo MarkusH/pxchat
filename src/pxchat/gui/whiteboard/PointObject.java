@@ -3,6 +3,7 @@ package pxchat.gui.whiteboard;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+
 import pxchat.net.protocol.frames.Frame;
 
 public class PointObject extends PrimitiveObject {

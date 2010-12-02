@@ -29,7 +29,7 @@ public class SplashScreen extends JDialog {
 			}
 		});
 		
-		imageLabel = new JLabel(new ImageIcon("testbild.png"), SwingConstants.LEFT);
+		imageLabel = new JLabel(new ImageIcon("data/img/test-pattern.png"), SwingConstants.LEFT);
 		imageLabel.setToolTipText(I18n.getInstance().getString("ssInfoText"));
 		this.getContentPane().add(imageLabel, BorderLayout.CENTER);
 		this.getContentPane().add(startButton, BorderLayout.SOUTH);
