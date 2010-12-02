@@ -36,11 +36,6 @@ public class WhiteBoard extends JFrame {
 		
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-		Dimension d = Toolkit.getDefaultToolkit().getScreenSize(); 
-		setLocation((d.width - getSize().width) / 2, 
-				(d.height - getSize().height) / 2);
-
-
 		setLayout(new BorderLayout());
 		
 		board = new JPanel();
@@ -92,6 +87,9 @@ public class WhiteBoard extends JFrame {
 		this.getContentPane().add(board, BorderLayout.CENTER);
 		this.getContentPane().add(toolbar, BorderLayout.WEST);
 		this.pack();
+		Dimension d = Toolkit.getDefaultToolkit().getScreenSize(); 
+		setLocation((d.width - getSize().width) / 2, 
+				(d.height - getSize().height) / 2);
 	}
 
 }
