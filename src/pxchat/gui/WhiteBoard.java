@@ -9,12 +9,19 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
+
+import pxchat.gui.whiteboard.PaintBoard;
 
 /**
  * @author florian
@@ -27,7 +34,7 @@ public class WhiteBoard extends JFrame {
 	private int sizeX = 800;
 	private int sizeY = 600;
 
-	private JPanel board;
+	private PaintBoard paintBoard;
 	private JPanel toolbar;
 
 	private Tool tool = Tool.Pencil;
@@ -36,16 +43,51 @@ public class WhiteBoard extends JFrame {
 		
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-		Dimension d = Toolkit.getDefaultToolkit().getScreenSize(); 
-		setLocation((d.width - getSize().width) / 2, 
-				(d.height - getSize().height) / 2);
-
-
 		setLayout(new BorderLayout());
 		
-		board = new JPanel();
-		board.setPreferredSize(new Dimension(sizeX, sizeY));
-		board.setBackground(Color.white);
+
+		paintBoard = new PaintBoard();
+//		paintBoard.setOpaque(false);
+		paintBoard.setBackground(Color.white);
+		paintBoard.setPreferredSize(new Dimension(sizeX, sizeY));
+		
+		final JPopupMenu popup = new JPopupMenu();
+		JMenuItem backgroundMenuItem = new JMenuItem("Change background");
+		backgroundMenuItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				if (fc.showOpenDialog(WhiteBoard.this) == JFileChooser.APPROVE_OPTION) {
+					paintBoard.loadBackground(fc.getSelectedFile());
+					paintBoard.repaint();
+				}
+			}
+		});
+		popup.add(backgroundMenuItem);
+		popup.add(new JMenuItem("Save to file"));
+		popup.add(new JMenuItem("Clear image"));
+		
+
+		paintBoard.addMouseListener(new MouseAdapter() {
+
+		    public void mousePressed(MouseEvent e) {
+		        maybeShowPopup(e);
+		    }
+
+		    public void mouseReleased(MouseEvent e) {
+		        maybeShowPopup(e);
+		    }
+
+		    private void maybeShowPopup(MouseEvent e) {
+		        if (e.isPopupTrigger()) {
+		            popup.show(e.getComponent(),
+		                       e.getX(), e.getY());
+		        }
+		    }
+		});
+
+		
 		
 		toolbar = new JPanel();
 		toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.PAGE_AXIS));
@@ -89,9 +131,13 @@ public class WhiteBoard extends JFrame {
 		toolbar.add(rectangle);
 		toolbar.add(circle);
 
-		this.getContentPane().add(board, BorderLayout.CENTER);
+		this.getContentPane().add(paintBoard, BorderLayout.CENTER);
 		this.getContentPane().add(toolbar, BorderLayout.WEST);
 		this.pack();
+		
+		Dimension d = Toolkit.getDefaultToolkit().getScreenSize(); 
+		setLocation((d.width - getSize().width) / 2, 
+				(d.height - getSize().height) / 2);
 	}
 
 }
