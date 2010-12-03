@@ -14,12 +14,12 @@ import java.util.Locale;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
@@ -97,13 +97,7 @@ public class ClientMain extends JFrame{
 		mAbout.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO Create class for about dialog
-				try {
-					chatLog.getDocument().insertString(chatLog.getDocument().getLength(), I18n.getInstance().getString("aboutText")
-							+ "\n", FOREIGN);
-				} catch (BadLocationException e1) {
-					//Nothing to do.
-				}
+				JOptionPane.showMessageDialog(null, I18n.getInstance().getString("aboutText"), I18n.getInstance().getString("aboutInfo"), JOptionPane.INFORMATION_MESSAGE, new ImageIcon("./data/img/icon/about-64.png"));
 			}
 		});
 		mHelp.add(mAbout);
