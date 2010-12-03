@@ -24,7 +24,12 @@ public final class I18n {
 	}
 
 	public String getString(String key) {
-		return (bundle == null) ? "!!" + key + "!!" : bundle.getString(key);
+		try {
+			return (bundle == null) ? "!!" + key + "!!" : bundle.getString(key);
+		} catch (Exception e) {
+			return "!!" + key + "!!";
+		}
+		
 	}
 	
 	public void setLocale(Locale locale) {

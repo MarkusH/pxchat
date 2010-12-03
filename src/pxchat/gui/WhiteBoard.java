@@ -43,6 +43,7 @@ public class WhiteBoard extends JFrame {
 	private JPanel toolbar;
 
 	private Tool tool = Tool.Freehand;
+	private Color currentColor = Color.BLACK;
 
 	public WhiteBoard() {
 		super(I18n.getInstance().getString("wbTitle"));
@@ -106,6 +107,10 @@ public class WhiteBoard extends JFrame {
 		drawColor.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				Color newColor = JColorChooser.showDialog(WhiteBoard.this, I18n.getInstance().getString("ccDialog"), currentColor);
+				if (newColor != null) {
+					currentColor = newColor;
+				}
 			}
 		});
 		JToggleButton drawEllipse = new JToggleButton("", new ImageIcon(
@@ -170,14 +175,14 @@ public class WhiteBoard extends JFrame {
 				loadBackgroundImage();
 			}
 		});
-		toolbar.add(drawCircle);
 		toolbar.add(drawColor);
-		toolbar.add(drawEllipse);
-		toolbar.add(drawEraser);
 		toolbar.add(drawFreehand);
 		toolbar.add(drawLine);
 		toolbar.add(drawRectangle);
+		toolbar.add(drawCircle);
+		toolbar.add(drawEllipse);
 		toolbar.add(drawText);
+		toolbar.add(drawEraser);
 		toolbar.add(loadImage);
 		
 		ButtonGroup g = new ButtonGroup();
