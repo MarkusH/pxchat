@@ -69,6 +69,8 @@ public class ClientMain extends JFrame{
 		super("pxchat");
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage("./data/img/icon/whiteboard.png"));
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		SplashScreen splashScreen = new SplashScreen(this);
+		splashScreen.setVisible(true);
 		
 		//Create Menu Bar
 		mBar = new JMenuBar();
@@ -186,8 +188,7 @@ public class ClientMain extends JFrame{
 		this.setResizable(false);
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(size.width/3-this.getWidth()/2, size.height/2-this.getHeight()/2);
-		
-		new SplashScreen(this).setVisible(true);
+		splashScreen.setReady();
 	}
 	
 	public void writeMessage(String author, String msg, String time) {
@@ -233,7 +234,7 @@ public class ClientMain extends JFrame{
 	 */
 	public static void main(String[] args) {
 //		I18n.getInstance().setLocale(new Locale("de", "DE"));
-		new ClientMain().setVisible(true);
+		new ClientMain();
 	}
 
 }

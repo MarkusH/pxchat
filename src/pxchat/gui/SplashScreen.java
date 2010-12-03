@@ -16,16 +16,20 @@ import javax.swing.SwingConstants;
 public class SplashScreen extends JDialog {
 	private JButton startButton;
 	private JLabel imageLabel;
+	private JFrame parent;
 	
 	public SplashScreen (JFrame parent) {
-		super(parent,"pxchat", true);
+		super(parent,"pxchat", false);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLayout(new BorderLayout());
+		this.parent = parent;
 		startButton = new JButton(I18n.getInstance().getString("ssEnterChat"));
+		startButton.setEnabled(false);
 		startButton.setPreferredSize(new Dimension(200,30));
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SplashScreen.this.dispose();
+				SplashScreen.this.parent.setVisible(true);
 			}
 		});
 		
@@ -37,5 +41,10 @@ public class SplashScreen extends JDialog {
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(size.width/2-this.getWidth()/2, size.height/2-this.getHeight()/2);
 		this.setResizable(false);
+	}
+	
+	public void setReady() {
+		System.out.println("ready");
+		startButton.setEnabled(true);
 	}
 }
