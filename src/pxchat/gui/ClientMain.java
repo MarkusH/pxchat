@@ -1,5 +1,6 @@
 package pxchat.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -9,9 +10,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -66,7 +69,6 @@ public class ClientMain extends JFrame{
 		super("pxchat");
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage("./data/img/icon/whiteboard.png"));
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		ClientMain.this.enableInputMethods(true);
 		
 		//Create Menu Bar
 		mBar = new JMenuBar();
@@ -90,6 +92,18 @@ public class ClientMain extends JFrame{
 		 */
 		mHelp = new JMenu(I18n.getInstance().getString("help"));
 		mAbout = new JMenuItem(I18n.getInstance().getString("aboutInfo"), new ImageIcon("./data/img/icon/about.png"));
+		mAbout.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//TODO Create class for about dialog
+				try {
+					chatLog.getDocument().insertString(chatLog.getDocument().getLength(), I18n.getInstance().getString("aboutText")
+							+ "\n", FOREIGN);
+				} catch (BadLocationException e1) {
+					//Nothing to do.
+				}
+			}
+		});
 		mHelp.add(mAbout);
 		mBar.add(mHelp);
 		this.setJMenuBar(mBar);

@@ -41,6 +41,9 @@ public class WhiteBoard extends JFrame {
 
 	private PaintBoard paintBoard;
 	private JPanel toolbar;
+	private JToggleButton drawCircle, drawEllipse, drawEraser,
+		drawFreehand, drawLine, drawRectangle, drawText; 
+	private JButton drawColor, loadImage;
 
 	private Tool tool = Tool.Freehand;
 	private Color currentColor = Color.BLACK;
@@ -93,7 +96,7 @@ public class WhiteBoard extends JFrame {
 		toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.PAGE_AXIS));
 		toolbar.setPreferredSize(new Dimension(100, sizeY));
 
-		JToggleButton drawCircle = new JToggleButton("", new ImageIcon(
+		drawCircle = new JToggleButton("", new ImageIcon(
 				"./data/img/icon/draw-circle.png"));
 		drawCircle.setToolTipText(I18n.getInstance().getString("wbCircle"));
 		drawCircle.addActionListener(new ActionListener() {
@@ -103,7 +106,7 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
-		JButton drawColor = new JButton("", new ImageIcon(
+		drawColor = new JButton("", new ImageIcon(
 				"./data/img/icon/draw-color.png"));
 		drawColor.setToolTipText(I18n.getInstance().getString("wbChangeColor"));
 		drawColor.addActionListener(new ActionListener() {
@@ -115,7 +118,7 @@ public class WhiteBoard extends JFrame {
 				}
 			}
 		});
-		JToggleButton drawEllipse = new JToggleButton("", new ImageIcon(
+		drawEllipse = new JToggleButton("", new ImageIcon(
 				"./data/img/icon/draw-ellipse.png"));
 		drawEllipse.setToolTipText(I18n.getInstance().getString("wbEllipse"));
 		drawEllipse.addActionListener(new ActionListener() {
@@ -125,7 +128,7 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
-		JToggleButton drawEraser = new JToggleButton("", new ImageIcon(
+		drawEraser = new JToggleButton("", new ImageIcon(
 				"./data/img/icon/draw-eraser.png"));
 		drawEraser.setToolTipText(I18n.getInstance().getString("wbEraser"));
 		drawEraser.addActionListener(new ActionListener() {
@@ -135,7 +138,7 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
-		JToggleButton drawFreehand = new JToggleButton("", new ImageIcon(
+		drawFreehand = new JToggleButton("", new ImageIcon(
 				"./data/img/icon/draw-freehand.png"));
 		drawFreehand.setToolTipText(I18n.getInstance().getString("wbPencil"));
 		drawFreehand.addActionListener(new ActionListener() {
@@ -145,7 +148,7 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
-		JToggleButton drawLine = new JToggleButton("", new ImageIcon(
+		drawLine = new JToggleButton("", new ImageIcon(
 				"./data/img/icon/draw-line.png"));
 		drawLine.setToolTipText(I18n.getInstance().getString("wbLine"));
 		drawLine.addActionListener(new ActionListener() {
@@ -155,7 +158,7 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
-		JToggleButton drawRectangle = new JToggleButton("", new ImageIcon(
+		drawRectangle = new JToggleButton("", new ImageIcon(
 				"./data/img/icon/draw-rectangle.png"));
 		drawRectangle.setToolTipText(I18n.getInstance().getString("wbRectangle"));
 		drawRectangle.addActionListener(new ActionListener() {
@@ -165,7 +168,7 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
-		JToggleButton drawText = new JToggleButton("", new ImageIcon(
+		drawText = new JToggleButton("", new ImageIcon(
 				"./data/img/icon/draw-text.png"));
 		drawText.setToolTipText(I18n.getInstance().getString("wbText"));
 		drawText.addActionListener(new ActionListener() {
@@ -175,7 +178,7 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
-		JButton loadImage = new JButton("", new ImageIcon(
+		loadImage = new JButton("", new ImageIcon(
 				"./data/img/icon/load-image.png"));
 		loadImage.setToolTipText(I18n.getInstance().getString("wbBackground"));
 		loadImage.addActionListener(new ActionListener() {
