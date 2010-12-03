@@ -28,8 +28,8 @@ public class ClientMain extends JFrame{
 //	private Logging log = new Logging();
 	
 	private JMenuBar mBar;
-	private JMenu mFile;
-	private JMenuItem mNewChat, mExit;
+	private JMenu mFile, mHelp;
+	private JMenuItem mNewChat, mExit, mAbout;
 	
 	private JTextArea inputArea;
 	private JTextPane chatLog;
@@ -70,6 +70,9 @@ public class ClientMain extends JFrame{
 		
 		//Create Menu Bar
 		mBar = new JMenuBar();
+		/**
+		 * building the pxchat menu
+		 */
 		mFile = new JMenu("pxchat");
 		mNewChat = new JMenuItem(I18n.getInstance().getString("connectToChat"));
 		mFile.add(mNewChat);
@@ -82,6 +85,13 @@ public class ClientMain extends JFrame{
 		});
 		mFile.add(mExit);
 		mBar.add(mFile);
+		/**
+		 * building the help menu
+		 */
+		mHelp = new JMenu(I18n.getInstance().getString("help"));
+		mAbout = new JMenuItem(I18n.getInstance().getString("aboutInfo"), new ImageIcon("./data/img/icon/about.png"));
+		mHelp.add(mAbout);
+		mBar.add(mHelp);
 		this.setJMenuBar(mBar);
 		
 		//Layout
@@ -135,7 +145,7 @@ public class ClientMain extends JFrame{
 		userListPane.setBounds(420, 10, 150, 300);
 		getContentPane().add(userListPane);
 		
-		whiteBoardButton = new JButton(I18n.getInstance().getString("whiteBoardButton"));
+		whiteBoardButton = new JButton(I18n.getInstance().getString("whiteBoardButton"), new ImageIcon("./data/img/icon/whiteboard.png"));
 		whiteBoardButton.setBounds(420, 320, 150, 30);
 		whiteBoardButton.addActionListener(new ActionListener() {
 			
@@ -146,7 +156,7 @@ public class ClientMain extends JFrame{
 		});
 		getContentPane().add(whiteBoardButton);
 		
-		sendButton = new JButton(I18n.getInstance().getString("sendButton"));
+		sendButton = new JButton(I18n.getInstance().getString("sendButton"), new ImageIcon("./data/img/icon/send.png"));
 		sendButton.setBounds(420, 360, 150, 30);
 		sendButton.addActionListener(new ActionListener() {
 			
