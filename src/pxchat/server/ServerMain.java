@@ -16,10 +16,15 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import pxchat.net.tcp.ClientListener;
+import pxchat.net.tcp.CustomSocket;
+import pxchat.net.tcp.ServerListener;
+import pxchat.net.tcp.TCPClient;
+import pxchat.net.tcp.TCPServer;
 import pxchat.util.XMLUtil;
 
 /**
- * @author markus
+ * @author Markus Döllinger
  *
  */
 public class ServerMain {
@@ -82,6 +87,69 @@ public class ServerMain {
 			}
 			
 			System.out.println(authList);
+			
+			TCPServer server = new TCPServer(new ServerListener() {
+				
+				@Override
+				public void clientRead(CustomSocket client, Object data) {
+					System.out.println("Server> " + client + " read " + data);
+				}
+				
+				@Override
+				public void clientDisconnect(CustomSocket client) {
+					System.out.println("Server> " + client + " disconnected.");
+				}
+				
+				@Override
+				public void clientConnecting(CustomSocket client) {
+					System.out.println("Server> " + client + " connecting.");
+				}
+				
+				@Override
+				public void clientConnect(CustomSocket client) {
+					System.out.println("Server> " + client + " connected.");
+					
+				}
+			});
+			server.listen(port);
+			
+			Thread.sleep(1000);
+			
+			TCPClient client = new TCPClient(new ClientListener() {
+				
+				@Override
+				public void clientRead(CustomSocket client, Object data) {
+					System.out.println("Client> " + client + " read " + data);
+				}
+				
+				@Override
+				public void clientDisconnect(CustomSocket client) {
+					System.out.println("Client> " + client + " disconnected.");
+				}
+				
+				@Override
+				public void clientConnecting(CustomSocket client) {
+					System.out.println("Client> " + client + " connecting.");			
+				}
+				
+				@Override
+				public void clientConnect(CustomSocket client) {
+					System.out.println("Client> " + client + " connected.");
+				}
+			});
+			client.connect("localhost", port);
+			
+			
+			Thread.sleep(1000);
+			
+			client.disconnect();
+			
+			Thread.sleep(1000);
+			
+			server.close();
+			
+			Thread.sleep(1000);
+			
 
 		} catch (Exception e) {
 			System.out.println("An error ocurred loading the config file");

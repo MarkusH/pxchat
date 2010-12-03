@@ -6,8 +6,11 @@ import java.net.ServerSocket;
 import java.util.Vector;
 
 /**
+ * This class implements a non-blocking server using
+ * the TCP protocol. It accepts connecting clients and
+ * stores them in an internal list.
+ * 
  * @author Markus Döllinger
- *
  */
 public class TCPServer {
 
@@ -18,26 +21,27 @@ public class TCPServer {
 	private boolean closing = false;
 	private boolean listening = false;
 
-//	private IServerCallbacks serverCallbacks = null;
+	private ServerListener serverListener;
 	
 	private ClientListener clientListener = new ClientListener() {
 
 		@Override
 		public void clientDisconnect(CustomSocket client) {
 			clients.remove(client);
-			System.out.println("Server> Removing client due to disconnect: " + client);
-//			serverCallbacks.clientDisconnect(client);
+			if (serverListener != null)
+				serverListener.clientDisconnect(client);
 		}
 
 		@Override
 		public void clientRead(CustomSocket client, Object data) {
-			System.out.println("Server> Message received from " + client + ": " + data);
-//			serverCallbacks.clientRead(client, object);
+			if (serverListener != null)
+				serverListener.clientRead(client, data);
 		}
 
 		@Override
 		public void clientConnect(CustomSocket client) {
-			throw new IllegalStateException("Server> A already connected socket of the server reconnected.");
+			throw new IllegalStateException("TCPServer> A socket already connected" +
+					"to the server reconnected.");
 		}
 
 		@Override
@@ -46,10 +50,22 @@ public class TCPServer {
 	};
 
 
-	public TCPServer(/*IServerCallbacks serverCallbacks*/) {
-//		this.serverCallbacks = serverCallbacks;
+	/**
+	 * Constructs a new <code>TCPServer</code> with a specified
+	 * {@link ServerListener}.
+	 * 
+	 * @param serverListener	The listener associated with this server.
+	 */
+	public TCPServer(ServerListener serverListener) {
+		this.serverListener = serverListener;
 	}
 
+	/**
+	 * Lets this server listen on the specified <code>port</code>.
+	 * 
+	 * @param port				The port to listen on.
+	 * @throws IOException
+	 */
 	public synchronized void listen(int port) throws IOException {
 		if ((serverSocket == null) || (!this.listening)) {
 			this.listening = false;
@@ -59,6 +75,11 @@ public class TCPServer {
 		}
 	}
 
+	/**
+	 * Closes this server and disonnects all clients.
+	 * 
+	 * @throws IOException
+	 */
 	public synchronized void close() throws IOException {
 		if (serverSocket != null) {
 			if (this.listening) {
@@ -97,6 +118,9 @@ public class TCPServer {
 		this.listening = false;
 	}
 
+	/**
+	 * Starts an AcceptThread
+	 */
 	private void doAccept() {
 		acceptThread = new AcceptThread();
 		acceptThread.start();	
@@ -104,7 +128,10 @@ public class TCPServer {
 
 	private synchronized void acceptCallback(CustomSocket socket) {
 		clients.add(socket);
-//		serverCallbacks.clientConnect(socket);
+		if (serverListener != null)
+			serverListener.clientConnecting(socket);
+		if (serverListener != null)
+			serverListener.clientConnect(socket);
 		doAccept();
 	}
 

@@ -25,24 +25,24 @@ public class CustomSocket {
 	private CipherInputStream cIn;
 	private CipherOutputStream cOut;
 	
-	protected ClientListener listener;
+	protected ClientListener clientListener;
 	
 	/**
 	 * 
 	 */
-	protected CustomSocket(ClientListener listener) {
-		this.listener = listener;
+	protected CustomSocket(ClientListener clientListener) {
+		this.clientListener = clientListener;
 		initCipher();
 	}
 
 	/**
 	 * Gets called from a server when a client connects. Do not call this constructor yourself!
-	 * @param socket		The client socket connected to the server.
-	 * @param listener		The listener waiting for socket events.
+	 * @param socket			The client socket connected to the server.
+	 * @param clientListener	The listener waiting for socket events.
 	 */
-	public CustomSocket(Socket socket, ClientListener listener) {
+	protected CustomSocket(Socket socket, ClientListener clientListener) {
 		this.socket = socket;
-		this.listener = listener;
+		this.clientListener = clientListener;
 		this.connected = true;
 		initCipher();
 
@@ -60,7 +60,7 @@ public class CustomSocket {
 		}
 	}
 	
-	public synchronized void close() throws IOException {
+	protected synchronized void close() throws IOException {
 		if (socket != null) {
 			if (this.connected) {
 				this.closing = true;
@@ -97,8 +97,8 @@ public class CustomSocket {
 	}
 	
 	private synchronized void readCallback(Object object) {
-		if (listener != null)
-			listener.clientRead(this, object);
+		if (clientListener != null)
+			clientListener.clientRead(this, object);
 		doRead();
 	}
 
@@ -106,8 +106,8 @@ public class CustomSocket {
 		if (this.closing || e instanceof EOFException || e instanceof SocketException) {
 			this.closing = false;
 			this.connected = false;
-			if (listener != null)
-				listener.clientDisconnect(this);
+			if (clientListener != null)
+				clientListener.clientDisconnect(this);
 		} else {
 		}
 	}
