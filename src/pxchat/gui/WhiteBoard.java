@@ -13,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
@@ -178,6 +179,15 @@ public class WhiteBoard extends JFrame {
 		toolbar.add(drawRectangle);
 		toolbar.add(drawText);
 		toolbar.add(loadImage);
+		
+		ButtonGroup g = new ButtonGroup();
+		g.add(drawCircle);
+		g.add(drawEllipse);
+		g.add(drawEraser);
+		g.add(drawFreehand);
+		g.add(drawLine);
+		g.add(drawRectangle);
+		g.add(drawText);
 
 		this.getContentPane().add(paintBoard, BorderLayout.CENTER);
 		this.getContentPane().add(toolbar, BorderLayout.WEST);
