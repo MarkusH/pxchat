@@ -41,9 +41,9 @@ public class WhiteBoard extends JFrame {
 
 	private PaintBoard paintBoard;
 	private JPanel toolbar;
-	private JToggleButton drawCircle, drawEllipse, drawEraser,
-		drawFreehand, drawLine, drawRectangle, drawText; 
-	private JButton drawColor, loadImage;
+	private JToggleButton drawCircle, drawEllipse, drawEraser, drawFreehand,
+			drawLine, drawRectangle, drawText, lockCanvas;
+	private JButton drawColor, loadImage, saveImage, clearImage, loadBackground;
 
 	private Tool tool = Tool.Freehand;
 	private Color currentColor = Color.BLACK;
@@ -62,18 +62,21 @@ public class WhiteBoard extends JFrame {
 
 		final JPopupMenu popup = new JPopupMenu();
 		JMenuItem backgroundMenuItem = new JMenuItem(I18n.getInstance()
-				.getString("wbBackground"));
+				.getString("wbBackground"), new ImageIcon(
+				"./data/img/icon/load-background-16.png"));
 		backgroundMenuItem.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				loadBackgroundImage();
+				insertImage();
 
 			}
 		});
 		popup.add(backgroundMenuItem);
-		popup.add(new JMenuItem(I18n.getInstance().getString("wbSaveToFile")));
-		popup.add(new JMenuItem(I18n.getInstance().getString("wbClear")));
+		popup.add(new JMenuItem(I18n.getInstance().getString("wbSaveToFile"),
+				new ImageIcon("./data/img/icon/save-16.png")));
+		popup.add(new JMenuItem(I18n.getInstance().getString("wbClear"),
+				new ImageIcon("./data/img/icon/clear-16.png")));
 
 		paintBoard.addMouseListener(new MouseAdapter() {
 
@@ -112,7 +115,8 @@ public class WhiteBoard extends JFrame {
 		drawColor.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Color newColor = JColorChooser.showDialog(WhiteBoard.this, I18n.getInstance().getString("ccDialog"), currentColor);
+				Color newColor = JColorChooser.showDialog(WhiteBoard.this, I18n
+						.getInstance().getString("ccDialog"), currentColor);
 				if (newColor != null) {
 					currentColor = newColor;
 				}
@@ -160,7 +164,8 @@ public class WhiteBoard extends JFrame {
 		});
 		drawRectangle = new JToggleButton("", new ImageIcon(
 				"./data/img/icon/draw-rectangle.png"));
-		drawRectangle.setToolTipText(I18n.getInstance().getString("wbRectangle"));
+		drawRectangle.setToolTipText(I18n.getInstance()
+				.getString("wbRectangle"));
 		drawRectangle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -178,13 +183,54 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
+		lockCanvas = new JToggleButton("", new ImageIcon(
+				"./data/img/icon/lock.png"));
+		lockCanvas.setToolTipText(I18n.getInstance().getString("wbLockCanvas"));
+		lockCanvas.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (WhiteBoard.this.lockCanvas.getModel().isSelected()) {
+					WhiteBoard.this.lockCanvas.setToolTipText(I18n
+							.getInstance().getString("wbUnlockCanvas"));
+					WhiteBoard.this.lockCanvas.setIcon(new ImageIcon(
+							"./data/img/icon/unlock.png"));
+				} else {
+					WhiteBoard.this.lockCanvas.setToolTipText(I18n
+							.getInstance().getString("wbLockCanvas"));
+					WhiteBoard.this.lockCanvas.setIcon(new ImageIcon(
+							"./data/img/icon/lock.png"));
+				}
+			}
+		});
 		loadImage = new JButton("", new ImageIcon(
 				"./data/img/icon/load-image.png"));
-		loadImage.setToolTipText(I18n.getInstance().getString("wbBackground"));
+		loadImage.setToolTipText(I18n.getInstance().getString("wbInsertImage"));
 		loadImage.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				loadBackgroundImage();
+				insertImage();
+			}
+		});
+		saveImage = new JButton("", new ImageIcon("./data/img/icon/save.png"));
+		saveImage.setToolTipText(I18n.getInstance().getString("wbSaveToFile"));
+		saveImage.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				insertImage();
+			}
+		});
+		clearImage = new JButton("", new ImageIcon("./data/img/icon/clear.png"));
+		clearImage.setToolTipText(I18n.getInstance().getString("wbClear"));
+		
+		loadBackground = new JButton("", new ImageIcon(
+				"./data/img/icon/load-background.png"));
+		loadBackground.setToolTipText(I18n.getInstance().getString(
+				"wbBackground"));
+		loadBackground.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Load a background image to a bottom layer
 			}
 		});
 		toolbar.add(drawColor);
@@ -195,8 +241,12 @@ public class WhiteBoard extends JFrame {
 		toolbar.add(drawEllipse);
 		toolbar.add(drawText);
 		toolbar.add(drawEraser);
+		toolbar.add(lockCanvas);
 		toolbar.add(loadImage);
-		
+		toolbar.add(saveImage);
+		toolbar.add(clearImage);
+		toolbar.add(loadBackground);
+
 		ButtonGroup g = new ButtonGroup();
 		g.add(drawCircle);
 		g.add(drawEllipse);
@@ -215,7 +265,7 @@ public class WhiteBoard extends JFrame {
 				(d.height - getSize().height) / 2);
 	}
 
-	private void loadBackgroundImage() {
+	private void insertImage() {
 		JFileChooser fc = new JFileChooser();
 		if (fc.showOpenDialog(WhiteBoard.this) == JFileChooser.APPROVE_OPTION) {
 			paintBoard.loadBackground(fc.getSelectedFile());

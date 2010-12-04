@@ -44,7 +44,6 @@ public class SplashScreen extends JDialog {
 	}
 	
 	public void setReady() {
-		System.out.println("ready");
 		startButton.setEnabled(true);
 	}
 }
