@@ -19,6 +19,8 @@ public abstract class Frame implements Serializable {
 	public static final int ID_SID = 2;
 	public static final int ID_MSG = 3;
 	public static final int ID_AUTO = 4;
+	public static final int ID_LOCK = 5;
+	public static final int ID_AUTH = 6;
 
 	public static final int ID_IMG = 10;
 
