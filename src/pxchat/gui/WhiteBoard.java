@@ -6,11 +6,14 @@ package pxchat.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -27,6 +30,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 
 import pxchat.gui.whiteboard.PaintBoard;
+import pxchat.gui.whiteboard.RectObject;
 import pxchat.util.Icons;
 import pxchat.util.PicFileFilter;
 
@@ -54,12 +58,30 @@ public class WhiteBoard extends JFrame {
 	private Color currentColor = Color.BLACK;
 	private Boolean lock = false;
 
+	/**
+	 * The coordinates of the starting point of a new paint object. It is
+	 * usually set in mousePressed()
+	 */
+	private Point startPoint;
+
+	/**
+	 * The coordinates of the current point of a new paint object. It is usually
+	 * set in mouseMoved()
+	 */
+	private Point currentPoint;
+
+	/**
+	 * The current width of the stroke.
+	 */
+	private float currentStrokeWidth = 1.0f;
+
 	public WhiteBoard() {
 		super(I18n.getInstance().getString("wbTitle"));
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage(
 				"./data/img/icon/whiteboard.png"));
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setLayout(new BorderLayout());
+		setResizable(false);
 
 		paintBoard = new PaintBoard();
 		// paintBoard.setOpaque(false);
@@ -104,17 +126,65 @@ public class WhiteBoard extends JFrame {
 
 		paintBoard.addMouseListener(new MouseAdapter() {
 
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
 			public void mousePressed(MouseEvent e) {
 				maybeShowPopup(e);
+
+				startPoint = currentPoint = new Point(e.getX(), e.getY());
 			}
 
 			public void mouseReleased(MouseEvent e) {
 				maybeShowPopup(e);
+
+				switch (tool) {
+					case Rectangle:
+						paintBoard.getPreviewObjects().clear();
+						paintBoard.repaint();
+						break;
+				}
 			}
 
 			private void maybeShowPopup(MouseEvent e) {
 				if (e.isPopupTrigger()) {
 					popup.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		});
+
+		paintBoard.addMouseMotionListener(new MouseMotionListener() {
+
+			@Override
+			public void mouseMoved(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				switch (tool) {
+					case Rectangle:
+						currentPoint = new Point(e.getX(), e.getY());
+						paintBoard.getPreviewObjects().clear();
+						paintBoard.getPreviewObjects().add(
+								new RectObject(startPoint, currentPoint,
+										currentColor, currentStrokeWidth));
+						paintBoard.repaint();
+						break;
 				}
 			}
 		});
@@ -137,8 +207,8 @@ public class WhiteBoard extends JFrame {
 		drawColor.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Color newColor = JColorChooser.showDialog(WhiteBoard.this,
-						I18n.getInstance().getString("ccDialog"), currentColor);
+				Color newColor = JColorChooser.showDialog(WhiteBoard.this, I18n
+						.getInstance().getString("ccDialog"), currentColor);
 				if (newColor != null) {
 					currentColor = newColor;
 				}
@@ -180,9 +250,10 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
-		
+
 		drawRectangle = new JToggleButton("", Icons.get("draw-rectangle.png"));
-		drawRectangle.setToolTipText(I18n.getInstance().getString("wbRectangle"));
+		drawRectangle.setToolTipText(I18n.getInstance()
+				.getString("wbRectangle"));
 		drawRectangle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -286,7 +357,7 @@ public class WhiteBoard extends JFrame {
 	}
 
 	private void clearImage() {
-		paintBoard.clearImage();
+		paintBoard.clearBoard();
 	}
 
 	private void insertImage() {
@@ -303,8 +374,8 @@ public class WhiteBoard extends JFrame {
 				format = name.substring(name.lastIndexOf(".") + 1);
 			}
 			try {
-				ImageIO.write(paintBoard.saveImage(), format, 
-						fc.getSelectedFile());
+				ImageIO.write(paintBoard.saveImage(), format, fc
+						.getSelectedFile());
 			} catch (IOException e) {
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(WhiteBoard.this, e.getMessage());

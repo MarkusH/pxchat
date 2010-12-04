@@ -11,6 +11,7 @@ public abstract class PrimitiveObject extends PaintObject {
 	private float width;
 
 	public PrimitiveObject(Color color, float width) {
+		this.color = color;
 		this.width = width;
 		this.stroke = new BasicStroke(width, BasicStroke.CAP_ROUND,
 				BasicStroke.JOIN_ROUND, 1.0f);
