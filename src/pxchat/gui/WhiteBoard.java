@@ -11,15 +11,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.print.attribute.standard.JobMessageFromOperator;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
@@ -212,15 +217,15 @@ public class WhiteBoard extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if (WhiteBoard.this.lockCanvas.getModel().isSelected()) {
-					WhiteBoard.this.lockCanvas.setToolTipText(I18n
+				if (lockCanvas.isSelected()) {
+					lockCanvas.setToolTipText(I18n
 							.getInstance().getString("wbUnlockCanvas"));
-					WhiteBoard.this.lockCanvas.setIcon(new ImageIcon(
+					lockCanvas.setIcon(new ImageIcon(
 							"./data/img/icon/unlock.png"));
 				} else {
-					WhiteBoard.this.lockCanvas.setToolTipText(I18n
+					lockCanvas.setToolTipText(I18n
 							.getInstance().getString("wbLockCanvas"));
-					WhiteBoard.this.lockCanvas.setIcon(new ImageIcon(
+					lockCanvas.setIcon(new ImageIcon(
 							"./data/img/icon/lock.png"));
 				}
 			}
@@ -297,29 +302,42 @@ public class WhiteBoard extends JFrame {
 	}
 
 	private void clearImage() {
-		// TODO clear the image
+		paintBoard.clearImage();
 	}
 
 	private void insertImage() {
-		JFileChooser fc = new JFileChooser();
-		fc.setFileFilter(new PicFileFilter());
-		if (fc.showOpenDialog(WhiteBoard.this) == JFileChooser.APPROVE_OPTION) {
-			paintBoard.loadBackground(fc.getSelectedFile());
-			paintBoard.repaint();
-		}
+		// TODO insert image
 	}
 
 	private void saveImage() {
 		JFileChooser fc = new JFileChooser();
 		fc.setFileFilter(new PicFileFilter());
 		if (fc.showSaveDialog(WhiteBoard.this) == JFileChooser.APPROVE_OPTION) {
-			System.out.println("Storing image at: "
-					+ fc.getSelectedFile().getAbsoluteFile());
+			String format = "png";
+			String name = fc.getSelectedFile().getName();
+			if (name.contains(".")) {
+				format = name.substring(name.lastIndexOf(".") + 1);
+			}
+			try {
+				ImageIO.write(paintBoard.saveImage(), format, fc.getSelectedFile());
+			} catch (IOException e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(WhiteBoard.this, e.getMessage());
+			}
 		}
 	}
 
 	private void loadBackground() {
-		// TODO Load a background image to a bottom layer
+		// TODO need some option to set the background to a specific color
+		// 		1) Display a dialog to choose "Image" or "Color"
+		//		2) Add an additional button to the toolbar
+		// 		3) Something else
+		JFileChooser fc = new JFileChooser();
+		fc.setFileFilter(new PicFileFilter());
+		if (fc.showOpenDialog(WhiteBoard.this) == JFileChooser.APPROVE_OPTION) {
+			paintBoard.loadBackground(fc.getSelectedFile());
+			paintBoard.repaint();
+		}
 	}
 
 	public void lockControls(Boolean lock) {
