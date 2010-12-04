@@ -46,7 +46,19 @@ public class PaintBoard extends JPanel {
 	}
 	
 	public void clearImage() {
-		
+		if (this.board == null)
+			return;
+		Graphics2D g = this.board.createGraphics();
+		Composite comp = g.getComposite();
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+		g.fillRect(0, 0, getWidth(), getHeight());
+		g.setComposite(comp);
+	}
+	
+	public BufferedImage saveImage() {
+		BufferedImage result = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+		paintComponent(result.createGraphics());
+		return result;
 	}
 	
 	private void updatePreview(Graphics2D g) {
