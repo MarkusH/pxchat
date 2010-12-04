@@ -43,10 +43,12 @@ public class WhiteBoard extends JFrame {
 	private JPanel toolbar;
 	private JToggleButton drawCircle, drawEllipse, drawEraser, drawFreehand,
 			drawLine, drawRectangle, drawText, lockCanvas;
-	private JButton drawColor, loadImage, saveImage, clearImage, loadBackground;
+	private JButton drawColor, loadImage, saveImage, clearImage,
+			loadBackground;
 
 	private Tool tool = Tool.Freehand;
 	private Color currentColor = Color.BLACK;
+	private Boolean lock = false;
 
 	public WhiteBoard() {
 		super(I18n.getInstance().getString("wbTitle"));
@@ -214,15 +216,10 @@ public class WhiteBoard extends JFrame {
 		});
 		saveImage = new JButton("", new ImageIcon("./data/img/icon/save.png"));
 		saveImage.setToolTipText(I18n.getInstance().getString("wbSaveToFile"));
-		saveImage.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				insertImage();
-			}
-		});
+
 		clearImage = new JButton("", new ImageIcon("./data/img/icon/clear.png"));
 		clearImage.setToolTipText(I18n.getInstance().getString("wbClear"));
-		
+
 		loadBackground = new JButton("", new ImageIcon(
 				"./data/img/icon/load-background.png"));
 		loadBackground.setToolTipText(I18n.getInstance().getString(
@@ -271,5 +268,29 @@ public class WhiteBoard extends JFrame {
 			paintBoard.loadBackground(fc.getSelectedFile());
 			paintBoard.repaint();
 		}
+	}
+	
+	public void lockControls(Boolean lock) {
+		this.lock = lock;
+		drawCircle.setEnabled(!lock);
+		drawEllipse.setEnabled(!lock);
+		drawEraser.setEnabled(!lock);
+		drawFreehand.setEnabled(!lock);
+		drawLine.setEnabled(!lock);
+		drawRectangle.setEnabled(!lock);
+		drawText.setEnabled(!lock);
+		lockCanvas.setEnabled(!lock);
+		drawColor.setEnabled(!lock);
+		loadImage.setEnabled(!lock);
+		clearImage.setEnabled(!lock);
+		loadBackground.setEnabled(!lock);
+	}
+
+	public void lockControls() {
+		lockControls(true);
+	}
+
+	public void unlockControls() {
+		lockControls(false);
 	}
 }
