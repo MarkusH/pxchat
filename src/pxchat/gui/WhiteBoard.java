@@ -25,6 +25,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 
 import pxchat.gui.whiteboard.PaintBoard;
+import pxchat.util.PicFileFilter;
 
 /**
  * @author Markus H.
@@ -301,6 +302,7 @@ public class WhiteBoard extends JFrame {
 
 	private void insertImage() {
 		JFileChooser fc = new JFileChooser();
+		fc.setFileFilter(new PicFileFilter());
 		if (fc.showOpenDialog(WhiteBoard.this) == JFileChooser.APPROVE_OPTION) {
 			paintBoard.loadBackground(fc.getSelectedFile());
 			paintBoard.repaint();
@@ -309,6 +311,7 @@ public class WhiteBoard extends JFrame {
 
 	private void saveImage() {
 		JFileChooser fc = new JFileChooser();
+		fc.setFileFilter(new PicFileFilter());
 		if (fc.showSaveDialog(WhiteBoard.this) == JFileChooser.APPROVE_OPTION) {
 			System.out.println("Storing image at: "
 					+ fc.getSelectedFile().getAbsoluteFile());
