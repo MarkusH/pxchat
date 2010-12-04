@@ -13,6 +13,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import pxchat.util.Icons;
+
 public class SplashScreen extends JDialog {
 	private JButton startButton;
 	private JLabel imageLabel;

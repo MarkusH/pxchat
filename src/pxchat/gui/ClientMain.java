@@ -10,7 +10,6 @@ import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -24,6 +23,8 @@ import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+
+import pxchat.util.Icons;
 
 public class ClientMain extends JFrame {
 	// private Logging log = new Logging();
@@ -89,7 +90,7 @@ public class ClientMain extends JFrame {
 		});
 		mFile.add(mNewChat);
 		mExit = new JMenuItem(I18n.getInstance().getString("quitProgram"),
-				new ImageIcon("./data/img/icon/quit.png"));
+				Icons.get("quit.png"));
 		mExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ClientMain.this.wb.dispose();
@@ -102,15 +103,15 @@ public class ClientMain extends JFrame {
 		 * building the help menu
 		 */
 		mHelp = new JMenu(I18n.getInstance().getString("help"));
-		mAbout = new JMenuItem(I18n.getInstance().getString("aboutInfo"),
-				new ImageIcon("./data/img/icon/about.png"));
+		mAbout = new JMenuItem(I18n.getInstance().getString("aboutInfo"), Icons
+				.get("about.png"));
 		mAbout.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, I18n.getInstance()
 						.getString("aboutText"), I18n.getInstance().getString(
-						"aboutInfo"), JOptionPane.INFORMATION_MESSAGE,
-						new ImageIcon("./data/img/icon/about-64.png"));
+						"aboutInfo"), JOptionPane.INFORMATION_MESSAGE, Icons
+						.get("about-64.png"));
 			}
 		});
 		mHelp.add(mAbout);
@@ -171,8 +172,7 @@ public class ClientMain extends JFrame {
 		getContentPane().add(userListPane);
 
 		whiteBoardButton = new JButton(I18n.getInstance().getString(
-				"whiteBoardButton"), new ImageIcon(
-				"./data/img/icon/whiteboard.png"));
+				"whiteBoardButton"), Icons.get("whiteboard.png"));
 		whiteBoardButton.setBounds(420, 320, 150, 30);
 		whiteBoardButton.addActionListener(new ActionListener() {
 
@@ -184,7 +184,7 @@ public class ClientMain extends JFrame {
 		getContentPane().add(whiteBoardButton);
 
 		sendButton = new JButton(I18n.getInstance().getString("sendButton"),
-				new ImageIcon("./data/img/icon/send.png"));
+				Icons.get("send.png"));
 		sendButton.setBounds(420, 360, 150, 30);
 		sendButton.addActionListener(new ActionListener() {
 
@@ -256,6 +256,7 @@ public class ClientMain extends JFrame {
 	 */
 	public static void main(String[] args) {
 		// I18n.getInstance().setLocale(new Locale("de", "DE"));
+		Icons.setFolder("./data/img/icon/");
 		new ClientMain();
 	}
 

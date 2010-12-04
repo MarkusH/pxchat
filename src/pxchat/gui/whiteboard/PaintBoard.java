@@ -56,7 +56,7 @@ public class PaintBoard extends JPanel {
 	}
 	
 	public BufferedImage saveImage() {
-		BufferedImage result = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+		BufferedImage result = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
 		paintComponent(result.createGraphics());
 		return result;
 	}
