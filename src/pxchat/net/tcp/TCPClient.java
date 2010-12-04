@@ -9,7 +9,7 @@ import java.net.UnknownHostException;
 
 /**
  * @author Markus Döllinger
- *
+ * 
  */
 
 public class TCPClient extends CustomSocket {
@@ -21,9 +21,8 @@ public class TCPClient extends CustomSocket {
 		super(clientListener);
 	}
 
-
-
-	public void connect(String host, int port) throws UnknownHostException, IOException {
+	public void connect(String host, int port) throws UnknownHostException,
+												IOException {
 		if ((socket == null) || (!this.connected)) {
 			this.connected = false;
 			clientListener.clientConnecting(this);

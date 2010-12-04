@@ -37,16 +37,16 @@ public class Logging {
 		userfilename = "log/.usr" + time;
 		msgfilename = "log/.msg" + time;
 
-		start = "\t<start date=\"" + getLogDate() + "\" time=\"" + getLogTime()
-				+ "\" />\n";
+		start = "\t<start date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n";
 
 		try {
 			File file = new File("log/");
 			if (!file.exists())
 				file.mkdir();
-			else if (!file.isDirectory())
-				throw new IOException(file.getAbsolutePath()
-						+ " is not a directory");
+			else
+				if (!file.isDirectory())
+					throw new IOException(
+							file.getAbsolutePath() + " is not a directory");
 
 			fUser = new File(userfilename);
 			if (!fUser.exists())
@@ -70,8 +70,7 @@ public class Logging {
 	 * endLog finishes the logging and stores the document
 	 */
 	public void endLog() {
-		end = "\t<end date=\"" + getLogDate() + "\" time=\"" + getLogTime()
-				+ "\" />\n";
+		end = "\t<end date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n";
 		try {
 			File fLog = new File(logfilename);
 			if (!fLog.exists())
@@ -81,11 +80,9 @@ public class Logging {
 			/**
 			 * build the basic header of a log file
 			 */
-			oswLog.write("<?xml version=\"1.0\" encoding=\"" + encoding
-					+ "\"?>\n");
+			oswLog.write("<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>\n");
 			oswLog.write("<!DOCTYPE pxchatlog SYSTEM \"pxchatlog.dtd\">\n");
-			oswLog
-					.write("<?xml-stylesheet href=\"pxchatlog.xsl\" type=\"text/xsl\" ?>\n");
+			oswLog.write("<?xml-stylesheet href=\"pxchatlog.xsl\" type=\"text/xsl\" ?>\n");
 			oswLog.write("<pxchatlog>\n");
 			oswLog.flush();
 
@@ -127,7 +124,7 @@ public class Logging {
 
 			oswLog.flush();
 			fMessages.delete();
-			
+
 			/**
 			 * finish the complete log
 			 */
@@ -148,16 +145,12 @@ public class Logging {
 	/**
 	 * Add a simple log message to the history
 	 * 
-	 * @param message
-	 *            the message to store
-	 * @param author
-	 *            the author of the message
+	 * @param message the message to store
+	 * @param author the author of the message
 	 */
 	public void logMessage(String message, String author) {
 		try {
-			oswMessage.write("\t\t<message author=\"" + author + "\" date=\""
-					+ getLogDate() + "\" time=\"" + getLogTime() + "\">"
-					+ message + "</message>\n");
+			oswMessage.write("\t\t<message author=\"" + author + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\">" + message + "</message>\n");
 			oswMessage.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -166,8 +159,7 @@ public class Logging {
 
 	private void logParticipant(String user) {
 		try {
-			oswUser.write("\t\t<name date=\"" + getLogDate() + "\" time=\""
-					+ getLogTime() + "\">" + user + "</name>\n");
+			oswUser.write("\t\t<name date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\">" + user + "</name>\n");
 			oswUser.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -181,8 +173,7 @@ public class Logging {
 	 */
 	public void logJoin(String user) {
 		try {
-			oswMessage.write("\t\t<join user=\"" + user + "\" date=\""
-					+ getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
+			oswMessage.write("\t\t<join user=\"" + user + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
 			oswMessage.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -197,8 +188,7 @@ public class Logging {
 	 */
 	public void logLeave(String user) {
 		try {
-			oswMessage.write("\t\t<leave user=\"" + user + "\" date=\""
-					+ getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
+			oswMessage.write("\t\t<leave user=\"" + user + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
 			oswMessage.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -212,9 +202,7 @@ public class Logging {
 	 */
 	public void logInvite(String invitor, String user) {
 		try {
-			oswMessage.write("\t\t<invite user1=\"" + invitor + "\" user2=\""
-					+ user + "\" date=\"" + getLogDate() + "\" time=\""
-					+ getLogTime() + "\" />\n");
+			oswMessage.write("\t\t<invite user1=\"" + invitor + "\" user2=\"" + user + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
 			oswMessage.flush();
 		} catch (Exception e) {
 			e.printStackTrace();

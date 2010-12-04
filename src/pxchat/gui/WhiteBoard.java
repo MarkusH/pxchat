@@ -69,9 +69,9 @@ public class WhiteBoard extends JFrame {
 		paintBoard.setPreferredSize(new Dimension(sizeX, sizeY));
 
 		final JPopupMenu popup = new JPopupMenu();
-		JMenuItem backgroundMenuItem = new JMenuItem(I18n.getInstance()
-				.getString("wbBackground"), new ImageIcon(
-				"./data/img/icon/load-background-16.png"));
+		JMenuItem backgroundMenuItem = new JMenuItem(
+				I18n.getInstance().getString("wbBackground"), new ImageIcon(
+						"./data/img/icon/load-background-16.png"));
 		backgroundMenuItem.addActionListener(new ActionListener() {
 
 			@Override
@@ -142,8 +142,8 @@ public class WhiteBoard extends JFrame {
 		drawColor.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Color newColor = JColorChooser.showDialog(WhiteBoard.this, I18n
-						.getInstance().getString("ccDialog"), currentColor);
+				Color newColor = JColorChooser.showDialog(WhiteBoard.this,
+						I18n.getInstance().getString("ccDialog"), currentColor);
 				if (newColor != null) {
 					currentColor = newColor;
 				}
@@ -191,8 +191,7 @@ public class WhiteBoard extends JFrame {
 		});
 		drawRectangle = new JToggleButton("", new ImageIcon(
 				"./data/img/icon/draw-rectangle.png"));
-		drawRectangle.setToolTipText(I18n.getInstance()
-				.getString("wbRectangle"));
+		drawRectangle.setToolTipText(I18n.getInstance().getString("wbRectangle"));
 		drawRectangle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -218,15 +217,14 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (lockCanvas.isSelected()) {
-					lockCanvas.setToolTipText(I18n
-							.getInstance().getString("wbUnlockCanvas"));
+					lockCanvas.setToolTipText(I18n.getInstance().getString(
+							"wbUnlockCanvas"));
 					lockCanvas.setIcon(new ImageIcon(
 							"./data/img/icon/unlock.png"));
 				} else {
-					lockCanvas.setToolTipText(I18n
-							.getInstance().getString("wbLockCanvas"));
-					lockCanvas.setIcon(new ImageIcon(
-							"./data/img/icon/lock.png"));
+					lockCanvas.setToolTipText(I18n.getInstance().getString(
+							"wbLockCanvas"));
+					lockCanvas.setIcon(new ImageIcon("./data/img/icon/lock.png"));
 				}
 			}
 		});
@@ -319,7 +317,8 @@ public class WhiteBoard extends JFrame {
 				format = name.substring(name.lastIndexOf(".") + 1);
 			}
 			try {
-				ImageIO.write(paintBoard.saveImage(), format, fc.getSelectedFile());
+				ImageIO.write(paintBoard.saveImage(), format,
+						fc.getSelectedFile());
 			} catch (IOException e) {
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(WhiteBoard.this, e.getMessage());
@@ -329,9 +328,9 @@ public class WhiteBoard extends JFrame {
 
 	private void loadBackground() {
 		// TODO need some option to set the background to a specific color
-		// 		1) Display a dialog to choose "Image" or "Color"
-		//		2) Add an additional button to the toolbar
-		// 		3) Something else
+		// 1) Display a dialog to choose "Image" or "Color"
+		// 2) Add an additional button to the toolbar
+		// 3) Something else
 		JFileChooser fc = new JFileChooser();
 		fc.setFileFilter(new PicFileFilter());
 		if (fc.showOpenDialog(WhiteBoard.this) == JFileChooser.APPROVE_OPTION) {

@@ -27,8 +27,8 @@
 <setting id="org.eclipse.jdt.core.formatter.indent_breaks_compare_to_cases" value="true"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_after_at_in_annotation" value="do not insert"/>
 <setting id="org.eclipse.jdt.core.formatter.alignment_for_multiple_fields" value="16"/>
-<setting id="org.eclipse.jdt.core.formatter.alignment_for_expressions_in_array_initializer" value="18"/>
-<setting id="org.eclipse.jdt.core.formatter.alignment_for_conditional_expression" value="18"/>
+<setting id="org.eclipse.jdt.core.formatter.alignment_for_expressions_in_array_initializer" value="0"/>
+<setting id="org.eclipse.jdt.core.formatter.alignment_for_conditional_expression" value="0"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_for" value="insert"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_after_binary_operator" value="insert"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_before_question_in_wildcard" value="do not insert"/>
@@ -86,7 +86,7 @@
 <setting id="org.eclipse.jdt.core.formatter.enabling_tag" value="@formatter:on"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_enum_constant" value="do not insert"/>
 <setting id="org.eclipse.jdt.core.formatter.alignment_for_superclass_in_type_declaration" value="16"/>
-<setting id="org.eclipse.jdt.core.formatter.alignment_for_assignment" value="18"/>
+<setting id="org.eclipse.jdt.core.formatter.alignment_for_assignment" value="0"/>
 <setting id="org.eclipse.jdt.core.compiler.problem.assertIdentifier" value="error"/>
 <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="tab"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_after_comma_in_constructor_declaration_parameters" value="insert"/>
@@ -183,7 +183,7 @@
 <setting id="org.eclipse.jdt.core.formatter.insert_space_before_colon_in_labeled_statement" value="do not insert"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_before_comma_in_parameterized_type_reference" value="do not insert"/>
 <setting id="org.eclipse.jdt.core.formatter.alignment_for_superinterfaces_in_type_declaration" value="16"/>
-<setting id="org.eclipse.jdt.core.formatter.alignment_for_binary_expression" value="18"/>
+<setting id="org.eclipse.jdt.core.formatter.alignment_for_binary_expression" value="0"/>
 <setting id="org.eclipse.jdt.core.formatter.brace_position_for_enum_declaration" value="end_of_line"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_while" value="do not insert"/>
 <setting id="org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode" value="enabled"/>
@@ -239,7 +239,7 @@
 <setting id="org.eclipse.jdt.core.formatter.insert_space_before_closing_brace_in_array_initializer" value="insert"/>
 <setting id="org.eclipse.jdt.core.compiler.codegen.targetPlatform" value="1.5"/>
 <setting id="org.eclipse.jdt.core.formatter.use_tabs_only_for_leading_indentations" value="false"/>
-<setting id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_annotation" value="18"/>
+<setting id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_annotation" value="16"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_member" value="insert"/>
 <setting id="org.eclipse.jdt.core.formatter.comment.format_header" value="true"/>
 <setting id="org.eclipse.jdt.core.formatter.comment.format_block_comments" value="true"/>

@@ -5,7 +5,6 @@ public class MessageFrame extends Frame {
 	private String message;
 	private int sessionId;
 
-	
 	public MessageFrame(String message) {
 		this.id = Frame.ID_MSG;
 		this.message = message;
@@ -19,9 +18,9 @@ public class MessageFrame extends Frame {
 	public int getSessionId() {
 		return sessionId;
 	}
-	
+
 	public void setSessionId(int sessionId) {
 		this.sessionId = sessionId;
 	}
-	
+
 }

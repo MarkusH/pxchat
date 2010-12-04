@@ -9,7 +9,7 @@ import pxchat.net.protocol.frames.Frame;
 public class PointObject extends PrimitiveObject {
 
 	private Point point;
-	
+
 	public PointObject(Point point, Color color, float width) {
 		super(color, width);
 		this.id = Frame.ID_POINT;
