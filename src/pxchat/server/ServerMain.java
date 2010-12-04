@@ -25,10 +25,10 @@ import pxchat.util.XMLUtil;
 
 /**
  * @author Markus Döllinger
- *
+ * 
  */
 public class ServerMain {
-	
+
 	private static HashMap<String, String> authList = new HashMap<String, String>();
 
 	/**
@@ -45,20 +45,20 @@ public class ServerMain {
 			DocumentBuilder builder = factory.newDocumentBuilder();
 
 			builder.setErrorHandler(new ErrorHandler() {
-				
+
 				@Override
 				public void warning(SAXParseException e) throws SAXException {
 					System.out.println("Warning validating the config file:");
 					e.printStackTrace();
 				}
-				
+
 				@Override
 				public void fatalError(SAXParseException e) throws SAXException {
 					System.out.println("Fatal error validating the config file:");
 					e.printStackTrace();
 					System.exit(0);
 				}
-				
+
 				@Override
 				public void error(SAXParseException e) throws SAXException {
 					throw e;
@@ -68,88 +68,87 @@ public class ServerMain {
 			Node node = doc.getDocumentElement();
 
 			Node config = XMLUtil.getChildByName(node, "config");
-			
-			int port = Integer.valueOf(
-					XMLUtil.getAttributeValue(XMLUtil.getChildByName(config, "port"), "number"));
-			
+
+			int port = Integer.valueOf(XMLUtil.getAttributeValue(
+					XMLUtil.getChildByName(config, "port"), "number"));
+
 			System.out.println(port);
-			
+
 			Node auth = XMLUtil.getChildByName(node, "auth");
-			
+
 			NodeList list = auth.getChildNodes();
 			if (list != null) {
 				for (int i = 0; i < list.getLength(); i++) {
 					if (list.item(i).getNodeName().equals("user")) {
-						authList.put(XMLUtil.getAttributeValue(list.item(i), "name"),
-								XMLUtil.getAttributeValue(list.item(i), "password"));
+						authList.put(XMLUtil.getAttributeValue(list.item(i),
+								"name"), XMLUtil.getAttributeValue(
+								list.item(i), "password"));
 					}
 				}
 			}
-			
+
 			System.out.println(authList);
-			
+
 			TCPServer server = new TCPServer(new ServerListener() {
-				
+
 				@Override
 				public void clientRead(CustomSocket client, Object data) {
 					System.out.println("Server> " + client + " read " + data);
 				}
-				
+
 				@Override
 				public void clientDisconnect(CustomSocket client) {
 					System.out.println("Server> " + client + " disconnected.");
 				}
-				
+
 				@Override
 				public void clientConnecting(CustomSocket client) {
 					System.out.println("Server> " + client + " connecting.");
 				}
-				
+
 				@Override
 				public void clientConnect(CustomSocket client) {
 					System.out.println("Server> " + client + " connected.");
-					
+
 				}
 			});
 			server.listen(port);
-			
+
 			Thread.sleep(1000);
-			
+
 			TCPClient client = new TCPClient(new ClientListener() {
-				
+
 				@Override
 				public void clientRead(CustomSocket client, Object data) {
 					System.out.println("Client> " + client + " read " + data);
 				}
-				
+
 				@Override
 				public void clientDisconnect(CustomSocket client) {
 					System.out.println("Client> " + client + " disconnected.");
 				}
-				
+
 				@Override
 				public void clientConnecting(CustomSocket client) {
-					System.out.println("Client> " + client + " connecting.");			
+					System.out.println("Client> " + client + " connecting.");
 				}
-				
+
 				@Override
 				public void clientConnect(CustomSocket client) {
 					System.out.println("Client> " + client + " connected.");
 				}
 			});
 			client.connect("localhost", port);
-			
-			
+
 			Thread.sleep(1000);
-			
+
 			client.disconnect();
-			
+
 			Thread.sleep(1000);
-			
+
 			server.close();
-			
+
 			Thread.sleep(1000);
-			
 
 		} catch (Exception e) {
 			System.out.println("An error ocurred loading the config file");

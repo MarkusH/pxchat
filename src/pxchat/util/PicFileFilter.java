@@ -24,8 +24,7 @@ public class PicFileFilter extends javax.swing.filechooser.FileFilter implements
 			ext = fName.substring(fName.lastIndexOf("."));
 		}
 
-		return ext.equalsIgnoreCase(".png") || ext.equalsIgnoreCase(".jpg")
-				|| ext.equalsIgnoreCase(".bmp") || arg0.isDirectory();
+		return ext.equalsIgnoreCase(".png") || ext.equalsIgnoreCase(".jpg") || ext.equalsIgnoreCase(".bmp") || arg0.isDirectory();
 	}
 
 	@Override

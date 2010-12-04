@@ -9,7 +9,7 @@ public abstract class PaintObject extends Frame {
 	public PaintObject() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public abstract void draw(Graphics2D g);
 
 }

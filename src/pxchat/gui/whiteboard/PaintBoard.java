@@ -31,20 +31,21 @@ public class PaintBoard extends JPanel {
 		}
 	}
 
-	public void loadBackgroundImage(BufferedImage img)
-	{
+	public void loadBackgroundImage(BufferedImage img) {
 		if (img == null) {
-			this.background = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+			this.background = new BufferedImage(getWidth(), getHeight(),
+					BufferedImage.TYPE_4BYTE_ABGR);
 			Graphics2D g = this.background.createGraphics();
 			Composite comp = g.getComposite();
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR,
+					0.0f));
 			g.fillRect(0, 0, getWidth(), getHeight());
 			g.setComposite(comp);
 		} else {
 			this.background = img;
 		}
 	}
-	
+
 	public void clearImage() {
 		if (this.board == null)
 			return;
@@ -54,39 +55,45 @@ public class PaintBoard extends JPanel {
 		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setComposite(comp);
 	}
-	
+
 	public BufferedImage saveImage() {
-		BufferedImage result = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+		BufferedImage result = new BufferedImage(getWidth(), getHeight(),
+				BufferedImage.TYPE_4BYTE_ABGR);
+
 		paintComponent(result.createGraphics());
 		return result;
 	}
-	
+
 	private void updatePreview(Graphics2D g) {
 		if (this.preview == null)
-			this.preview = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-	}
-	
-	private void updateBoard(Graphics2D g) {
-		if (this.board == null)
-			this.board = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+			this.preview = new BufferedImage(getWidth(), getHeight(),
+					BufferedImage.TYPE_4BYTE_ABGR);
 	}
 
-	/* (non-Javadoc)
+	private void updateBoard(Graphics2D g) {
+		if (this.board == null)
+			this.board = new BufferedImage(getWidth(), getHeight(),
+					BufferedImage.TYPE_4BYTE_ABGR);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
 	 */
 	protected void paintComponent(Graphics og) {
 		super.paintComponent(og);
 		Graphics2D g = (Graphics2D) og;
-		
+
 		// draw background
 		if (this.background == null)
 			loadBackgroundImage(null);
 		g.drawImage(this.background, 0, 0, getWidth(), getHeight(), null);
-		
+
 		// draw board
 		updateBoard(g);
 		g.drawImage(this.board, 0, 0, null);
-		
+
 		// draw preview
 		updatePreview(g);
 		g.drawImage(this.preview, 0, 0, null);

@@ -15,7 +15,7 @@ public final class I18n {
 		setLocale(Locale.getDefault());
 	}
 
-	private static class Holder { 
+	private static class Holder {
 		public static final I18n INSTANCE = new I18n();
 	}
 
@@ -29,16 +29,19 @@ public final class I18n {
 		} catch (Exception e) {
 			return "!!" + key + "!!";
 		}
-		
+
 	}
-	
+
 	public void setLocale(Locale locale) {
 		if (locale == null)
 			locale = Locale.getDefault();
 		this.locale = locale;
 		try {
-			this.bundle = ResourceBundle.getBundle("Messages", this.locale,
-				new URLClassLoader(new URL[] { new File("./data/lang/").toURI().toURL() }));
+			this.bundle = ResourceBundle.getBundle(
+					"Messages",
+					this.locale,
+					new URLClassLoader(
+							new URL[] { new File("./data/lang/").toURI().toURL() }));
 		} catch (Exception e) {
 			this.bundle = null;
 			this.locale = null;

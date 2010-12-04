@@ -108,10 +108,11 @@ public class ClientMain extends JFrame {
 		mAbout.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, I18n.getInstance()
-						.getString("aboutText"), I18n.getInstance().getString(
-						"aboutInfo"), JOptionPane.INFORMATION_MESSAGE, Icons
-						.get("about-64.png"));
+				JOptionPane.showMessageDialog(null, 
+						I18n.getInstance().getString("aboutText"),
+						I18n.getInstance().getString("aboutInfo"),
+						JOptionPane.INFORMATION_MESSAGE,
+						Icons.get("about-64.png"));
 			}
 		});
 		mHelp.add(mAbout);
@@ -199,8 +200,8 @@ public class ClientMain extends JFrame {
 		this.setSize(580, 480);
 		this.setResizable(false);
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setLocation(size.width / 3 - this.getWidth() / 2, size.height / 2
-				- this.getHeight() / 2);
+		this.setLocation(size.width / 3 - this.getWidth() / 2,
+				size.height / 2 - this.getHeight() / 2);
 		splashScreen.setReady();
 	}
 
@@ -236,9 +237,8 @@ public class ClientMain extends JFrame {
 			try {
 				chatLog.getDocument().insertString(
 						chatLog.getDocument().getLength(),
-						"[" + df.format(new Date()) + "] "
-								+ I18n.getInstance().getString("you") + ": ",
-						OWNNAME);
+						"[" + df.format(new Date()) + "] " + I18n.getInstance().getString(
+								"you") + ": ", OWNNAME);
 				chatLog.getDocument().insertString(
 						chatLog.getDocument().getLength(), msg + "\n", OWN);
 				// TODO msg über Netzwerk versenden

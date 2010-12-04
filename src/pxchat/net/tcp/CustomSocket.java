@@ -13,20 +13,20 @@ import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.SecretKeySpec;
 
 public class CustomSocket {
-	
+
 	protected Socket socket = null;
 	private ReadThread readThread = null;
 
 	private boolean closing = false;
 	protected boolean connected = false;
-	
+
 	private Cipher cipherIn;
 	private Cipher cipherOut;
 	private CipherInputStream cIn;
 	private CipherOutputStream cOut;
-	
+
 	protected ClientListener clientListener;
-	
+
 	/**
 	 * 
 	 */
@@ -36,9 +36,11 @@ public class CustomSocket {
 	}
 
 	/**
-	 * Gets called from a server when a client connects. Do not call this constructor yourself!
-	 * @param socket			The client socket connected to the server.
-	 * @param clientListener	The listener waiting for socket events.
+	 * Gets called from a server when a client connects. Do not call this
+	 * constructor yourself!
+	 * 
+	 * @param socket The client socket connected to the server.
+	 * @param clientListener The listener waiting for socket events.
 	 */
 	protected CustomSocket(Socket socket, ClientListener clientListener) {
 		this.socket = socket;
@@ -48,18 +50,20 @@ public class CustomSocket {
 
 		doRead();
 	}
-	
+
 	private void initCipher() {
 		try {
 			cipherOut = Cipher.getInstance("RC4");
-			cipherOut.init(Cipher.DECRYPT_MODE, new SecretKeySpec("12345678".getBytes(), "RC4"));
+			cipherOut.init(Cipher.DECRYPT_MODE,
+					new SecretKeySpec("12345678".getBytes(), "RC4"));
 			cipherIn = Cipher.getInstance("RC4");
-			cipherIn.init(Cipher.ENCRYPT_MODE, new SecretKeySpec("12345678".getBytes(), "RC4"));
+			cipherIn.init(Cipher.ENCRYPT_MODE,
+					new SecretKeySpec("12345678".getBytes(), "RC4"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected synchronized void close() throws IOException {
 		if (socket != null) {
 			if (this.connected) {
@@ -75,14 +79,15 @@ public class CustomSocket {
 			}
 		}
 	}
-	
+
 	public synchronized boolean writeObject(Object object) throws IOException {
 		if (isConnected()) {
 			if (cOut == null)
-				cOut = new CipherOutputStream(socket.getOutputStream(), cipherOut);
+				cOut = new CipherOutputStream(socket.getOutputStream(),
+						cipherOut);
 			ObjectOutputStream stream = new ObjectOutputStream(cOut);
 			stream.writeObject(object);
-//			stream.flush();
+			// stream.flush();
 
 			return true;
 		}
@@ -95,7 +100,7 @@ public class CustomSocket {
 			readThread.start();
 		}
 	}
-	
+
 	private synchronized void readCallback(Object object) {
 		if (clientListener != null)
 			clientListener.clientRead(this, object);
@@ -124,7 +129,8 @@ public class CustomSocket {
 		public void run() {
 			try {
 				if (cIn == null)
-					cIn = new CipherInputStream(socket.getInputStream(), cipherIn);
+					cIn = new CipherInputStream(socket.getInputStream(),
+							cipherIn);
 				ObjectInputStream stream = new ObjectInputStream(cIn);
 				object = stream.readObject();
 			} catch (Exception e) {
@@ -134,7 +140,7 @@ public class CustomSocket {
 			readCallback(object);
 		}
 	}
-	
+
 	public boolean isConnected() {
 		return ((socket != null) && this.connected);
 	}

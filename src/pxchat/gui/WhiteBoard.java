@@ -137,8 +137,8 @@ public class WhiteBoard extends JFrame {
 		drawColor.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Color newColor = JColorChooser.showDialog(WhiteBoard.this, I18n
-						.getInstance().getString("ccDialog"), currentColor);
+				Color newColor = JColorChooser.showDialog(WhiteBoard.this,
+						I18n.getInstance().getString("ccDialog"), currentColor);
 				if (newColor != null) {
 					currentColor = newColor;
 				}
@@ -180,9 +180,9 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
+		
 		drawRectangle = new JToggleButton("", Icons.get("draw-rectangle.png"));
-		drawRectangle.setToolTipText(I18n.getInstance()
-				.getString("wbRectangle"));
+		drawRectangle.setToolTipText(I18n.getInstance().getString("wbRectangle"));
 		drawRectangle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -303,8 +303,8 @@ public class WhiteBoard extends JFrame {
 				format = name.substring(name.lastIndexOf(".") + 1);
 			}
 			try {
-				ImageIO.write(paintBoard.saveImage(), format, fc
-						.getSelectedFile());
+				ImageIO.write(paintBoard.saveImage(), format, 
+						fc.getSelectedFile());
 			} catch (IOException e) {
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(WhiteBoard.this, e.getMessage());

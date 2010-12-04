@@ -1,14 +1,12 @@
 package pxchat.net.tcp;
 
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Vector;
 
 /**
- * This class implements a non-blocking server using
- * the TCP protocol. It accepts connecting clients and
- * stores them in an internal list.
+ * This class implements a non-blocking server using the TCP protocol. It
+ * accepts connecting clients and stores them in an internal list.
  * 
  * @author Markus Döllinger
  */
@@ -22,7 +20,7 @@ public class TCPServer {
 	private boolean listening = false;
 
 	private ServerListener serverListener;
-	
+
 	private ClientListener clientListener = new ClientListener() {
 
 		@Override
@@ -40,8 +38,8 @@ public class TCPServer {
 
 		@Override
 		public void clientConnect(CustomSocket client) {
-			throw new IllegalStateException("TCPServer> A socket already connected" +
-					"to the server reconnected.");
+			throw new IllegalStateException(
+					"TCPServer> A socket already connected" + "to the server reconnected.");
 		}
 
 		@Override
@@ -49,12 +47,11 @@ public class TCPServer {
 		}
 	};
 
-
 	/**
 	 * Constructs a new <code>TCPServer</code> with a specified
 	 * {@link ServerListener}.
 	 * 
-	 * @param serverListener	The listener associated with this server.
+	 * @param serverListener The listener associated with this server.
 	 */
 	public TCPServer(ServerListener serverListener) {
 		this.serverListener = serverListener;
@@ -63,7 +60,7 @@ public class TCPServer {
 	/**
 	 * Lets this server listen on the specified <code>port</code>.
 	 * 
-	 * @param port				The port to listen on.
+	 * @param port The port to listen on.
 	 * @throws IOException
 	 */
 	public synchronized void listen(int port) throws IOException {
@@ -84,21 +81,21 @@ public class TCPServer {
 		if (serverSocket != null) {
 			if (this.listening) {
 				closing = true;
-							
+
 				for (int i = clients.size() - 1; i >= 0; --i)
 					clients.get(i).close();
-				
+
 				Thread.yield();
 
 				while (clients.size() > 0) {
 					Thread.yield();
-					
+
 					try {
 						Thread.sleep(50);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-	
+
 					Thread.yield();
 				}
 
@@ -123,7 +120,7 @@ public class TCPServer {
 	 */
 	private void doAccept() {
 		acceptThread = new AcceptThread();
-		acceptThread.start();	
+		acceptThread.start();
 	}
 
 	private synchronized void acceptCallback(CustomSocket socket) {
