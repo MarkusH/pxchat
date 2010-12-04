@@ -14,9 +14,13 @@ import javax.swing.JPanel;
 public class PaintBoard extends JPanel {
 
 	private BufferedImage background;
+	private BufferedImage board;
+	private BufferedImage preview;
 
 	public PaintBoard() {
 		this.background = null;
+		this.board = null;
+		this.preview = null;
 	}
 
 	public void loadBackground(File file) {
@@ -40,12 +44,39 @@ public class PaintBoard extends JPanel {
 			this.background = img;
 		}
 	}
+	
+	public void clearImage() {
+		
+	}
+	
+	private void updatePreview(Graphics2D g) {
+		if (this.preview == null)
+			this.preview = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+	}
+	
+	private void updateBoard(Graphics2D g) {
+		if (this.board == null)
+			this.board = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+	}
 
-	public void paintComponent(Graphics og) {
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
+	 */
+	protected void paintComponent(Graphics og) {
 		super.paintComponent(og);
 		Graphics2D g = (Graphics2D) og;
+		
+		// draw background
 		if (this.background == null)
 			loadBackgroundImage(null);
-		g.drawImage(background, 0, 0, getWidth(), getHeight(), null);
+		g.drawImage(this.background, 0, 0, getWidth(), getHeight(), null);
+		
+		// draw board
+		updateBoard(g);
+		g.drawImage(this.board, 0, 0, null);
+		
+		// draw preview
+		updatePreview(g);
+		g.drawImage(this.preview, 0, 0, null);
 	}
 }
