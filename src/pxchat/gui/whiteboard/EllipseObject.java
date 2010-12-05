@@ -13,7 +13,7 @@ public class EllipseObject extends PrimitiveObject {
 	private Point topLeft;
 	private int width;
 	private int height;
-	
+
 	private transient Shape ellipse;
 
 	public EllipseObject(Point point1, Point point2, Color color, float width) {
@@ -38,8 +38,8 @@ public class EllipseObject extends PrimitiveObject {
 	public void draw(Graphics2D g) {
 		// this may be moved to readObject, we will see what's better
 		if (ellipse == null)
-			this.ellipse = new Ellipse2D.Double(topLeft.x, topLeft.y, width, height);
-		
+			this.ellipse = new Ellipse2D.Double(topLeft.x, topLeft.y, width,
+					height);
 		beginDraw(g);
 		g.draw(this.ellipse);
 		endDraw(g);

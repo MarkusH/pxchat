@@ -10,6 +10,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -30,6 +31,7 @@ import javax.swing.JToggleButton;
 
 import pxchat.gui.whiteboard.CircleObject;
 import pxchat.gui.whiteboard.EllipseObject;
+import pxchat.gui.whiteboard.LineObject;
 import pxchat.gui.whiteboard.PaintBoard;
 import pxchat.gui.whiteboard.RectObject;
 import pxchat.util.Icons;
@@ -165,6 +167,10 @@ public class WhiteBoard extends JFrame {
 						paintBoard.getPreviewObjects().clear();
 						paintBoard.repaint();
 						break;
+					case Line:
+						paintBoard.getPreviewObjects().clear();
+						paintBoard.repaint();
+						break;
 					case Rectangle:
 						paintBoard.getPreviewObjects().clear();
 						paintBoard.repaint();
@@ -201,6 +207,14 @@ public class WhiteBoard extends JFrame {
 						paintBoard.getPreviewObjects().clear();
 						paintBoard.getPreviewObjects().add(
 								new EllipseObject(startPoint, currentPoint,
+										currentColor, currentStrokeWidth));
+						paintBoard.repaint();
+						break;
+					case Line:
+						currentPoint = new Point(e.getX(), e.getY());
+						paintBoard.getPreviewObjects().clear();
+						paintBoard.getPreviewObjects().add(
+								new LineObject(startPoint, currentPoint,
 										currentColor, currentStrokeWidth));
 						paintBoard.repaint();
 						break;

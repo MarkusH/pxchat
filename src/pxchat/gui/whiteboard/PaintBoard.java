@@ -17,14 +17,14 @@ public class PaintBoard extends JPanel {
 
 	private BufferedImage background;
 	private BufferedImage board;
-//	private BufferedImage preview;
+	// private BufferedImage preview;
 
 	private Vector<PaintObject> previewObjects = new Vector<PaintObject>();
 
 	public PaintBoard() {
 		this.background = null;
 		this.board = null;
-//		this.preview = null;
+		// this.preview = null;
 	}
 
 	public void loadBackground(File file) {
@@ -80,26 +80,26 @@ public class PaintBoard extends JPanel {
 	 * Updates the preview layer
 	 */
 	private void updatePreview(Graphics2D g) {
-//		Graphics2D g = null;
+		// Graphics2D g = null;
 
-//		// create a new image if the preview is null
-//		if (this.preview == null) {
-//			this.preview = new BufferedImage(getWidth(), getHeight(),
-//					BufferedImage.TYPE_4BYTE_ABGR);
-//			g = this.preview.createGraphics();
-//		} else {
-//			g = this.preview.createGraphics();
-//
-//			// otherwise clear the image
-//			Composite comp = g.getComposite();
-//			g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR,
-//					0.0f));
-//			g.fillRect(0, 0, getWidth(), getHeight());
-//			g.setComposite(comp);
-//		}
-//		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//				RenderingHints.VALUE_ANTIALIAS_ON);
-		
+		// // create a new image if the preview is null
+		// if (this.preview == null) {
+		// this.preview = new BufferedImage(getWidth(), getHeight(),
+		// BufferedImage.TYPE_4BYTE_ABGR);
+		// g = this.preview.createGraphics();
+		// } else {
+		// g = this.preview.createGraphics();
+		//
+		// // otherwise clear the image
+		// Composite comp = g.getComposite();
+		// g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR,
+		// 0.0f));
+		// g.fillRect(0, 0, getWidth(), getHeight());
+		// g.setComposite(comp);
+		// }
+		// g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+		// RenderingHints.VALUE_ANTIALIAS_ON);
+
 		// render the preview objects
 		for (PaintObject o : previewObjects) {
 			o.draw(g);
@@ -124,7 +124,7 @@ public class PaintBoard extends JPanel {
 	protected void paintComponent(Graphics og) {
 		super.paintComponent(og);
 		Graphics2D g = (Graphics2D) og;
-		
+
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -139,7 +139,7 @@ public class PaintBoard extends JPanel {
 
 		// draw preview
 		updatePreview(g);
-//		g.drawImage(this.preview, 0, 0, null);
+		// g.drawImage(this.preview, 0, 0, null);
 	}
 
 	public Vector<PaintObject> getPreviewObjects() {
