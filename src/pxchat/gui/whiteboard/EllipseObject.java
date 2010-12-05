@@ -3,6 +3,8 @@ package pxchat.gui.whiteboard;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
 
 import pxchat.net.protocol.frames.Frame;
 
@@ -24,7 +26,7 @@ public class EllipseObject extends PrimitiveObject {
 	public EllipseObject(Point topLeft, int width, int height, Color color,
 							float strokeWidth) {
 		super(color, strokeWidth);
-		this.id = Frame.ID_RECT;
+		this.id = Frame.ID_ELLIPSE;
 		this.topLeft = topLeft;
 		this.width = width;
 		this.height = height;
@@ -33,7 +35,8 @@ public class EllipseObject extends PrimitiveObject {
 	@Override
 	public void draw(Graphics2D g) {
 		beginDraw(g);
-		g.drawOval(topLeft.x, topLeft.y, width, height);
+		Shape ellipse = new Ellipse2D.Double(topLeft.x, topLeft.y, width, height);
+		g.draw(ellipse);
 		endDraw(g);
 	}
 

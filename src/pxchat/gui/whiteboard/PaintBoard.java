@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Composite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -96,7 +97,8 @@ public class PaintBoard extends JPanel {
 			g.fillRect(0, 0, getWidth(), getHeight());
 			g.setComposite(comp);
 		}
-
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
 		// render the preview objects
 		for (PaintObject o : previewObjects) {
 			o.draw(g);
