@@ -6,8 +6,6 @@ import java.awt.Point;
 
 import pxchat.net.protocol.frames.Frame;
 
-import com.sun.istack.internal.FragmentContentHandler;
-
 public class EllipseObject extends PrimitiveObject {
 
 	private Point topLeft;
@@ -24,7 +22,7 @@ public class EllipseObject extends PrimitiveObject {
 	}
 
 	public EllipseObject(Point topLeft, int width, int height, Color color,
-						float strokeWidth) {
+							float strokeWidth) {
 		super(color, strokeWidth);
 		this.id = Frame.ID_RECT;
 		this.topLeft = topLeft;

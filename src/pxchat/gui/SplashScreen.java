@@ -27,6 +27,7 @@ public class SplashScreen extends JDialog {
 		startButton.setEnabled(false);
 		startButton.setPreferredSize(new Dimension(200, 30));
 		startButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				SplashScreen.this.dispose();
 				SplashScreen.this.parent.setVisible(true);

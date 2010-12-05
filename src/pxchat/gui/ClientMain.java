@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -92,6 +93,7 @@ public class ClientMain extends JFrame {
 		mExit = new JMenuItem(I18n.getInstance().getString("quitProgram"),
 				Icons.get("quit.png"));
 		mExit.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				ClientMain.this.wb.dispose();
 				ClientMain.this.dispose();
@@ -125,8 +127,8 @@ public class ClientMain extends JFrame {
 		chatLog = new JTextPane();
 		chatLog.setEditable(false);
 		chatLogPane = new JScrollPane(chatLog,
-				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		chatLogPane.setBounds(10, 10, 400, 300);
 		getContentPane().add(chatLogPane);
 
@@ -159,16 +161,16 @@ public class ClientMain extends JFrame {
 			}
 		});
 		inputAreaPane = new JScrollPane(inputArea,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		inputAreaPane.setBounds(10, 320, 400, 100);
 		getContentPane().add(inputAreaPane);
 
 		userList = new JList(new String[] { "User", "User2" });
 		userList.setEnabled(false);
 		userListPane = new JScrollPane(userList,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		userListPane.setBounds(420, 10, 150, 300);
 		getContentPane().add(userListPane);
 

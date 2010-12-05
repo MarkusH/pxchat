@@ -6,8 +6,6 @@ import java.awt.Point;
 
 import pxchat.net.protocol.frames.Frame;
 
-import com.sun.istack.internal.FragmentContentHandler;
-
 public class RectObject extends PrimitiveObject {
 
 	private Point topLeft;

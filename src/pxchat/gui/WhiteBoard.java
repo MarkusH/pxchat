@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 
@@ -29,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 
+import pxchat.gui.whiteboard.CircleObject;
 import pxchat.gui.whiteboard.EllipseObject;
 import pxchat.gui.whiteboard.PaintBoard;
 import pxchat.gui.whiteboard.RectObject;
@@ -145,16 +145,22 @@ public class WhiteBoard extends JFrame {
 
 			}
 
+			@Override
 			public void mousePressed(MouseEvent e) {
 				maybeShowPopup(e);
 
 				startPoint = currentPoint = new Point(e.getX(), e.getY());
 			}
 
+			@Override
 			public void mouseReleased(MouseEvent e) {
 				maybeShowPopup(e);
 
 				switch (tool) {
+					case Circle:
+						paintBoard.getPreviewObjects().clear();
+						paintBoard.repaint();
+						break;
 					case Ellipse:
 						paintBoard.getPreviewObjects().clear();
 						paintBoard.repaint();
@@ -182,6 +188,14 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				switch (tool) {
+					case Circle:
+						currentPoint = new Point(e.getX(), e.getY());
+						paintBoard.getPreviewObjects().clear();
+						paintBoard.getPreviewObjects().add(
+								new CircleObject(startPoint, currentPoint,
+										currentColor, currentStrokeWidth));
+						paintBoard.repaint();
+						break;
 					case Ellipse:
 						currentPoint = new Point(e.getX(), e.getY());
 						paintBoard.getPreviewObjects().clear();
