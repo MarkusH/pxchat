@@ -85,7 +85,8 @@ public class XMLUtil {
 	public static String getAttributeValue(Node node, String attribute,
 											String defaultValue) {
 		try {
-			return node.getAttributes().getNamedItem(attribute).getTextContent();
+			return node.getAttributes().getNamedItem(attribute)
+					.getTextContent();
 		} catch (Exception e) {
 			return defaultValue;
 		}

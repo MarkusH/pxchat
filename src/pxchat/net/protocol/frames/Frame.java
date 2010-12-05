@@ -29,6 +29,7 @@ public abstract class Frame implements Serializable {
 	public static final int ID_RECT = 102;
 	public static final int ID_CIRCLE = 103;
 	public static final int ID_IMGTEXT = 104;
+	public static final int ID_ELLIPSE = 105;
 
 	/**
 	 * The id of this frame

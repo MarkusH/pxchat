@@ -40,7 +40,8 @@ public class ServerMain {
 		File file = new File("xml/server.xml");
 		Document doc = null;
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
 			factory.setValidating(true);
 			DocumentBuilder builder = factory.newDocumentBuilder();
 
@@ -54,7 +55,8 @@ public class ServerMain {
 
 				@Override
 				public void fatalError(SAXParseException e) throws SAXException {
-					System.out.println("Fatal error validating the config file:");
+					System.out
+							.println("Fatal error validating the config file:");
 					e.printStackTrace();
 					System.exit(0);
 				}

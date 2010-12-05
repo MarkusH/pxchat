@@ -150,7 +150,8 @@ public class Logging {
 	 */
 	public void logMessage(String message, String author) {
 		try {
-			oswMessage.write("\t\t<message author=\"" + author + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\">" + message + "</message>\n");
+			oswMessage
+					.write("\t\t<message author=\"" + author + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\">" + message + "</message>\n");
 			oswMessage.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -173,7 +174,8 @@ public class Logging {
 	 */
 	public void logJoin(String user) {
 		try {
-			oswMessage.write("\t\t<join user=\"" + user + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
+			oswMessage
+					.write("\t\t<join user=\"" + user + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
 			oswMessage.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -188,7 +190,8 @@ public class Logging {
 	 */
 	public void logLeave(String user) {
 		try {
-			oswMessage.write("\t\t<leave user=\"" + user + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
+			oswMessage
+					.write("\t\t<leave user=\"" + user + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
 			oswMessage.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -202,7 +205,8 @@ public class Logging {
 	 */
 	public void logInvite(String invitor, String user) {
 		try {
-			oswMessage.write("\t\t<invite user1=\"" + invitor + "\" user2=\"" + user + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
+			oswMessage
+					.write("\t\t<invite user1=\"" + invitor + "\" user2=\"" + user + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
 			oswMessage.flush();
 		} catch (Exception e) {
 			e.printStackTrace();

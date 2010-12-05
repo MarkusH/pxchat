@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 
+import pxchat.gui.whiteboard.EllipseObject;
 import pxchat.gui.whiteboard.PaintBoard;
 import pxchat.gui.whiteboard.RectObject;
 import pxchat.util.Icons;
@@ -154,6 +155,10 @@ public class WhiteBoard extends JFrame {
 				maybeShowPopup(e);
 
 				switch (tool) {
+					case Ellipse:
+						paintBoard.getPreviewObjects().clear();
+						paintBoard.repaint();
+						break;
 					case Rectangle:
 						paintBoard.getPreviewObjects().clear();
 						paintBoard.repaint();
@@ -177,6 +182,14 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				switch (tool) {
+					case Ellipse:
+						currentPoint = new Point(e.getX(), e.getY());
+						paintBoard.getPreviewObjects().clear();
+						paintBoard.getPreviewObjects().add(
+								new EllipseObject(startPoint, currentPoint,
+										currentColor, currentStrokeWidth));
+						paintBoard.repaint();
+						break;
 					case Rectangle:
 						currentPoint = new Point(e.getX(), e.getY());
 						paintBoard.getPreviewObjects().clear();
@@ -374,8 +387,8 @@ public class WhiteBoard extends JFrame {
 				format = name.substring(name.lastIndexOf(".") + 1);
 			}
 			try {
-				ImageIO.write(paintBoard.saveImage(), format, fc
-						.getSelectedFile());
+				ImageIO.write(paintBoard.saveImage(), format,
+						fc.getSelectedFile());
 			} catch (IOException e) {
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(WhiteBoard.this, e.getMessage());

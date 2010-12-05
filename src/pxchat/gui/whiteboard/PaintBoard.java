@@ -65,7 +65,7 @@ public class PaintBoard extends JPanel {
 	/**
 	 * Saves the board to a <code>BufferedImage</code>
 	 * 
-	 * @return		The current PaintBoard
+	 * @return The current PaintBoard
 	 */
 	public BufferedImage saveImage() {
 		BufferedImage result = new BufferedImage(getWidth(), getHeight(),
@@ -80,7 +80,7 @@ public class PaintBoard extends JPanel {
 	 */
 	private void updatePreview() {
 		Graphics2D g = null;
-		
+
 		// create a new image if the preview is null
 		if (this.preview == null) {
 			this.preview = new BufferedImage(getWidth(), getHeight(),
@@ -88,14 +88,15 @@ public class PaintBoard extends JPanel {
 			g = this.preview.createGraphics();
 		} else {
 			g = this.preview.createGraphics();
-			
+
 			// otherwise clear the image
 			Composite comp = g.getComposite();
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR,
+					0.0f));
 			g.fillRect(0, 0, getWidth(), getHeight());
 			g.setComposite(comp);
 		}
-		
+
 		// render the preview objects
 		for (PaintObject o : previewObjects) {
 			o.draw(g);

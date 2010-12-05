@@ -4,7 +4,7 @@ public class AuthentificationFrame extends Frame {
 
 	private String username;
 	private String password;
-	
+
 	AuthentificationFrame(String username, String password) {
 		this.username = username;
 		this.password = password;
@@ -18,6 +18,5 @@ public class AuthentificationFrame extends Frame {
 	public String getPassword() {
 		return password;
 	}
-	
 
 }

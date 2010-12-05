@@ -103,16 +103,16 @@ public class ClientMain extends JFrame {
 		 * building the help menu
 		 */
 		mHelp = new JMenu(I18n.getInstance().getString("help"));
-		mAbout = new JMenuItem(I18n.getInstance().getString("aboutInfo"), Icons
-				.get("about.png"));
+		mAbout = new JMenuItem(I18n.getInstance().getString("aboutInfo"),
+				Icons.get("about.png"));
 		mAbout.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, 
-						I18n.getInstance().getString("aboutText"),
+				JOptionPane.showMessageDialog(null, I18n.getInstance()
+						.getString("aboutText"),
 						I18n.getInstance().getString("aboutInfo"),
-						JOptionPane.INFORMATION_MESSAGE,
-						Icons.get("about-64.png"));
+						JOptionPane.INFORMATION_MESSAGE, Icons
+								.get("about-64.png"));
 			}
 		});
 		mHelp.add(mAbout);
@@ -237,8 +237,8 @@ public class ClientMain extends JFrame {
 			try {
 				chatLog.getDocument().insertString(
 						chatLog.getDocument().getLength(),
-						"[" + df.format(new Date()) + "] " + I18n.getInstance().getString(
-								"you") + ": ", OWNNAME);
+						"[" + df.format(new Date()) + "] " + I18n.getInstance()
+								.getString("you") + ": ", OWNNAME);
 				chatLog.getDocument().insertString(
 						chatLog.getDocument().getLength(), msg + "\n", OWN);
 				// TODO msg über Netzwerk versenden

@@ -37,11 +37,9 @@ public final class I18n {
 			locale = Locale.getDefault();
 		this.locale = locale;
 		try {
-			this.bundle = ResourceBundle.getBundle(
-					"Messages",
-					this.locale,
-					new URLClassLoader(
-							new URL[] { new File("./data/lang/").toURI().toURL() }));
+			this.bundle = ResourceBundle.getBundle("Messages", this.locale,
+					new URLClassLoader(new URL[] { new File("./data/lang/")
+							.toURI().toURL() }));
 		} catch (Exception e) {
 			this.bundle = null;
 			this.locale = null;
