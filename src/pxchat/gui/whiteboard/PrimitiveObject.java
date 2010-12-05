@@ -18,6 +18,7 @@ public abstract class PrimitiveObject extends PaintObject {
 	}
 
 	public void beginDraw(Graphics2D g) {
+		// this may be moved to readObject, we will see what's better
 		if (stroke == null)
 			stroke = new BasicStroke(width, BasicStroke.CAP_ROUND,
 					BasicStroke.JOIN_ROUND, 1.0f);
