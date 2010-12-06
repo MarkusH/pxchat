@@ -64,7 +64,7 @@ public class CustomSocket {
 		}
 	}
 
-	protected synchronized void close() throws IOException {
+	public synchronized void close() throws IOException {
 		if (socket != null) {
 			if (this.connected) {
 				this.closing = true;
