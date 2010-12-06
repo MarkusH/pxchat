@@ -15,20 +15,21 @@ import java.net.UnknownHostException;
 public class TCPClient extends CustomSocket {
 
 	/**
-	 * @param clientListener
+	 * @param tcpClientListener
 	 */
-	public TCPClient(ClientListener clientListener) {
-		super(clientListener);
+	public TCPClient(TCPClientListener tcpClientListener) {
+		super(tcpClientListener);
 	}
 
 	public void connect(String host, int port) throws UnknownHostException,
 												IOException {
 		if ((socket == null) || (!this.connected)) {
 			this.connected = false;
-			clientListener.clientConnecting(this);
+			tcpClientListener.clientConnecting(this);
 			this.socket = new Socket(host, port);
+			this.initCipher();
 			this.connected = true;
-			clientListener.clientConnect(this);
+			tcpClientListener.clientConnect(this);
 			doRead();
 		}
 	}

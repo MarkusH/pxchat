@@ -19,21 +19,21 @@ public class TCPServer {
 	private boolean closing = false;
 	private boolean listening = false;
 
-	private ServerListener serverListener;
+	private TCPServerListener tcpServerListener;
 
-	private ClientListener clientListener = new ClientListener() {
+	private TCPClientListener clientListener = new TCPClientListener() {
 
 		@Override
 		public void clientDisconnect(CustomSocket client) {
 			clients.remove(client);
-			if (serverListener != null)
-				serverListener.clientDisconnect(client);
+			if (tcpServerListener != null)
+				tcpServerListener.clientDisconnect(client);
 		}
 
 		@Override
 		public void clientRead(CustomSocket client, Object data) {
-			if (serverListener != null)
-				serverListener.clientRead(client, data);
+			if (tcpServerListener != null)
+				tcpServerListener.clientRead(client, data);
 		}
 
 		@Override
@@ -49,12 +49,12 @@ public class TCPServer {
 
 	/**
 	 * Constructs a new <code>TCPServer</code> with a specified
-	 * {@link ServerListener}.
+	 * {@link TCPServerListener}.
 	 * 
-	 * @param serverListener The listener associated with this server.
+	 * @param tcpServerListener The listener associated with this server.
 	 */
-	public TCPServer(ServerListener serverListener) {
-		this.serverListener = serverListener;
+	public TCPServer(TCPServerListener tcpServerListener) {
+		this.tcpServerListener = tcpServerListener;
 	}
 
 	/**
@@ -125,10 +125,10 @@ public class TCPServer {
 
 	private synchronized void acceptCallback(CustomSocket socket) {
 		clients.add(socket);
-		if (serverListener != null)
-			serverListener.clientConnecting(socket);
-		if (serverListener != null)
-			serverListener.clientConnect(socket);
+		if (tcpServerListener != null)
+			tcpServerListener.clientConnecting(socket);
+		if (tcpServerListener != null)
+			tcpServerListener.clientConnect(socket);
 		doAccept();
 	}
 

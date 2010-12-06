@@ -17,9 +17,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import pxchat.net.Client;
-import pxchat.net.tcp.ClientListener;
+import pxchat.net.tcp.TCPClientListener;
 import pxchat.net.tcp.CustomSocket;
-import pxchat.net.tcp.ServerListener;
+import pxchat.net.tcp.TCPServerListener;
 import pxchat.net.tcp.TCPServer;
 import pxchat.util.XMLUtil;
 
@@ -88,7 +88,7 @@ public class ServerMain {
 
 			System.out.println(authList);
 
-			TCPServer server = new TCPServer(new ServerListener() {
+			TCPServer server = new TCPServer(new TCPServerListener() {
 
 				@Override
 				public void clientRead(CustomSocket client, Object data) {

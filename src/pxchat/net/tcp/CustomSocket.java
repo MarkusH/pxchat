@@ -25,13 +25,13 @@ public class CustomSocket {
 	private CipherInputStream cIn;
 	private CipherOutputStream cOut;
 
-	protected ClientListener clientListener;
+	protected TCPClientListener tcpClientListener;
 
 	/**
 	 * 
 	 */
-	protected CustomSocket(ClientListener clientListener) {
-		this.clientListener = clientListener;
+	protected CustomSocket(TCPClientListener tcpClientListener) {
+		this.tcpClientListener = tcpClientListener;
 		initCipher();
 	}
 
@@ -40,18 +40,18 @@ public class CustomSocket {
 	 * constructor yourself!
 	 * 
 	 * @param socket The client socket connected to the server.
-	 * @param clientListener The listener waiting for socket events.
+	 * @param tcpClientListener The listener waiting for socket events.
 	 */
-	protected CustomSocket(Socket socket, ClientListener clientListener) {
+	protected CustomSocket(Socket socket, TCPClientListener tcpClientListener) {
 		this.socket = socket;
-		this.clientListener = clientListener;
+		this.tcpClientListener = tcpClientListener;
 		this.connected = true;
 		initCipher();
 
 		doRead();
 	}
 
-	private void initCipher() {
+	protected void initCipher() {
 		try {
 			cipherOut = Cipher.getInstance("RC4");
 			cipherOut.init(Cipher.DECRYPT_MODE,
@@ -59,6 +59,8 @@ public class CustomSocket {
 			cipherIn = Cipher.getInstance("RC4");
 			cipherIn.init(Cipher.ENCRYPT_MODE,
 					new SecretKeySpec("12345678".getBytes(), "RC4"));
+			cIn = null;
+			cOut = null;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -76,6 +78,9 @@ public class CustomSocket {
 				socket.close();
 
 				Thread.yield();
+				
+				this.socket = null;
+				this.connected = false;
 			}
 		}
 	}
@@ -102,8 +107,8 @@ public class CustomSocket {
 	}
 
 	private synchronized void readCallback(Object object) {
-		if (clientListener != null)
-			clientListener.clientRead(this, object);
+		if (tcpClientListener != null)
+			tcpClientListener.clientRead(this, object);
 		doRead();
 	}
 
@@ -111,8 +116,8 @@ public class CustomSocket {
 		if (this.closing || e instanceof EOFException || e instanceof SocketException) {
 			this.closing = false;
 			this.connected = false;
-			if (clientListener != null)
-				clientListener.clientDisconnect(this);
+			if (tcpClientListener != null)
+				tcpClientListener.clientDisconnect(this);
 		} else {
 		}
 	}

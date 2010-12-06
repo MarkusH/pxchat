@@ -26,6 +26,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import pxchat.net.Client;
+import pxchat.net.ClientListener;
 import pxchat.util.Icons;
 
 public class ClientMain extends JFrame {
@@ -208,6 +209,25 @@ public class ClientMain extends JFrame {
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(size.width / 3 - this.getWidth() / 2,
 				size.height / 2 - this.getHeight() / 2);
+		
+		
+		// register a client listener
+		Client.getInstance().registerClientListener(new ClientListener() {
+			
+			@Override
+			public void clientDisconnect() {
+				mNewChat.setEnabled(true);
+				mCloseChat.setEnabled(false);
+			}
+			
+			@Override
+			public void clientConnect() {
+				mCloseChat.setEnabled(true);
+				mNewChat.setEnabled(false);
+			}
+		});
+		
+		
 		splashScreen.setReady();
 	}
 

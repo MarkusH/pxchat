@@ -9,4 +9,4 @@ package pxchat.net.tcp;
  * 
  * @author Markus Döllinger
  */
-public interface ServerListener extends ClientListener {}
+public interface TCPServerListener extends TCPClientListener {}

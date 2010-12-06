@@ -4,12 +4,12 @@
 package pxchat.net.tcp;
 
 /**
- * The <code>ClientListener</code> interface contains the callbacks used to
+ * The <code>TCPClientListener</code> interface contains the callbacks used to
  * react to client events.
  * 
  * @author Markus Döllinger
  */
-public interface ClientListener {
+public interface TCPClientListener {
 
 	/**
 	 * This method is called when the <code>client</code> disconnects.
