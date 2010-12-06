@@ -33,5 +33,9 @@ public class VersionFrame extends Frame {
 		else
 			return false;
 	}
+	
+	public static VersionFrame getCurrent() {
+		return new VersionFrame(0, 1);
+	}
 
 }

@@ -16,10 +16,10 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import pxchat.net.Client;
 import pxchat.net.tcp.ClientListener;
 import pxchat.net.tcp.CustomSocket;
 import pxchat.net.tcp.ServerListener;
-import pxchat.net.tcp.TCPClient;
 import pxchat.net.tcp.TCPServer;
 import pxchat.util.XMLUtil;
 
@@ -118,28 +118,7 @@ public class ServerMain {
 
 			Thread.sleep(1000);
 
-			TCPClient client = new TCPClient(new ClientListener() {
-
-				@Override
-				public void clientRead(CustomSocket client, Object data) {
-					System.out.println("Client> " + client + " read " + data);
-				}
-
-				@Override
-				public void clientDisconnect(CustomSocket client) {
-					System.out.println("Client> " + client + " disconnected.");
-				}
-
-				@Override
-				public void clientConnecting(CustomSocket client) {
-					System.out.println("Client> " + client + " connecting.");
-				}
-
-				@Override
-				public void clientConnect(CustomSocket client) {
-					System.out.println("Client> " + client + " connected.");
-				}
-			});
+			Client client = new Client();
 			client.connect("localhost", port);
 
 			Thread.sleep(1000);
