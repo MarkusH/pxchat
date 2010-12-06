@@ -14,20 +14,19 @@ import pxchat.net.tcp.TCPClient;
  * 
  * @author Markus Döllinger
  */
-public class Client {
-	
+public final class Client {
+
 	private TCPClient client;
 	private FrameAdapter frameAdapter;
-	
 
 	private ClientListener clientListener = new ClientListener() {
-		
+
 		@Override
 		public void clientRead(CustomSocket client, Object data) {
 			System.out.println(this + "> Message received from server: " + data);
 			frameAdapter.receive(data);
 		}
-		
+
 		@Override
 		public void clientDisconnect(CustomSocket client) {
 			System.out.println(this + "> Client disconnected");
@@ -46,39 +45,43 @@ public class Client {
 			frameAdapter.reset();
 		}
 	};
-	
+
 	private FrameAdapterListener adapterListener = new FrameAdapterListener() {
-		
+
 		@Override
 		public void process(FrameAdapter adapter) {
 			System.out.println(this + " executes " + adapter.getIncoming());
-		
-			
+
 			adapter.getIncoming().clear();
 		}
 	};
-	
-	
+
 	/**
 	 * Constructs a new client.
 	 */
-	public Client() {
+	private Client() {
 		client = new TCPClient(clientListener);
 		frameAdapter = new FrameAdapter(client, adapterListener);
 	}
-	
+
+	private static class Holder {
+		public static final Client INSTANCE = new Client();
+	}
+
+	public static Client getInstance() {
+		return Holder.INSTANCE;
+	}
+
 	/**
 	 * Connects to the specified host on the defined port.
 	 * 
 	 * @param host
 	 * @param port
+	 * @throws IOException
+	 * @throws UnknownHostException
 	 */
-	public void connect(String host, int port) {
-		try {
-			client.connect(host, port);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public void connect(String host, int port) throws UnknownHostException, IOException {
+		client.connect(host, port);
 	}
 
 	/**
@@ -86,5 +89,9 @@ public class Client {
 	 */
 	public void disconnect() {
 		client.disconnect();
+	}
+
+	public boolean isConnected() {
+		return client.isConnected();
 	}
 }

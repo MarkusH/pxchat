@@ -11,8 +11,11 @@ import java.awt.event.FocusListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
+import pxchat.net.Client;
 
 /**
  * @author florian
@@ -23,15 +26,13 @@ public class ConnectionDialog extends JDialog {
 	/**
 	 * 
 	 */
-	private JFrame parent;
 
 	private JButton connectButton, abortButton;
 	private JTextField hostAddress, portNumber, userName;
 	private JPasswordField passWord;
 
-	public ConnectionDialog(JFrame parent) {
+	public ConnectionDialog(ClientMain parent) {
 		super(parent, I18n.getInstance().getString("cdTitle"));
-		this.parent = parent;
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setResizable(false);
@@ -64,7 +65,7 @@ public class ConnectionDialog extends JDialog {
 				// TODO Auto-generated method stub
 				ConnectionDialog.this.hostAddress.select(0, 0);
 			}
-			
+
 			@Override
 			public void focusGained(FocusEvent arg0) {
 				// TODO Auto-generated method stub
@@ -80,7 +81,7 @@ public class ConnectionDialog extends JDialog {
 				// TODO Auto-generated method stub
 				ConnectionDialog.this.portNumber.select(0, 0);
 			}
-			
+
 			@Override
 			public void focusGained(FocusEvent arg0) {
 				// TODO Auto-generated method stub
@@ -96,7 +97,7 @@ public class ConnectionDialog extends JDialog {
 				// TODO Auto-generated method stub
 				ConnectionDialog.this.userName.select(0, 0);
 			}
-			
+
 			@Override
 			public void focusGained(FocusEvent arg0) {
 				// TODO Auto-generated method stub
@@ -105,15 +106,14 @@ public class ConnectionDialog extends JDialog {
 		});
 		userName.setBounds(10, 90, 210, 30);
 
-		passWord = new JPasswordField(I18n.getInstance()
-				.getString("cdPassWord"));
+		passWord = new JPasswordField(I18n.getInstance().getString("cdPassWord"));
 		passWord.addFocusListener(new FocusListener() {
 			@Override
 			public void focusLost(FocusEvent e) {
 				// TODO Auto-generated method stub
 				ConnectionDialog.this.passWord.select(0, 0);
 			}
-			
+
 			@Override
 			public void focusGained(FocusEvent arg0) {
 				// TODO Auto-generated method stub
@@ -122,20 +122,39 @@ public class ConnectionDialog extends JDialog {
 		});
 		passWord.setBounds(10, 130, 210, 30);
 
-		this.add(hostAddress);
-		this.add(portNumber);
-		this.add(userName);
-		this.add(passWord);
-		this.add(connectButton);
-		this.add(abortButton);
+		getContentPane().add(hostAddress);
+		getContentPane().add(portNumber);
+		getContentPane().add(userName);
+		getContentPane().add(passWord);
+		getContentPane().add(connectButton);
+		getContentPane().add(abortButton);
 
 		this.setSize(230, 240);
 		this.setAlwaysOnTop(true);
-		this.setLocationRelativeTo(this.parent);
+		this.setLocationRelativeTo(this.getParent());
 		this.setVisible(true);
 	}
 
 	private void connect() {
+		String host, user, pass;
+		int port;
+		host = hostAddress.getText();
+		try {
+			port = Integer.valueOf(portNumber.getText());
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(this, I18n.getInstance().getString("cdPortFail"));
+			return;
+		}
+		user = userName.getText();
+		pass = String.valueOf(passWord.getPassword());
+
+		try {
+			Client.getInstance().connect(host, port);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, I18n.getInstance().getString("cdConnectFail"));
+			return;
+		}
+
 		this.dispose();
 	}
 

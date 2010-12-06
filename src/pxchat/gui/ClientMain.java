@@ -25,6 +25,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import pxchat.net.Client;
 import pxchat.util.Icons;
 
 public class ClientMain extends JFrame {
@@ -32,7 +33,7 @@ public class ClientMain extends JFrame {
 
 	private JMenuBar mBar;
 	private JMenu mFile, mHelp;
-	private JMenuItem mNewChat, mExit, mAbout;
+	private JMenuItem mNewChat, mCloseChat, mExit, mAbout;
 
 	private JTextArea inputArea;
 	private JTextPane chatLog;
@@ -43,10 +44,8 @@ public class ClientMain extends JFrame {
 	private WhiteBoard wb = new WhiteBoard();
 
 	private static SimpleAttributeSet OWN = new SimpleAttributeSet(),
-			FOREIGN = new SimpleAttributeSet(),
-			OWNNAME = new SimpleAttributeSet(),
-			FOREIGNNAME = new SimpleAttributeSet(),
-			NOTIFY = new SimpleAttributeSet();
+			FOREIGN = new SimpleAttributeSet(), OWNNAME = new SimpleAttributeSet(),
+			FOREIGNNAME = new SimpleAttributeSet(), NOTIFY = new SimpleAttributeSet();
 	static {
 		StyleConstants.setForeground(OWN, Color.blue);
 		StyleConstants.setFontSize(OWN, 12);
@@ -69,8 +68,7 @@ public class ClientMain extends JFrame {
 
 	public ClientMain() {
 		super("pxchat");
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage(
-				"./data/img/icon/whiteboard.png"));
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage("./data/img/icon/whiteboard.png"));
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		SplashScreen splashScreen = new SplashScreen(this);
 		splashScreen.setVisible(true);
@@ -90,8 +88,19 @@ public class ClientMain extends JFrame {
 			}
 		});
 		mFile.add(mNewChat);
-		mExit = new JMenuItem(I18n.getInstance().getString("quitProgram"),
-				Icons.get("quit.png"));
+
+		mCloseChat = new JMenuItem(I18n.getInstance().getString("closeChat"));
+		mCloseChat.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				Client.getInstance().disconnect();
+			}
+		});
+		mCloseChat.setEnabled(false);
+		mFile.add(mCloseChat);
+
+		mExit = new JMenuItem(I18n.getInstance().getString("quitProgram"), Icons.get("quit.png"));
 		mExit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -100,21 +109,19 @@ public class ClientMain extends JFrame {
 			}
 		});
 		mFile.add(mExit);
+
 		mBar.add(mFile);
 		/**
 		 * building the help menu
 		 */
 		mHelp = new JMenu(I18n.getInstance().getString("help"));
-		mAbout = new JMenuItem(I18n.getInstance().getString("aboutInfo"),
-				Icons.get("about.png"));
+		mAbout = new JMenuItem(I18n.getInstance().getString("aboutInfo"), Icons.get("about.png"));
 		mAbout.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, I18n.getInstance()
-						.getString("aboutText"),
-						I18n.getInstance().getString("aboutInfo"),
-						JOptionPane.INFORMATION_MESSAGE, Icons
-								.get("about-64.png"));
+				JOptionPane.showMessageDialog(null, I18n.getInstance().getString("aboutText"), I18n
+						.getInstance().getString("aboutInfo"), JOptionPane.INFORMATION_MESSAGE,
+						Icons.get("about-64.png"));
 			}
 		});
 		mHelp.add(mAbout);
@@ -126,8 +133,7 @@ public class ClientMain extends JFrame {
 
 		chatLog = new JTextPane();
 		chatLog.setEditable(false);
-		chatLogPane = new JScrollPane(chatLog,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+		chatLogPane = new JScrollPane(chatLog, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		chatLogPane.setBounds(10, 10, 400, 300);
 		getContentPane().add(chatLogPane);
@@ -168,14 +174,13 @@ public class ClientMain extends JFrame {
 
 		userList = new JList(new String[] { "User", "User2" });
 		userList.setEnabled(false);
-		userListPane = new JScrollPane(userList,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+		userListPane = new JScrollPane(userList, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		userListPane.setBounds(420, 10, 150, 300);
 		getContentPane().add(userListPane);
 
-		whiteBoardButton = new JButton(I18n.getInstance().getString(
-				"whiteBoardButton"), Icons.get("whiteboard.png"));
+		whiteBoardButton = new JButton(I18n.getInstance().getString("whiteBoardButton"), Icons
+				.get("whiteboard.png"));
 		whiteBoardButton.setBounds(420, 320, 150, 30);
 		whiteBoardButton.addActionListener(new ActionListener() {
 
@@ -186,8 +191,7 @@ public class ClientMain extends JFrame {
 		});
 		getContentPane().add(whiteBoardButton);
 
-		sendButton = new JButton(I18n.getInstance().getString("sendButton"),
-				Icons.get("send.png"));
+		sendButton = new JButton(I18n.getInstance().getString("sendButton"), Icons.get("send.png"));
 		sendButton.setBounds(420, 360, 150, 30);
 		sendButton.addActionListener(new ActionListener() {
 
@@ -209,11 +213,10 @@ public class ClientMain extends JFrame {
 
 	public void writeMessage(String author, String msg, String time) {
 		try {
-			chatLog.getDocument().insertString(
-					chatLog.getDocument().getLength(),
+			chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
 					"[" + time + "] " + author, FOREIGNNAME);
-			chatLog.getDocument().insertString(
-					chatLog.getDocument().getLength(), msg + "\n", FOREIGN);
+			chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n",
+					FOREIGN);
 		} catch (BadLocationException e) {
 			System.err.println("Could not write to JTextPane \"chatLog\".");
 		}
@@ -223,8 +226,7 @@ public class ClientMain extends JFrame {
 
 	public void writeNotification(String msg, String time) {
 		try {
-			chatLog.getDocument().insertString(
-					chatLog.getDocument().getLength(),
+			chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
 					"[" + time + "] " + msg + "\n", NOTIFY);
 		} catch (BadLocationException e) {
 			System.err.println("Could not write to JTextPane \"chatLog\".");
@@ -237,12 +239,12 @@ public class ClientMain extends JFrame {
 
 		if (!msg.trim().equals("")) {
 			try {
-				chatLog.getDocument().insertString(
-						chatLog.getDocument().getLength(),
-						"[" + df.format(new Date()) + "] " + I18n.getInstance()
-								.getString("you") + ": ", OWNNAME);
-				chatLog.getDocument().insertString(
-						chatLog.getDocument().getLength(), msg + "\n", OWN);
+				chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
+						"[" + df.format(new Date()) + "] " + 
+						I18n.getInstance().getString("you") + ": ", OWNNAME);
+				
+				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n",
+						OWN);
 				// TODO msg über Netzwerk versenden
 
 			} catch (BadLocationException e) {

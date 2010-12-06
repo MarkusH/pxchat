@@ -40,8 +40,7 @@ public class ServerMain {
 		File file = new File("xml/server.xml");
 		Document doc = null;
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setValidating(true);
 			DocumentBuilder builder = factory.newDocumentBuilder();
 
@@ -55,8 +54,7 @@ public class ServerMain {
 
 				@Override
 				public void fatalError(SAXParseException e) throws SAXException {
-					System.out
-							.println("Fatal error validating the config file:");
+					System.out.println("Fatal error validating the config file:");
 					e.printStackTrace();
 					System.exit(0);
 				}
@@ -71,8 +69,8 @@ public class ServerMain {
 
 			Node config = XMLUtil.getChildByName(node, "config");
 
-			int port = Integer.valueOf(XMLUtil.getAttributeValue(
-					XMLUtil.getChildByName(config, "port"), "number"));
+			int port = Integer.valueOf(XMLUtil.getAttributeValue(XMLUtil.getChildByName(config,
+					"port"), "number"));
 
 			System.out.println(port);
 
@@ -82,9 +80,8 @@ public class ServerMain {
 			if (list != null) {
 				for (int i = 0; i < list.getLength(); i++) {
 					if (list.item(i).getNodeName().equals("user")) {
-						authList.put(XMLUtil.getAttributeValue(list.item(i),
-								"name"), XMLUtil.getAttributeValue(
-								list.item(i), "password"));
+						authList.put(XMLUtil.getAttributeValue(list.item(i), "name"), XMLUtil
+								.getAttributeValue(list.item(i), "password"));
 					}
 				}
 			}
@@ -118,18 +115,17 @@ public class ServerMain {
 
 			Thread.sleep(1000);
 
-			Client client = new Client();
-			client.connect("localhost", port);
+			// Client client = Client.getInstance();
+			// client.connect("localhost", port);
+			// Thread.sleep(1000);
+			// client.disconnect();
+			// Thread.sleep(1000);
+			// server.close();
+			// Thread.sleep(1000);
 
-			Thread.sleep(1000);
-
-			client.disconnect();
-
-			Thread.sleep(1000);
+			Thread.sleep(30000);
 
 			server.close();
-
-			Thread.sleep(1000);
 
 		} catch (Exception e) {
 			System.out.println("An error ocurred loading the config file");
