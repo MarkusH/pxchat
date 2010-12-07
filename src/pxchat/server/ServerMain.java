@@ -16,11 +16,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import pxchat.net.Client;
-import pxchat.net.tcp.TCPClientListener;
-import pxchat.net.tcp.CustomSocket;
-import pxchat.net.tcp.TCPServerListener;
-import pxchat.net.tcp.TCPServer;
+import pxchat.net.Server;
 import pxchat.util.XMLUtil;
 
 /**
@@ -88,29 +84,7 @@ public class ServerMain {
 
 			System.out.println(authList);
 
-			TCPServer server = new TCPServer(new TCPServerListener() {
-
-				@Override
-				public void clientRead(CustomSocket client, Object data) {
-					System.out.println("Server> " + client + " read " + data);
-				}
-
-				@Override
-				public void clientDisconnect(CustomSocket client) {
-					System.out.println("Server> " + client + " disconnected.");
-				}
-
-				@Override
-				public void clientConnecting(CustomSocket client) {
-					System.out.println("Server> " + client + " connecting.");
-				}
-
-				@Override
-				public void clientConnect(CustomSocket client) {
-					System.out.println("Server> " + client + " connected.");
-
-				}
-			});
+			Server server = new Server();
 			server.listen(port);
 
 			Thread.sleep(1000);
@@ -125,7 +99,8 @@ public class ServerMain {
 
 			Thread.sleep(30000);
 
-			server.close();
+			System.out.println("Stopping server...");
+			server.stopListening();
 
 		} catch (Exception e) {
 			System.out.println("An error ocurred loading the config file");

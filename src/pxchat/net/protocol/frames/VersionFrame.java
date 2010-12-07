@@ -27,7 +27,7 @@ public class VersionFrame extends Frame {
 		this.minor = minor;
 	}
 
-	boolean isCompatible(VersionFrame ver) {
+	public boolean isCompatible(VersionFrame ver) {
 		if (ver.getMajor() == this.getMajor())
 			return true;
 		else
