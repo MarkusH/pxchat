@@ -12,6 +12,8 @@ import pxchat.net.tcp.CustomSocket;
 import pxchat.net.tcp.TCPClient;
 
 /**
+ * This class implements the client for pxchat. Only one instance is available
+ * to the application. It can be obtained by calling {@link #getInstance()}.
  * 
  * @author Markus Döllinger
  */
@@ -39,15 +41,14 @@ public final class Client {
 
 		@Override
 		public void clientRead(CustomSocket client, Object data) {
-			System.out
-					.println(this + "> Message received from server: " + data);
+			System.out.println(this + "> Message received from server: " + data);
 			frameAdapter.receive(data);
 		}
 
 		@Override
 		public void clientDisconnect(CustomSocket client) {
 			System.out.println(this + "> Client disconnected");
-			
+
 			for (ClientListener listener : clientListeners)
 				listener.clientDisconnect();
 		}
@@ -55,10 +56,10 @@ public final class Client {
 		@Override
 		public void clientConnect(CustomSocket client) {
 			System.out.println(this + "> Conntected to server");
-			
+
 			for (ClientListener listener : clientListeners)
 				listener.clientConnect();
-				
+
 			frameAdapter.getOutgoing().add(VersionFrame.getCurrent());
 			frameAdapter.send();
 		}
@@ -104,8 +105,7 @@ public final class Client {
 	 * @throws IOException
 	 * @throws UnknownHostException
 	 */
-	public void connect(String host, int port) throws UnknownHostException,
-			IOException {
+	public void connect(String host, int port) throws UnknownHostException, IOException {
 		client.connect(host, port);
 	}
 
@@ -124,12 +124,12 @@ public final class Client {
 	public boolean isConnected() {
 		return client.isConnected();
 	}
-	
+
 	public void registerClientListener(ClientListener listener) {
 		if (listener != null)
 			clientListeners.add(listener);
 	}
-	
+
 	public void removeClientListener(ClientListener listener) {
 		clientListeners.remove(listener);
 	}

@@ -100,7 +100,7 @@ public class ServerMain {
 			Thread.sleep(30000);
 
 			System.out.println("Stopping server...");
-			server.stopListening();
+			server.close();
 
 		} catch (Exception e) {
 			System.out.println("An error ocurred loading the config file");
