@@ -378,6 +378,7 @@ public class WhiteBoard extends JFrame {
 		drawColorPanel.setBackground(currentColor);
 		
 		lineWidthSlider = new JSlider(1, 10);
+		lineWidthSlider.setValue(1);
 		lineWidthSlider.setToolTipText(I18n.getInstance().getString("wbLineWidth"));
 		lineWidthSlider.addChangeListener(new ChangeListener() {
 			

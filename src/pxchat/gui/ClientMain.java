@@ -41,6 +41,8 @@ public class ClientMain extends JFrame {
 	private JScrollPane chatLogPane, inputAreaPane, userListPane;
 	private JList userList;
 	private JButton whiteBoardButton, sendButton;
+	
+	private boolean connected;
 
 	private WhiteBoard wb = new WhiteBoard();
 
@@ -139,10 +141,11 @@ public class ClientMain extends JFrame {
 		chatLogPane.setBounds(10, 10, 400, 300);
 		getContentPane().add(chatLogPane);
 
-		inputArea = new JTextArea("", 3, 30);
+		inputArea = new JTextArea("");
 		inputArea.setLineWrap(true);
 		inputArea.setWrapStyleWord(true);
 		inputArea.setEditable(true);
+		inputArea.setEnabled(false);
 		inputArea.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -183,6 +186,8 @@ public class ClientMain extends JFrame {
 		whiteBoardButton = new JButton(I18n.getInstance().getString("whiteBoardButton"), Icons
 				.get("whiteboard.png"));
 		whiteBoardButton.setBounds(420, 320, 150, 30);
+		// TODO remove the comment from next line as soon as it is possible
+		//whiteBoardButton.setEnabled(false);
 		whiteBoardButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -194,6 +199,7 @@ public class ClientMain extends JFrame {
 
 		sendButton = new JButton(I18n.getInstance().getString("sendButton"), Icons.get("send.png"));
 		sendButton.setBounds(420, 360, 150, 30);
+		sendButton.setEnabled(false);
 		sendButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -218,12 +224,19 @@ public class ClientMain extends JFrame {
 			public void clientDisconnect() {
 				mNewChat.setEnabled(true);
 				mCloseChat.setEnabled(false);
+				whiteBoardButton.setEnabled(false);
+				wb.setVisible(false);
+				sendButton.setEnabled(false);
+				inputArea.setEnabled(false);
 			}
 			
 			@Override
 			public void clientConnect() {
 				mCloseChat.setEnabled(true);
 				mNewChat.setEnabled(false);
+				whiteBoardButton.setEnabled(true);
+				sendButton.setEnabled(true);
+				inputArea.setEnabled(true);
 			}
 		});
 		

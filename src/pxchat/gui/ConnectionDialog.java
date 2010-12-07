@@ -5,11 +5,14 @@ package pxchat.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -17,7 +20,7 @@ import javax.swing.JTextField;
 import pxchat.net.Client;
 
 /**
- * @author florian
+ * @author Florian Bausch
  * 
  */
 public class ConnectionDialog extends JDialog {
@@ -29,6 +32,7 @@ public class ConnectionDialog extends JDialog {
 	private JButton connectButton, abortButton;
 	private JTextField hostAddress, portNumber, userName;
 	private JPasswordField passWord;
+	private JLabel hostAddressLabel, portNumberLabel, userNameLabel, passWordLabel;
 
 	public ConnectionDialog(ClientMain parent) {
 		super(parent, I18n.getInstance().getString("cdTitle"));
@@ -45,7 +49,7 @@ public class ConnectionDialog extends JDialog {
 				ConnectionDialog.this.connect();
 			}
 		});
-		connectButton.setBounds(10, 170, 100, 30);
+		connectButton.setBounds(35, 150, 100, 30);
 
 		abortButton = new JButton(I18n.getInstance().getString("cdAbort"));
 		abortButton.addActionListener(new ActionListener() {
@@ -55,7 +59,7 @@ public class ConnectionDialog extends JDialog {
 				ConnectionDialog.this.abort();
 			}
 		});
-		abortButton.setBounds(120, 170, 100, 30);
+		abortButton.setBounds(145, 150, 100, 30);
 
 		hostAddress = new JTextField(I18n.getInstance().getString("cdHost"));
 		hostAddress.addFocusListener(new FocusListener() {
@@ -71,7 +75,10 @@ public class ConnectionDialog extends JDialog {
 				ConnectionDialog.this.hostAddress.selectAll();
 			}
 		});
-		hostAddress.setBounds(10, 10, 210, 30);
+		hostAddress.setBounds(120, 10, 150, 25);
+		
+		hostAddressLabel = new JLabel(I18n.getInstance().getString("cdHost"));
+		hostAddressLabel.setBounds(10, 10, 100, 25);
 
 		portNumber = new JTextField(I18n.getInstance().getString("cdPort"));
 		portNumber.addFocusListener(new FocusListener() {
@@ -87,7 +94,10 @@ public class ConnectionDialog extends JDialog {
 				ConnectionDialog.this.portNumber.selectAll();
 			}
 		});
-		portNumber.setBounds(10, 50, 210, 30);
+		portNumber.setBounds(120, 45, 150, 25);
+		
+		portNumberLabel = new JLabel(I18n.getInstance().getString("cdPort"));
+		portNumberLabel.setBounds(10, 45, 100, 25);
 
 		userName = new JTextField(I18n.getInstance().getString("cdUser"));
 		userName.addFocusListener(new FocusListener() {
@@ -103,9 +113,12 @@ public class ConnectionDialog extends JDialog {
 				ConnectionDialog.this.userName.selectAll();
 			}
 		});
-		userName.setBounds(10, 90, 210, 30);
+		userName.setBounds(120, 80, 150, 25);
+		
+		userNameLabel = new JLabel(I18n.getInstance().getString("cdUser"));
+		userNameLabel.setBounds(10, 80, 100, 25);
 
-		passWord = new JPasswordField(I18n.getInstance().getString("cdPassWord"));
+		passWord = new JPasswordField();
 		passWord.addFocusListener(new FocusListener() {
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -119,16 +132,23 @@ public class ConnectionDialog extends JDialog {
 				ConnectionDialog.this.passWord.selectAll();
 			}
 		});
-		passWord.setBounds(10, 130, 210, 30);
+		passWord.setBounds(120, 115, 150, 25);
+		
+		passWordLabel = new JLabel(I18n.getInstance().getString("cdPassWord"));
+		passWordLabel.setBounds(10, 115, 100, 25);
 
 		getContentPane().add(hostAddress);
+		getContentPane().add(hostAddressLabel);
 		getContentPane().add(portNumber);
+		getContentPane().add(portNumberLabel);
 		getContentPane().add(userName);
+		getContentPane().add(userNameLabel);
 		getContentPane().add(passWord);
+		getContentPane().add(passWordLabel);
 		getContentPane().add(connectButton);
 		getContentPane().add(abortButton);
 
-		this.setSize(230, 240);
+		this.setSize(280, 220);
 		this.setAlwaysOnTop(true);
 		this.setLocationRelativeTo(this.getParent());
 		this.setVisible(true);
