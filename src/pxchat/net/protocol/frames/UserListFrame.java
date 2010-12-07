@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class UserListFrame extends Frame {
 
-	HashMap<Integer,String> userlist;
+	private HashMap<Integer,String> userlist;
 	
 	UserListFrame() {
 		this.id = Frame.ID_USERLIST;
