@@ -21,7 +21,7 @@ public class SplashScreen extends JDialog {
 	public SplashScreen(JFrame parent) {
 		super(parent, "pxchat", false);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		this.setLayout(new BorderLayout());
+		this.setLayout(new BorderLayout(10, 10));
 		this.parent = parent;
 		startButton = new JButton(I18n.getInstance().getString("ssEnterChat"));
 		startButton.setEnabled(false);

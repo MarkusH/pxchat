@@ -6,6 +6,7 @@ package pxchat.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -16,17 +17,21 @@ import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JSlider;
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import pxchat.gui.whiteboard.CircleObject;
 import pxchat.gui.whiteboard.EllipseObject;
@@ -37,7 +42,7 @@ import pxchat.util.Icons;
 import pxchat.util.PicFileFilter;
 
 /**
- * @author Markus H.
+ * @author MarkusH
  * 
  */
 public class WhiteBoard extends JFrame {
@@ -50,11 +55,13 @@ public class WhiteBoard extends JFrame {
 	private int sizeY = 600;
 
 	private PaintBoard paintBoard;
-	private JPanel toolbar;
+	private JPanel toolbar, drawColorPanel;
 	private JToggleButton drawCircle, drawEllipse, drawEraser, drawFreehand,
 			drawLine, drawRectangle, drawText, lockCanvas;
 	private JButton drawColor, loadImage, saveImage, clearImage,
 			loadBackground;
+	private JSlider lineWidthSlider;
+	private JLabel lineWidthLabel;
 
 	private Tool tool = Tool.Freehand;
 	private Color currentColor = Color.BLACK;
@@ -82,7 +89,7 @@ public class WhiteBoard extends JFrame {
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage(
 				"./data/img/icon/whiteboard.png"));
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
-		setLayout(new BorderLayout());
+		setLayout(new BorderLayout(10,10));
 		setResizable(false);
 
 		paintBoard = new PaintBoard();
@@ -230,8 +237,8 @@ public class WhiteBoard extends JFrame {
 		});
 
 		toolbar = new JPanel();
-		toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.PAGE_AXIS));
 		toolbar.setPreferredSize(new Dimension(100, sizeY));
+		toolbar.setLayout(new GridLayout(12, 2, 10, 10));
 
 		drawCircle = new JToggleButton("", Icons.get("draw-circle.png"));
 		drawCircle.setToolTipText(I18n.getInstance().getString("wbCircle"));
@@ -252,6 +259,7 @@ public class WhiteBoard extends JFrame {
 				if (newColor != null) {
 					currentColor = newColor;
 				}
+				drawColorPanel.setBackground(currentColor);
 			}
 		});
 		drawEllipse = new JToggleButton("", Icons.get("draw-ellipse.png"));
@@ -364,20 +372,50 @@ public class WhiteBoard extends JFrame {
 				loadBackground();
 			}
 		});
+		
+		drawColorPanel = new JPanel();
+		drawColorPanel.setMaximumSize(new Dimension(16, 16));
+		drawColorPanel.setBackground(currentColor);
+		
+		lineWidthSlider = new JSlider(1, 10);
+		lineWidthSlider.setToolTipText(I18n.getInstance().getString("wbLineWidth"));
+		lineWidthSlider.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				currentStrokeWidth = lineWidthSlider.getValue();
+				lineWidthLabel.setText("" + (int)currentStrokeWidth);
+			}
+		});
+		
+		lineWidthLabel = new JLabel("" + (int)currentStrokeWidth, SwingConstants.CENTER);
+		lineWidthLabel.setSize(new Dimension(32, 32));
+		lineWidthLabel.setVerticalAlignment(SwingConstants.CENTER);
+		
 		toolbar.add(drawColor);
+		toolbar.add(drawColorPanel);
+		
 		toolbar.add(drawFreehand);
 		toolbar.add(drawLine);
-		toolbar.add(drawRectangle);
+		
 		toolbar.add(drawCircle);
 		toolbar.add(drawEllipse);
+
+		toolbar.add(drawRectangle);
 		toolbar.add(drawText);
+
 		toolbar.add(drawEraser);
 		toolbar.add(lockCanvas);
+
 		toolbar.add(loadImage);
 		toolbar.add(saveImage);
+
 		toolbar.add(clearImage);
 		toolbar.add(loadBackground);
-
+		
+		toolbar.add(lineWidthSlider);
+		toolbar.add(lineWidthLabel);
+		
 		ButtonGroup g = new ButtonGroup();
 		g.add(drawCircle);
 		g.add(drawEllipse);
