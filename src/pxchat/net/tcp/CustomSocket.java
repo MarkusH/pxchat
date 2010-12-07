@@ -12,6 +12,12 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * This class implements a socket that is able to read and write encrypted
+ * objects to a TCP socket using object input and object output streams.
+ * 
+ * @author Markus Döllinger
+ */
 public class CustomSocket {
 
 	protected Socket socket = null;
@@ -28,7 +34,8 @@ public class CustomSocket {
 	protected TCPClientListener tcpClientListener;
 
 	/**
-	 * 
+	 * Constructs a new custom socket with a specified listener. No connection
+	 * is established.
 	 */
 	protected CustomSocket(TCPClientListener tcpClientListener) {
 		this.tcpClientListener = tcpClientListener;
@@ -51,14 +58,15 @@ public class CustomSocket {
 		doRead();
 	}
 
+	/**
+	 * Initialized the encryption / decryption facility.
+	 */
 	protected void initCipher() {
 		try {
 			cipherOut = Cipher.getInstance("RC4");
-			cipherOut.init(Cipher.DECRYPT_MODE,
-					new SecretKeySpec("12345678".getBytes(), "RC4"));
+			cipherOut.init(Cipher.DECRYPT_MODE, new SecretKeySpec("12345678".getBytes(), "RC4"));
 			cipherIn = Cipher.getInstance("RC4");
-			cipherIn.init(Cipher.ENCRYPT_MODE,
-					new SecretKeySpec("12345678".getBytes(), "RC4"));
+			cipherIn.init(Cipher.ENCRYPT_MODE, new SecretKeySpec("12345678".getBytes(), "RC4"));
 			cIn = null;
 			cOut = null;
 		} catch (Exception e) {
@@ -66,6 +74,11 @@ public class CustomSocket {
 		}
 	}
 
+	/**
+	 * Closes the socket.
+	 * 
+	 * @throws IOException
+	 */
 	public synchronized void close() throws IOException {
 		if (socket != null) {
 			if (this.connected) {
@@ -78,18 +91,24 @@ public class CustomSocket {
 				socket.close();
 
 				Thread.yield();
-				
+
 				this.socket = null;
 				this.connected = false;
 			}
 		}
 	}
 
+	/**
+	 * Encrypts and write the object to the output stream of the socket.
+	 * 
+	 * @param object
+	 * @return
+	 * @throws IOException
+	 */
 	public synchronized boolean writeObject(Object object) throws IOException {
 		if (isConnected()) {
 			if (cOut == null)
-				cOut = new CipherOutputStream(socket.getOutputStream(),
-						cipherOut);
+				cOut = new CipherOutputStream(socket.getOutputStream(), cipherOut);
 			ObjectOutputStream stream = new ObjectOutputStream(cOut);
 			stream.writeObject(object);
 			// stream.flush();
@@ -99,6 +118,9 @@ public class CustomSocket {
 		return false;
 	}
 
+	/**
+	 * Starts a new thread that reads from the input stream.
+	 */
 	protected synchronized void doRead() {
 		if (isConnected()) {
 			readThread = new ReadThread();
@@ -119,6 +141,12 @@ public class CustomSocket {
 			if (tcpClientListener != null)
 				tcpClientListener.clientDisconnect(this);
 		} else {
+			try {
+				close();
+			} catch (Exception e1) {
+			}
+			if (tcpClientListener != null)
+				tcpClientListener.clientDisconnect(this);
 		}
 	}
 
@@ -134,8 +162,7 @@ public class CustomSocket {
 		public void run() {
 			try {
 				if (cIn == null)
-					cIn = new CipherInputStream(socket.getInputStream(),
-							cipherIn);
+					cIn = new CipherInputStream(socket.getInputStream(), cipherIn);
 				ObjectInputStream stream = new ObjectInputStream(cIn);
 				object = stream.readObject();
 			} catch (Exception e) {
