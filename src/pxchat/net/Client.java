@@ -55,10 +55,10 @@ public final class Client {
 
 		@Override
 		public void clientConnect(CustomSocket client) {
-			System.out.println(this + "> Conntected to server");
+			System.out.println(this + "> Conntected to server: " + client.getRemoteAddress());
 
 			for (ClientListener listener : clientListeners)
-				listener.clientConnect();
+				listener.clientConnect(client.getRemoteAddress());
 
 			frameAdapter.getOutgoing().add(VersionFrame.getCurrent());
 			frameAdapter.send();

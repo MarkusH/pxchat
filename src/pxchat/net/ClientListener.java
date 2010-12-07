@@ -15,7 +15,7 @@ public interface ClientListener {
 	 * This method is called after the client successfully connected to the
 	 * server.
 	 */
-	public void clientConnect();
+	public void clientConnect(String remoteAddress);
 
 	/**
 	 * This method is called when the clients disconnects from the server,

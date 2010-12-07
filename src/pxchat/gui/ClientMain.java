@@ -41,7 +41,7 @@ public class ClientMain extends JFrame {
 	private JScrollPane chatLogPane, inputAreaPane, userListPane;
 	private JList userList;
 	private JButton whiteBoardButton, sendButton;
-	
+
 	private boolean connected;
 
 	private WhiteBoard wb = new WhiteBoard();
@@ -187,7 +187,7 @@ public class ClientMain extends JFrame {
 				.get("whiteboard.png"));
 		whiteBoardButton.setBounds(420, 320, 150, 30);
 		// TODO remove the comment from next line as soon as it is possible
-		//whiteBoardButton.setEnabled(false);
+		// whiteBoardButton.setEnabled(false);
 		whiteBoardButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -215,11 +215,10 @@ public class ClientMain extends JFrame {
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(size.width / 3 - this.getWidth() / 2,
 				size.height / 2 - this.getHeight() / 2);
-		
-		
+
 		// register a client listener
 		Client.getInstance().registerClientListener(new ClientListener() {
-			
+
 			@Override
 			public void clientDisconnect() {
 				mNewChat.setEnabled(true);
@@ -228,19 +227,20 @@ public class ClientMain extends JFrame {
 				wb.setVisible(false);
 				sendButton.setEnabled(false);
 				inputArea.setEnabled(false);
+				writeNotification(I18n.getInstance().getString("disconnectedFromServer"));
 			}
-			
+
 			@Override
-			public void clientConnect() {
+			public void clientConnect(String remoteAddress) {
 				mCloseChat.setEnabled(true);
 				mNewChat.setEnabled(false);
 				whiteBoardButton.setEnabled(true);
 				sendButton.setEnabled(true);
 				inputArea.setEnabled(true);
+				writeNotification(I18n.getInstance().getString("connectedToServer") + " " + remoteAddress);
 			}
 		});
-		
-		
+
 		splashScreen.setReady();
 	}
 
@@ -257,10 +257,11 @@ public class ClientMain extends JFrame {
 		// log.logMessage(msg, author);
 	}
 
-	public void writeNotification(String msg, String time) {
+	public void writeNotification(String msg) {
 		try {
 			chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
-					"[" + time + "] " + msg + "\n", NOTIFY);
+					"[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] " + msg + "\n",
+					NOTIFY);
 		} catch (BadLocationException e) {
 			System.err.println("Could not write to JTextPane \"chatLog\".");
 		}
@@ -272,10 +273,12 @@ public class ClientMain extends JFrame {
 
 		if (!msg.trim().equals("")) {
 			try {
-				chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
-						"[" + df.format(new Date()) + "] " + 
-						I18n.getInstance().getString("you") + ": ", OWNNAME);
-				
+				chatLog.getDocument()
+						.insertString(
+								chatLog.getDocument().getLength(),
+								"[" + df.format(new Date()) + "] " + I18n.getInstance().getString(
+										"you") + ": ", OWNNAME);
+
 				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n",
 						OWN);
 				// TODO msg über Netzwerk versenden
