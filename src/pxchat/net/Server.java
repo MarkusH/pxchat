@@ -10,6 +10,7 @@ import pxchat.net.protocol.core.ServerFrameAdapter;
 import pxchat.net.protocol.core.ServerFrameAdapterListener;
 import pxchat.net.protocol.frames.AuthenticationFrame;
 import pxchat.net.protocol.frames.Frame;
+import pxchat.net.protocol.frames.MessageFrame;
 import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.net.protocol.frames.SessionIDFrame;
 import pxchat.net.protocol.frames.UserListFrame;
@@ -155,6 +156,13 @@ public class Server {
 							sendUserList();
 						}
 						
+						break;
+						
+					case Frame.ID_MSG:
+						MessageFrame mf = (MessageFrame) frame;
+						mf.setSessionId(adapter.getSessionID());
+						serverFrameAdapter.broadcast(FrameQueue.from(mf), 
+								true, adapter.getSessionID());
 						break;
 				}
 			}

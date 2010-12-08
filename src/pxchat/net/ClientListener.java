@@ -37,5 +37,13 @@ public interface ClientListener {
 	 * @param newUserList
 	 */
 	public void userListChanged(HashMap<Integer, String> newUserList);
+	
+	/**
+	 * This method is called when a message is received.
+	 * 
+	 * @param author The author of the message
+	 * @param message The message itself
+	 */
+	public void messageReceived(String author, String message);
 
 }

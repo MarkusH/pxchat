@@ -43,8 +43,6 @@ public class ClientMain extends JFrame {
 	private JList userList;
 	private JButton whiteBoardButton, sendButton;
 
-	private boolean connected;
-
 	private WhiteBoard wb = new WhiteBoard();
 
 	private static SimpleAttributeSet OWN = new SimpleAttributeSet(),
@@ -257,24 +255,17 @@ public class ClientMain extends JFrame {
 			@Override
 			public void userListChanged(HashMap<Integer, String> newUserList) {
 				ClientMain.this.userList.setListData(
-						newUserList.values().toArray(new String[newUserList.size()]));
+						newUserList.values().toArray(
+						new String[newUserList.size()]));
+			}
+
+			@Override
+			public void messageReceived(String author, String message) {
+				writeMessage(author, message);
 			}
 		});
 
 		splashScreen.setReady();
-	}
-
-	public void writeMessage(String author, String msg, String time) {
-		try {
-			chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
-					"[" + time + "] " + author, FOREIGNNAME);
-			chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n",
-					FOREIGN);
-		} catch (BadLocationException e) {
-			System.err.println("Could not write to JTextPane \"chatLog\".");
-		}
-
-		// log.logMessage(msg, author);
 	}
 
 	public void writeNotification(String msg) {
@@ -285,6 +276,21 @@ public class ClientMain extends JFrame {
 		} catch (BadLocationException e) {
 			System.err.println("Could not write to JTextPane \"chatLog\".");
 		}
+	}
+
+	public void writeMessage(String author, String msg) {
+		try {
+			chatLog.getDocument().insertString(
+							chatLog.getDocument().getLength(),
+							"[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] " + author + ": ",
+							FOREIGNNAME);
+			chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n",
+					FOREIGN);
+		} catch (BadLocationException e) {
+			System.err.println("Could not write to JTextPane \"chatLog\".");
+		}
+
+		// log.logMessage(msg, author);
 	}
 
 	private void sendMessage() {
@@ -301,7 +307,7 @@ public class ClientMain extends JFrame {
 
 				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n",
 						OWN);
-				// TODO msg über Netzwerk versenden
+				Client.getInstance().sendMessage(msg);
 
 			} catch (BadLocationException e) {
 				System.err.println("Could not write to JTextPane \"chatLog\".");

@@ -98,26 +98,14 @@ public class ServerMain {
 			// server.close();
 			// Thread.sleep(1000);
 
-			Thread.sleep(10000);
-			System.out.println(server.getUserList());
 			
-			Thread.sleep(10000);
-			System.out.println(server.getUserList());
-			
-			Thread.sleep(10000);
-			System.out.println(server.getUserList());
-			
-			Thread.sleep(10000);
-			System.out.println(server.getUserList());
-			
-			Thread.sleep(3000);
-			System.out.println(server.getUserList());
-			
-			Thread.sleep(3000);
-			System.out.println(server.getUserList());
+			while (true) {
+				Thread.sleep(3000);
+				System.out.println(server.getUserList());
+			}
 
-			System.out.println("Stopping server...");
-			server.close();
+//			System.out.println("Stopping server...");
+//			server.close();
 
 		} catch (Exception e) {
 			System.out.println("An error ocurred loading the config file");

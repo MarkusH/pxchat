@@ -148,9 +148,13 @@ public class ServerFrameAdapter extends Vector<FrameAdapter> {
 	 * @param immediate If <code>true</code>, the data is send immediately
 	 * @return The number of clients reached by the broadcast
 	 */
-	public int broadcast(FrameQueue queue, boolean immediate) {
+	public int broadcast(FrameQueue queue, boolean immediate, int... exceptSessionID) {
 		int count = 0;
-		for (FrameAdapter adapter : this) {
+LOOP:	for (FrameAdapter adapter : this) {
+			for (int i : exceptSessionID) {
+				if (adapter.getSessionID() == i)
+					continue LOOP;
+			}
 			adapter.getOutgoing().addAll(queue);
 			if (immediate)
 				adapter.send();

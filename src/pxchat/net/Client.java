@@ -2,12 +2,14 @@ package pxchat.net;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.Vector;
 
 import pxchat.net.protocol.core.FrameAdapter;
 import pxchat.net.protocol.core.FrameAdapterListener;
 import pxchat.net.protocol.frames.AuthenticationFrame;
 import pxchat.net.protocol.frames.Frame;
+import pxchat.net.protocol.frames.MessageFrame;
 import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.net.protocol.frames.UserListFrame;
 import pxchat.net.protocol.frames.VersionFrame;
@@ -33,11 +35,13 @@ public final class Client {
 	 */
 	private FrameAdapter frameAdapter;
 
+	private HashMap<Integer, String> userList = new HashMap<Integer, String>();
+
 	/**
 	 * The client listener sending events to the GUI.
 	 */
 	private Vector<ClientListener> clientListeners = new Vector<ClientListener>();
-	
+
 	private String loginName = "";
 	private String loginPassword = "";
 
@@ -84,11 +88,11 @@ public final class Client {
 		@Override
 		public void process(FrameAdapter adapter) {
 			System.out.println(this + " executes " + adapter.getIncoming());
-			
+
 			for (Frame frame : adapter.getIncoming()) {
 
 				switch (frame.getId()) {
-					
+
 					/*
 					 * 
 					 */
@@ -98,15 +102,26 @@ public final class Client {
 							listener.notification(nf.getMessage());
 						}
 						break;
-						
 
 					/*
-					 * 
+					 * A new user list is sent
 					 */
 					case Frame.ID_USERLIST:
 						UserListFrame uf = (UserListFrame) frame;
+						userList = uf.getUserlist();
 						for (ClientListener listener : clientListeners) {
 							listener.userListChanged(uf.getUserlist());
+						}
+						break;
+
+					/*
+					 * A message was received
+					 */
+					case Frame.ID_MSG:
+						MessageFrame mf = (MessageFrame) frame;
+						for (ClientListener listener : clientListeners) {
+							listener.messageReceived(userList.get(mf.getSessionId()), 
+									mf.getMessage());
 						}
 						break;
 				}
@@ -133,8 +148,8 @@ public final class Client {
 	}
 
 	/**
-	 * Connects to the specified host on the defined port. It uses the login credentials to
-	 * establish a connection.
+	 * Connects to the specified host on the defined port. It uses the login
+	 * credentials to establish a connection.
 	 * 
 	 * @param host The host to connect to
 	 * @param port The port of the end-point
@@ -143,8 +158,9 @@ public final class Client {
 	 * @throws UnknownHostException If the host cannot be found
 	 * @throws IOException If there was an error concerning the connection
 	 */
-	public void connect(String host, int port, 
-	                    String name, String password) throws UnknownHostException, IOException {
+	public void connect(String host, int port, String name, String password)
+																			throws UnknownHostException,
+																			IOException {
 		this.loginName = name;
 		this.loginPassword = password;
 		client.connect(host, port);
@@ -173,5 +189,17 @@ public final class Client {
 
 	public void removeClientListener(ClientListener listener) {
 		clientListeners.remove(listener);
+	}
+	
+	
+	/*
+	 * Client commands
+	 * 
+	 */
+	public void sendMessage(String message) {
+		if (isConnected()) {
+			frameAdapter.getOutgoing().add(new MessageFrame(message));
+			frameAdapter.send();
+		}
 	}
 }

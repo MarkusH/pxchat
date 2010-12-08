@@ -65,8 +65,6 @@ public class WhiteBoard extends JFrame {
 
 	private Tool tool = Tool.Freehand;
 	private Color currentColor = Color.BLACK;
-	private Boolean lock = false;
-
 	/**
 	 * The coordinates of the starting point of a new paint object. It is
 	 * usually set in mousePressed()
@@ -476,7 +474,6 @@ public class WhiteBoard extends JFrame {
 	}
 
 	public void lockControls(Boolean lock) {
-		this.lock = lock;
 		drawCircle.setEnabled(!lock);
 		drawEllipse.setEnabled(!lock);
 		drawEraser.setEnabled(!lock);
