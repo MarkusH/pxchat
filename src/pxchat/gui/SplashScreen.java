@@ -6,13 +6,20 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+/**
+ * @author Florian Bausch
+ * @author Markus Holtermann
+ * 
+ */
 public class SplashScreen extends JDialog {
 	private JButton startButton;
 	private JLabel imageLabel;
@@ -20,12 +27,15 @@ public class SplashScreen extends JDialog {
 
 	public SplashScreen(JFrame parent) {
 		super(parent, "pxchat", false);
-		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		this.setLayout(new BorderLayout(10, 10));
 		this.parent = parent;
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout(10,10));
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		startButton = new JButton(I18n.getInstance().getString("ssEnterChat"));
 		startButton.setEnabled(false);
 		startButton.setPreferredSize(new Dimension(200, 30));
+
 		startButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -37,8 +47,9 @@ public class SplashScreen extends JDialog {
 		imageLabel = new JLabel(new ImageIcon("data/img/test-pattern.png"),
 				SwingConstants.LEFT);
 		imageLabel.setToolTipText(I18n.getInstance().getString("ssInfoText"));
-		this.getContentPane().add(imageLabel, BorderLayout.CENTER);
-		this.getContentPane().add(startButton, BorderLayout.SOUTH);
+		panel.add(imageLabel, BorderLayout.CENTER);
+		panel.add(startButton, BorderLayout.SOUTH);
+		this.getContentPane().add(panel, BorderLayout.CENTER);
 		this.pack();
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(size.width / 2 - this.getWidth() / 2,
