@@ -29,6 +29,7 @@ public class TCPClient extends CustomSocket {
 			this.socket = new Socket(host, port);
 			this.initCipher();
 			this.connected = true;
+			this.sendDisconnectedEvent = false;
 			tcpClientListener.clientConnect(this);
 			doRead();
 		}

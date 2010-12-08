@@ -1,6 +1,7 @@
 package pxchat.net;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import pxchat.net.protocol.core.FrameAdapter;
 import pxchat.net.protocol.core.FrameAdapterListener;
@@ -32,6 +33,9 @@ public class Server {
 	 * The frame adapter used to control the data flow
 	 */
 	private ServerFrameAdapter serverFrameAdapter;
+	
+	private HashMap<String, String> authList = new HashMap<String, String>();
+	private HashMap<Integer, String> userList = new HashMap<Integer, String>();
 
 	/**
 	 * The TCP server listener used to process events of the underlying server
@@ -46,8 +50,9 @@ public class Server {
 
 		@Override
 		public void clientDisconnect(CustomSocket client) {
-			int sessionID = serverFrameAdapter.getAdapter(client).getSessionID();
-			System.out.println(this + "> Client with id " + sessionID + " disconnected.");
+			FrameAdapter adapter = serverFrameAdapter.getAdapter(client);
+			serverFrameAdapter.delete(adapter);
+			System.out.println(this + "> Client with id " + adapter.getSessionID() + " disconnected.");
 		}
 
 		@Override
@@ -69,7 +74,7 @@ public class Server {
 
 		@Override
 		public void destroyAdapter(ServerFrameAdapter serverAdapter, FrameAdapter adapter) {
-
+			userList.remove(adapter.getSessionID());
 		}
 
 		@Override
@@ -107,9 +112,6 @@ public class Server {
 					 * TODO: If another frame is sent before the version frame
 					 * arrives, or the version frame does not arrive after a
 					 * specified timeout, the connection needs to be terminated.
-					 * 
-					 * TODO: Should the version frame include the
-					 * authentication?
 					 */
 					case Frame.ID_VERSION:
 						VersionFrame vf = (VersionFrame) frame;
@@ -128,9 +130,18 @@ public class Server {
 						
 					case Frame.ID_AUTH:
 						AuthenticationFrame af = (AuthenticationFrame) frame;
-						adapter.getOutgoing().add(new NotificationFrame("Authentification was unsuccessful"));
-						adapter.send();
-						adapter.disconnect();
+						String pwd = authList.get(af.getUsername());
+						
+						// reject access, if password is not matching (or null) or if the user name
+						// is already in use
+						if (!af.getPassword().equals(pwd) || userList.get(af.getUsername()) != null) {
+							adapter.getOutgoing().add(new NotificationFrame("Authentification was unsuccessful"));
+							adapter.send();
+							adapter.disconnect();
+						} else {
+							userList.put(adapter.getSessionID(), af.getUsername());
+						}
+						
 						break;
 				}
 			}
@@ -169,5 +180,17 @@ public class Server {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public HashMap<String, String> getAuthList() {
+		return authList;
+	}
+
+	public void setAuthList(HashMap<String, String> authList) {
+		this.authList = authList;
+	}
+
+	public HashMap<Integer, String> getUserList() {
+		return userList;
 	}
 }

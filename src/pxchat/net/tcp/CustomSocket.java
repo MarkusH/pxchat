@@ -25,6 +25,7 @@ public class CustomSocket {
 
 	private boolean closing = false;
 	protected boolean connected = false;
+	protected boolean sendDisconnectedEvent = false;
 
 	private Cipher cipherIn;
 	private Cipher cipherOut;
@@ -94,6 +95,8 @@ public class CustomSocket {
 
 				this.socket = null;
 				this.connected = false;
+				
+				doDisconnect();
 			}
 		}
 	}
@@ -135,20 +138,29 @@ public class CustomSocket {
 	}
 
 	private synchronized void readCallback(Exception e) {
-		System.out.println(e);
 		if (this.closing || e instanceof EOFException || e instanceof SocketException) {
 			this.closing = false;
 			this.connected = false;
-			if (tcpClientListener != null)
-				tcpClientListener.clientDisconnect(this);
 		} else {
 			try {
 				close();
 			} catch (Exception e1) {
 			}
-			if (tcpClientListener != null)
-				tcpClientListener.clientDisconnect(this);
 		}
+		doDisconnect();
+	}
+	
+	/**
+	 * Sends the disconnected event to the listener
+	 */
+	private void doDisconnect() {
+		if (sendDisconnectedEvent)
+			return;
+		
+		if (tcpClientListener != null)
+			tcpClientListener.clientDisconnect(this);
+		
+		sendDisconnectedEvent = true;
 	}
 
 	class ReadThread extends Thread {
@@ -166,11 +178,10 @@ public class CustomSocket {
 					cIn = new CipherInputStream(socket.getInputStream(), cipherIn);
 				ObjectInputStream stream = new ObjectInputStream(cIn);
 				object = stream.readObject();
+				readCallback(object);
 			} catch (Exception e) {
 				readCallback(e);
-				return;
 			}
-			readCallback(object);
 		}
 	}
 

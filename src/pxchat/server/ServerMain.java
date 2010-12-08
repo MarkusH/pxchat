@@ -85,6 +85,7 @@ public class ServerMain {
 			System.out.println(authList);
 
 			Server server = new Server();
+			server.setAuthList(authList);
 			server.listen(port);
 
 			Thread.sleep(1000);
@@ -97,7 +98,23 @@ public class ServerMain {
 			// server.close();
 			// Thread.sleep(1000);
 
-			Thread.sleep(30000);
+			Thread.sleep(10000);
+			System.out.println(server.getUserList());
+			
+			Thread.sleep(10000);
+			System.out.println(server.getUserList());
+			
+			Thread.sleep(10000);
+			System.out.println(server.getUserList());
+			
+			Thread.sleep(10000);
+			System.out.println(server.getUserList());
+			
+			Thread.sleep(3000);
+			System.out.println(server.getUserList());
+			
+			Thread.sleep(3000);
+			System.out.println(server.getUserList());
 
 			System.out.println("Stopping server...");
 			server.close();
