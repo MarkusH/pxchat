@@ -76,6 +76,11 @@ public class Server {
 
 		@Override
 		public void destroyAdapter(ServerFrameAdapter serverAdapter, FrameAdapter adapter) {
+			String name = userList.get(adapter.getSessionID());
+			if (name != null) {
+				serverAdapter.broadcast(FrameQueue.from(new NotificationFrame(name + " left the chat")),
+						false);
+			}
 			userList.remove(adapter.getSessionID());
 			sendUserList();
 		}
@@ -143,6 +148,9 @@ public class Server {
 							adapter.send();
 							adapter.disconnect();
 						} else {
+							serverFrameAdapter.broadcast(FrameQueue.from(
+									new NotificationFrame(af.getUsername() + " joined the chat")),
+									false);
 							userList.put(adapter.getSessionID(), af.getUsername());
 							sendUserList();
 						}

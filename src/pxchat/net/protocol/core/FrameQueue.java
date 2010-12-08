@@ -11,5 +11,13 @@ import pxchat.net.protocol.frames.Frame;
  * @author Markus Döllinger
  */
 public class FrameQueue extends LinkedList<Frame> {
+	
+	public static FrameQueue from(Frame... frames) {
+		FrameQueue result = new FrameQueue();
+		for (Frame frame : frames) {
+			result.add(frame);
+		}
+		return result;
+	}
 
 }
