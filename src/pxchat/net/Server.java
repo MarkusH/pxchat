@@ -5,12 +5,14 @@ import java.util.HashMap;
 
 import pxchat.net.protocol.core.FrameAdapter;
 import pxchat.net.protocol.core.FrameAdapterListener;
+import pxchat.net.protocol.core.FrameQueue;
 import pxchat.net.protocol.core.ServerFrameAdapter;
 import pxchat.net.protocol.core.ServerFrameAdapterListener;
 import pxchat.net.protocol.frames.AuthenticationFrame;
 import pxchat.net.protocol.frames.Frame;
 import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.net.protocol.frames.SessionIDFrame;
+import pxchat.net.protocol.frames.UserListFrame;
 import pxchat.net.protocol.frames.VersionFrame;
 import pxchat.net.tcp.CustomSocket;
 import pxchat.net.tcp.TCPServer;
@@ -75,6 +77,7 @@ public class Server {
 		@Override
 		public void destroyAdapter(ServerFrameAdapter serverAdapter, FrameAdapter adapter) {
 			userList.remove(adapter.getSessionID());
+			sendUserList();
 		}
 
 		@Override
@@ -134,12 +137,14 @@ public class Server {
 						
 						// reject access, if password is not matching (or null) or if the user name
 						// is already in use
-						if (!af.getPassword().equals(pwd) || userList.get(af.getUsername()) != null) {
+						if (!af.getPassword().equals(pwd) || 
+								userList.values().contains(af.getUsername())) {
 							adapter.getOutgoing().add(new NotificationFrame("Authentification was unsuccessful"));
 							adapter.send();
 							adapter.disconnect();
 						} else {
 							userList.put(adapter.getSessionID(), af.getUsername());
+							sendUserList();
 						}
 						
 						break;
@@ -181,16 +186,34 @@ public class Server {
 			e.printStackTrace();
 		}
 	}
-
-	public HashMap<String, String> getAuthList() {
-		return authList;
+	
+	
+	/**
+	 * Sends the current user list to all clients
+	 */
+	private void sendUserList() {
+		// TODO: only send this to verified clients
+		FrameQueue queue = new FrameQueue();
+		queue.add(new UserListFrame(this.userList));
+		serverFrameAdapter.broadcast(queue, true);
 	}
+	
 
+	/**
+	 * Sets the authentication list of the server.
+	 * 
+	 * @param authList The new authentication list
+	 */
 	public void setAuthList(HashMap<String, String> authList) {
 		this.authList = authList;
 	}
-
+	
+	/**
+	 * Returns the current user list of the server.
+	 * 
+	 * @return The user list
+	 */
 	public HashMap<Integer, String> getUserList() {
-		return userList;
+		return this.userList;
 	}
 }

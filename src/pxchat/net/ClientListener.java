@@ -1,5 +1,7 @@
 package pxchat.net;
 
+import java.util.HashMap;
+
 /**
  * This interface controls the information flow between network and the GUI
  * components.
@@ -22,9 +24,18 @@ public interface ClientListener {
 	 * either because it closed the connection or the server shut down.
 	 */
 	public void clientDisconnect();
-	
+
 	/**
 	 * @param message
 	 */
-	public void clientNotification(String message);
+	public void notification(String message);
+
+	/**
+	 * This method is called when the user list changes, i.e. a client connected
+	 * or disconnected
+	 * 
+	 * @param newUserList
+	 */
+	public void userListChanged(HashMap<Integer, String> newUserList);
+
 }

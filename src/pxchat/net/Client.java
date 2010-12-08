@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Vector;
 
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.NoFixedFacet;
-
 import pxchat.net.protocol.core.FrameAdapter;
 import pxchat.net.protocol.core.FrameAdapterListener;
 import pxchat.net.protocol.frames.AuthenticationFrame;
 import pxchat.net.protocol.frames.Frame;
 import pxchat.net.protocol.frames.NotificationFrame;
+import pxchat.net.protocol.frames.UserListFrame;
 import pxchat.net.protocol.frames.VersionFrame;
 import pxchat.net.tcp.TCPClientListener;
 import pxchat.net.tcp.CustomSocket;
@@ -96,7 +95,18 @@ public final class Client {
 					case Frame.ID_NOTIFICATION:
 						NotificationFrame nf = (NotificationFrame) frame;
 						for (ClientListener listener : clientListeners) {
-							listener.clientNotification(nf.getMessage());
+							listener.notification(nf.getMessage());
+						}
+						break;
+						
+
+					/*
+					 * 
+					 */
+					case Frame.ID_USERLIST:
+						UserListFrame uf = (UserListFrame) frame;
+						for (ClientListener listener : clientListeners) {
+							listener.userListChanged(uf.getUserlist());
 						}
 						break;
 				}

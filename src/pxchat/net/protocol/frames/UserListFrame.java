@@ -2,25 +2,21 @@ package pxchat.net.protocol.frames;
 
 import java.util.HashMap;
 
+/**
+ * @author markus
+ *
+ */
 public class UserListFrame extends Frame {
 
-	private HashMap<Integer,String> userlist;
+	private HashMap<Integer, String> userlist;
 	
-	UserListFrame() {
+	public UserListFrame(HashMap<Integer, String> userList) {
 		this.id = Frame.ID_USERLIST;
-		this.userlist = new HashMap<Integer, String>();
+		this.userlist = userList;
 	}
 
 	public HashMap<Integer, String> getUserlist() {
 		return userlist;
-	}
-
-	public void addUser(Integer uid, String name) {
-		this.userlist.put(uid, name);
-	}
-	
-	public void removeUser(Integer uid) {
-		this.userlist.remove(uid);
 	}
 	
 }

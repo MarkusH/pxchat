@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -228,6 +229,7 @@ public class ClientMain extends JFrame {
 				sendButton.setEnabled(false);
 				inputArea.setEnabled(false);
 				writeNotification(I18n.getInstance().getString("disconnectedFromServer"));
+				userList.setListData(new Object[0]);
 			}
 
 			@Override
@@ -241,8 +243,14 @@ public class ClientMain extends JFrame {
 			}
 
 			@Override
-			public void clientNotification(String message) {
+			public void notification(String message) {
 				writeNotification(message);
+			}
+
+			@Override
+			public void userListChanged(HashMap<Integer, String> newUserList) {
+				ClientMain.this.userList.setListData(
+						newUserList.values().toArray(new String[newUserList.size()]));
 			}
 		});
 
