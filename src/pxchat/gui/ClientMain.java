@@ -83,7 +83,9 @@ public class ClientMain extends JFrame {
 		 * building the pxchat menu
 		 */
 		mFile = new JMenu("pxchat");
+		mFile.setMnemonic('x');
 		mNewChat = new JMenuItem(I18n.getInstance().getString("connectToChat"));
+		mNewChat.setMnemonic('n');
 		mNewChat.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -94,6 +96,7 @@ public class ClientMain extends JFrame {
 		mFile.add(mNewChat);
 
 		mCloseChat = new JMenuItem(I18n.getInstance().getString("closeChat"));
+		mCloseChat.setMnemonic('d');
 		mCloseChat.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -105,6 +108,7 @@ public class ClientMain extends JFrame {
 		mFile.add(mCloseChat);
 
 		mExit = new JMenuItem(I18n.getInstance().getString("quitProgram"), Icons.get("quit.png"));
+		mExit.setMnemonic('q');
 		mExit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -119,7 +123,9 @@ public class ClientMain extends JFrame {
 		 * building the help menu
 		 */
 		mHelp = new JMenu(I18n.getInstance().getString("help"));
+		mHelp.setMnemonic('h');
 		mAbout = new JMenuItem(I18n.getInstance().getString("aboutInfo"), Icons.get("about.png"));
+		mAbout.setMnemonic('b');
 		mAbout.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -177,7 +183,7 @@ public class ClientMain extends JFrame {
 		inputAreaPane.setBounds(10, 320, 400, 100);
 		getContentPane().add(inputAreaPane);
 
-		userList = new JList(new String[] { "User", "User2" });
+		userList = new JList();
 		userList.setEnabled(false);
 		userListPane = new JScrollPane(userList, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -186,11 +192,11 @@ public class ClientMain extends JFrame {
 
 		whiteBoardButton = new JButton(I18n.getInstance().getString("whiteBoardButton"), Icons
 				.get("whiteboard.png"));
+		whiteBoardButton.setMnemonic('w');
 		whiteBoardButton.setBounds(420, 320, 150, 30);
 		// TODO remove the comment from next line as soon as it is possible
 		// whiteBoardButton.setEnabled(false);
 		whiteBoardButton.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				wb.setVisible(!wb.isVisible());
@@ -199,6 +205,7 @@ public class ClientMain extends JFrame {
 		getContentPane().add(whiteBoardButton);
 
 		sendButton = new JButton(I18n.getInstance().getString("sendButton"), Icons.get("send.png"));
+		sendButton.setMnemonic('s');
 		sendButton.setBounds(420, 360, 150, 30);
 		sendButton.setEnabled(false);
 		sendButton.addActionListener(new ActionListener() {
