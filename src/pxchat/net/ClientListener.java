@@ -22,4 +22,9 @@ public interface ClientListener {
 	 * either because it closed the connection or the server shut down.
 	 */
 	public void clientDisconnect();
+	
+	/**
+	 * @param message
+	 */
+	public void clientNotification(String message);
 }

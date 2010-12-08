@@ -4,8 +4,13 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Vector;
 
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.NoFixedFacet;
+
 import pxchat.net.protocol.core.FrameAdapter;
 import pxchat.net.protocol.core.FrameAdapterListener;
+import pxchat.net.protocol.frames.AuthenticationFrame;
+import pxchat.net.protocol.frames.Frame;
+import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.net.protocol.frames.VersionFrame;
 import pxchat.net.tcp.TCPClientListener;
 import pxchat.net.tcp.CustomSocket;
@@ -33,6 +38,9 @@ public final class Client {
 	 * The client listener sending events to the GUI.
 	 */
 	private Vector<ClientListener> clientListeners = new Vector<ClientListener>();
+	
+	private String loginName = "";
+	private String loginPassword = "";
 
 	/**
 	 * The TCP client listener receiving events from the underlying TCP client.
@@ -61,6 +69,7 @@ public final class Client {
 				listener.clientConnect(client.getRemoteAddress());
 
 			frameAdapter.getOutgoing().add(VersionFrame.getCurrent());
+			frameAdapter.getOutgoing().add(new AuthenticationFrame(loginName, loginPassword));
 			frameAdapter.send();
 		}
 
@@ -76,6 +85,22 @@ public final class Client {
 		@Override
 		public void process(FrameAdapter adapter) {
 			System.out.println(this + " executes " + adapter.getIncoming());
+			
+			for (Frame frame : adapter.getIncoming()) {
+
+				switch (frame.getId()) {
+					
+					/*
+					 * 
+					 */
+					case Frame.ID_NOTIFICATION:
+						NotificationFrame nf = (NotificationFrame) frame;
+						for (ClientListener listener : clientListeners) {
+							listener.clientNotification(nf.getMessage());
+						}
+						break;
+				}
+			}
 
 			adapter.getIncoming().clear();
 		}
@@ -98,14 +123,20 @@ public final class Client {
 	}
 
 	/**
-	 * Connects to the specified host on the defined port.
+	 * Connects to the specified host on the defined port. It uses the login credentials to
+	 * establish a connection.
 	 * 
-	 * @param host
-	 * @param port
-	 * @throws IOException
-	 * @throws UnknownHostException
+	 * @param host The host to connect to
+	 * @param port The port of the end-point
+	 * @param name The login name
+	 * @param password The login password
+	 * @throws UnknownHostException If the host cannot be found
+	 * @throws IOException If there was an error concerning the connection
 	 */
-	public void connect(String host, int port) throws UnknownHostException, IOException {
+	public void connect(String host, int port, 
+	                    String name, String password) throws UnknownHostException, IOException {
+		this.loginName = name;
+		this.loginPassword = password;
 		client.connect(host, port);
 	}
 

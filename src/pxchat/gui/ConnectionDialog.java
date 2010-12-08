@@ -196,7 +196,7 @@ public class ConnectionDialog extends JDialog {
 		pass = String.valueOf(passWord.getPassword());
 
 		try {
-			Client.getInstance().connect(host, port);
+			Client.getInstance().connect(host, port, user, pass);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, I18n.getInstance().getString("cdConnectFail"));
 			return;

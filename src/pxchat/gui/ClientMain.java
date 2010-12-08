@@ -239,6 +239,11 @@ public class ClientMain extends JFrame {
 				inputArea.setEnabled(true);
 				writeNotification(I18n.getInstance().getString("connectedToServer") + " " + remoteAddress);
 			}
+
+			@Override
+			public void clientNotification(String message) {
+				writeNotification(message);
+			}
 		});
 
 		splashScreen.setReady();

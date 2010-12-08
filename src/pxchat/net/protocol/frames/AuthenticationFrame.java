@@ -1,11 +1,11 @@
 package pxchat.net.protocol.frames;
 
-public class AuthentificationFrame extends Frame {
+public class AuthenticationFrame extends Frame {
 
 	private String username;
 	private String password;
 
-	AuthentificationFrame(String username, String password) {
+	public AuthenticationFrame(String username, String password) {
 		this.username = username;
 		this.password = password;
 		this.id = Frame.ID_AUTH;

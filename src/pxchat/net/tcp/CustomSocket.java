@@ -135,6 +135,7 @@ public class CustomSocket {
 	}
 
 	private synchronized void readCallback(Exception e) {
+		System.out.println(e);
 		if (this.closing || e instanceof EOFException || e instanceof SocketException) {
 			this.closing = false;
 			this.connected = false;

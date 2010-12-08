@@ -6,7 +6,9 @@ import pxchat.net.protocol.core.FrameAdapter;
 import pxchat.net.protocol.core.FrameAdapterListener;
 import pxchat.net.protocol.core.ServerFrameAdapter;
 import pxchat.net.protocol.core.ServerFrameAdapterListener;
+import pxchat.net.protocol.frames.AuthenticationFrame;
 import pxchat.net.protocol.frames.Frame;
+import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.net.protocol.frames.SessionIDFrame;
 import pxchat.net.protocol.frames.VersionFrame;
 import pxchat.net.tcp.CustomSocket;
@@ -113,6 +115,8 @@ public class Server {
 						VersionFrame vf = (VersionFrame) frame;
 						if (!vf.isCompatible(VersionFrame.getCurrent())) {
 							System.out.println(this + "> Version control unsuccessful.");
+							adapter.getOutgoing().add(new NotificationFrame("Version control was unsuccessful"));
+							adapter.send();
 							adapter.disconnect();
 						} else {
 							System.out
@@ -120,6 +124,13 @@ public class Server {
 							adapter.getOutgoing().add(new SessionIDFrame(adapter.getSessionID()));
 							adapter.send();
 						}
+						break;
+						
+					case Frame.ID_AUTH:
+						AuthenticationFrame af = (AuthenticationFrame) frame;
+						adapter.getOutgoing().add(new NotificationFrame("Authentification was unsuccessful"));
+						adapter.send();
+						adapter.disconnect();
 						break;
 				}
 			}
