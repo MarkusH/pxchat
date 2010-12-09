@@ -485,6 +485,7 @@ public class WhiteBoard extends JFrame {
 		JFileChooser fc = new JFileChooser();
 		fc.setFileFilter(new PicFileFilter());
 		if (fc.showOpenDialog(WhiteBoard.this) == JFileChooser.APPROVE_OPTION) {
+			
 			paintBoard.loadBackground(fc.getSelectedFile());
 			paintBoard.repaint();
 		}

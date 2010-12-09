@@ -23,7 +23,8 @@ public abstract class Frame implements Serializable {
 	public static final int ID_AUTH = 6;
 	public static final int ID_USERLIST = 7;
 
-	public static final int ID_IMG = 10;
+	public static final int ID_IMG_START = 10;
+	public static final int ID_IMG_ID = 11;
 
 	public static final int ID_POINT = 100;
 	public static final int ID_LINE = 101;

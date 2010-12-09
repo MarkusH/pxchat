@@ -13,11 +13,13 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import pxchat.net.Client;
+import pxchat.whiteboard.ImageTable;
 import pxchat.whiteboard.PaintObject;
 
 public class PaintBoard extends JPanel {
 
-	private BufferedImage background;
+	private Integer background = -1;
 	private BufferedImage board;
 	// private BufferedImage preview;
 
@@ -30,27 +32,39 @@ public class PaintBoard extends JPanel {
 	}
 
 	public void loadBackground(File file) {
+		BufferedImage img = null;
 		try {
-			loadBackgroundImage(ImageIO.read(file));
-		} catch (IOException e) {
-			loadBackgroundImage(null);
+			img = ImageIO.read(file);
+		} catch (Exception e) {
+			return;
 		}
+		
+		background = Client.getInstance().getNextImageID();
+		ImageTable.getInstance().put(background, img);
+
+		
+		
+//		try {
+//			loadBackgroundImage(ImageIO.read(file));
+//		} catch (IOException e) {
+//			loadBackgroundImage(null);
+//		}
 	}
 
-	public void loadBackgroundImage(BufferedImage img) {
-		if (img == null) {
-			this.background = new BufferedImage(getWidth(), getHeight(),
-					BufferedImage.TYPE_4BYTE_ABGR);
-			Graphics2D g = this.background.createGraphics();
-			Composite comp = g.getComposite();
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR,
-					0.0f));
-			g.fillRect(0, 0, getWidth(), getHeight());
-			g.setComposite(comp);
-		} else {
-			this.background = img;
-		}
-	}
+//	public void loadBackgroundImage(BufferedImage img) {
+//		if (img == null) {
+//			this.background = new BufferedImage(getWidth(), getHeight(),
+//					BufferedImage.TYPE_4BYTE_ABGR);
+//			Graphics2D g = this.background.createGraphics();
+//			Composite comp = g.getComposite();
+//			g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR,
+//					0.0f));
+//			g.fillRect(0, 0, getWidth(), getHeight());
+//			g.setComposite(comp);
+//		} else {
+//			this.background = img;
+//		}
+//	}
 
 	/**
 	 * Clears the board
@@ -131,9 +145,13 @@ public class PaintBoard extends JPanel {
 				RenderingHints.VALUE_ANTIALIAS_ON);
 
 		// draw background
-		if (this.background == null)
-			loadBackgroundImage(null);
-		g.drawImage(this.background, 0, 0, getWidth(), getHeight(), null);
+//		if (this.background == null)
+//			loadBackgroundImage(null);
+//		g.drawImage(this.background, 0, 0, getWidth(), getHeight(), null);
+		
+		BufferedImage img = ImageTable.getInstance().get(background);
+		if (img != null)
+			g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
 
 		// draw board
 		updateBoard();

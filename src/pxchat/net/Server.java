@@ -11,6 +11,7 @@ import pxchat.net.protocol.core.ServerFrameAdapter;
 import pxchat.net.protocol.core.ServerFrameAdapterListener;
 import pxchat.net.protocol.frames.AuthenticationFrame;
 import pxchat.net.protocol.frames.Frame;
+import pxchat.net.protocol.frames.ImageIDFrame;
 import pxchat.net.protocol.frames.MessageFrame;
 import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.net.protocol.frames.SessionIDFrame;
@@ -40,6 +41,12 @@ public class Server {
 
 	private HashMap<String, String> authList = new HashMap<String, String>();
 	private HashMap<Integer, String> userList = new HashMap<Integer, String>();
+	
+	private int nextImageID = 0;
+	
+	private synchronized int getNextImageID() {
+		return nextImageID++;
+	}
 
 	/**
 	 * The TCP server listener used to process events of the underlying server
@@ -193,6 +200,7 @@ public class Server {
 							adapter.setVersionVerified(true);
 							adapter.getOutgoing().add(
 									new SessionIDFrame(adapter.getSessionID()));
+							adapter.getOutgoing().add(new ImageIDFrame(getNextImageID()));
 							adapter.send();
 						}
 						break;

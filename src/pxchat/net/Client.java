@@ -9,6 +9,7 @@ import pxchat.net.protocol.core.FrameAdapter;
 import pxchat.net.protocol.core.FrameAdapterListener;
 import pxchat.net.protocol.frames.AuthenticationFrame;
 import pxchat.net.protocol.frames.Frame;
+import pxchat.net.protocol.frames.ImageIDFrame;
 import pxchat.net.protocol.frames.MessageFrame;
 import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.net.protocol.frames.UserListFrame;
@@ -48,6 +49,15 @@ public final class Client {
 
 	private String loginName = "";
 	private String loginPassword = "";
+
+	private int nextImageID = -1;
+	
+	/**
+	 * @return the nextImageID
+	 */
+	public int getNextImageID() {
+		return nextImageID;
+	}
 
 	/**
 	 * The TCP client listener receiving events from the underlying TCP client.
@@ -131,6 +141,11 @@ public final class Client {
 									userList.get(mf.getSessionId()),
 									mf.getMessage());
 						}
+						break;
+						
+					case Frame.ID_IMG_ID:
+						ImageIDFrame idf = (ImageIDFrame) frame;
+						nextImageID = idf.getImageID();
 						break;
 				}
 			}
