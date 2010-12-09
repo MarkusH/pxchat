@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output method="html" omit-xml-declaration="yes" media-type="xml" indent="yes" />
 
 	<xsl:template match="/">
 		<html>
@@ -38,20 +39,6 @@
 
 	<xsl:template match="chat">
 		<xsl:apply-templates />
-	</xsl:template>
-
-	<xsl:template match="invite">
-		<i>
-			<xsl:text>[</xsl:text>
-			<xsl:value-of select="@date" />
-			<xsl:text> - </xsl:text>
-			<xsl:value-of select="@time" />
-			<xsl:text>]: </xsl:text>
-			<xsl:value-of select="@user1" />
-			<xsl:text> has invited </xsl:text>
-			<xsl:value-of select="@user2" />
-		</i>
-		<br />
 	</xsl:template>
 
 	<xsl:template match="join">

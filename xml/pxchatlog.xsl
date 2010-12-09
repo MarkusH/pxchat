@@ -41,20 +41,6 @@
 		<xsl:apply-templates />
 	</xsl:template>
 
-	<xsl:template match="invite">
-		<i>
-			<xsl:text>[</xsl:text>
-			<xsl:value-of select="@date" />
-			<xsl:text> - </xsl:text>
-			<xsl:value-of select="@time" />
-			<xsl:text>]: </xsl:text>
-			<xsl:value-of select="@user1" />
-			<xsl:text> has invited </xsl:text>
-			<xsl:value-of select="@user2" />
-		</i>
-		<br />
-	</xsl:template>
-
 	<xsl:template match="join">
 		<i>
 			<xsl:text>[</xsl:text>

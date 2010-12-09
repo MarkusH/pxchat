@@ -3,8 +3,6 @@
  */
 package pxchat.net.protocol.core;
 
-import java.io.IOException;
-
 import pxchat.net.tcp.CustomSocket;
 
 /**

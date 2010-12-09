@@ -5,9 +5,8 @@
 <!ELEMENT name (#PCDATA)>
 <!ELEMENT start EMPTY>
 <!ELEMENT end EMPTY>
-<!ELEMENT chat (message|invite|join|leave)*>
+<!ELEMENT chat (message|join|leave)*>
 <!ELEMENT message (#PCDATA)>
-<!ELEMENT invite EMPTY>
 <!ELEMENT join EMPTY>
 <!ELEMENT leave EMPTY>
 
@@ -31,13 +30,6 @@
 	author  CDATA   #REQUIRED
 	date    CDATA   #REQUIRED
 	time    CDATA   #REQUIRED
->
-
-<!ATTLIST invite
-	date    CDATA   #REQUIRED
-	time    CDATA   #REQUIRED
-	user1   CDATA   #REQUIRED
-	user2   CDATA   #REQUIRED
 >
 
 <!ATTLIST join

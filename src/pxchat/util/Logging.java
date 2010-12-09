@@ -197,21 +197,6 @@ public class Logging {
 		}
 	}
 
-	/**
-	 * Call this function when a <invitor> has invited <user>
-	 * 
-	 * @param user
-	 */
-	public void logInvite(String invitor, String user) {
-		try {
-			oswMessage
-					.write("\t\t<invite user1=\"" + invitor + "\" user2=\"" + user + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
-			oswMessage.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	private String formatDateTime(String format) {
 		sdf = new SimpleDateFormat(format);
 		return sdf.format(cal.getTime());

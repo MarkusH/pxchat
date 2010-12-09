@@ -10,7 +10,6 @@ public class LoggingMain {
 		l.logMessage("I hate TPS reports!", "Peter");
 		l.logMessage("Didn't you get that memo!", "Samir");
 
-		l.logInvite("Samir", "Michael");
 		l.logJoin("Michael");
 
 		l.logMessage("Why don't you go by 'Mike' instead of 'Michael'.",
