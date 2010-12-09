@@ -16,23 +16,23 @@ public class FrameAdapter {
 	/**
 	 * The socket associated with this adapter.
 	 */
-	private CustomSocket socket;
+	protected CustomSocket socket;
 
 	/**
-	 * A unique id used to identifiy this adapter, or more generally, the
+	 * A unique id used to identify this adapter, or more generally, the
 	 * associated socket.
 	 */
-	private int sessionID;
+	protected int sessionID;
 
 	/**
 	 * The incoming frames which were received by the socket.
 	 */
-	private FrameQueue incoming;
+	protected FrameQueue incoming;
 
 	/**
 	 * The outgoing frames, which will be send be the socket.
 	 */
-	private FrameQueue outgoing;
+	protected FrameQueue outgoing;
 
 	/**
 	 * A listener for the callbacks of this adapter.

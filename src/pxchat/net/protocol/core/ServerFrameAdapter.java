@@ -11,7 +11,7 @@ import pxchat.net.tcp.CustomSocket;
  * 
  * @author Markus Döllinger
  */
-public class ServerFrameAdapter extends Vector<FrameAdapter> {
+public class ServerFrameAdapter extends Vector<AuthFrameAdapter> {
 
 	/**
 	 * The listener for this server adapter.
@@ -63,7 +63,7 @@ public class ServerFrameAdapter extends Vector<FrameAdapter> {
 
 		// create a new frame adapter
 		if (result == this.size()) {
-			FrameAdapter newAdapter = new FrameAdapter(socket, adapterListener);
+			AuthFrameAdapter newAdapter = new AuthFrameAdapter(socket, adapterListener);
 			newAdapter.setSessionID(getNewSessionID());
 
 			this.add(newAdapter);
@@ -83,7 +83,7 @@ public class ServerFrameAdapter extends Vector<FrameAdapter> {
 	 * @param socket The socket to return the adapter for
 	 * @return The frame adapter associated with the socket
 	 */
-	public FrameAdapter getAdapter(CustomSocket socket) {
+	public AuthFrameAdapter getAdapter(CustomSocket socket) {
 		return this.get(indexOfSocket(socket));
 	}
 
@@ -93,7 +93,7 @@ public class ServerFrameAdapter extends Vector<FrameAdapter> {
 	 * @param sessionID The session id to return the adapter for
 	 * @return The frame adapter associated with the socket
 	 */
-	public FrameAdapter getAdapter(int sessionID) {
+	public AuthFrameAdapter getAdapter(int sessionID) {
 		return this.get(indexOfSessionID(sessionID));
 	}
 
@@ -104,7 +104,7 @@ public class ServerFrameAdapter extends Vector<FrameAdapter> {
 	 * @param index The index of the frame adapter
 	 */
 	public void delete(int index) {
-		FrameAdapter candidate = this.get(index);
+		AuthFrameAdapter candidate = this.get(index);
 
 		if (candidate != null) {
 			if (serverListener != null)
@@ -120,7 +120,7 @@ public class ServerFrameAdapter extends Vector<FrameAdapter> {
 	 * 
 	 * @param adapter The frame adapter to remove
 	 */
-	public void delete(FrameAdapter adapter) {
+	public void delete(AuthFrameAdapter adapter) {
 		this.delete(this.indexOf(adapter));
 	}
 
@@ -131,7 +131,7 @@ public class ServerFrameAdapter extends Vector<FrameAdapter> {
 	 * @return The index of the adapter
 	 */
 	public int indexOfSessionID(int sessionID) {
-		for (FrameAdapter adapter : this) {
+		for (AuthFrameAdapter adapter : this) {
 			if (adapter.getSessionID() == sessionID)
 				return this.indexOf(adapter);
 		}
@@ -143,14 +143,17 @@ public class ServerFrameAdapter extends Vector<FrameAdapter> {
 	 * and returns the number of clients reached. If <code>immediate</code> is
 	 * set, this method calls the {@link FrameAdapter#send()} method.
 	 * 
+	 * It is possible to pass a list of exceptions to the broadcast.
+	 * 
 	 * @param queue The data to enqueue in the outgoing buffer of the frame
 	 *            adapters
 	 * @param immediate If <code>true</code>, the data is send immediately
+	 * @param exceptSessionID A list of session ids the queue should not be sent to
 	 * @return The number of clients reached by the broadcast
 	 */
 	public int broadcast(FrameQueue queue, boolean immediate, int... exceptSessionID) {
 		int count = 0;
-LOOP:	for (FrameAdapter adapter : this) {
+LOOP:	for (AuthFrameAdapter adapter : this) {
 			for (int i : exceptSessionID) {
 				if (adapter.getSessionID() == i)
 					continue LOOP;

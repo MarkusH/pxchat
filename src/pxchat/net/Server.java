@@ -3,6 +3,7 @@ package pxchat.net;
 import java.io.IOException;
 import java.util.HashMap;
 
+import pxchat.net.protocol.core.AuthFrameAdapter;
 import pxchat.net.protocol.core.FrameAdapter;
 import pxchat.net.protocol.core.FrameAdapterListener;
 import pxchat.net.protocol.core.FrameQueue;
@@ -36,7 +37,7 @@ public class Server {
 	 * The frame adapter used to control the data flow
 	 */
 	private ServerFrameAdapter serverFrameAdapter;
-	
+
 	private HashMap<String, String> authList = new HashMap<String, String>();
 	private HashMap<Integer, String> userList = new HashMap<Integer, String>();
 
@@ -53,15 +54,17 @@ public class Server {
 
 		@Override
 		public void clientDisconnect(CustomSocket client) {
-			FrameAdapter adapter = serverFrameAdapter.getAdapter(client);
+			AuthFrameAdapter adapter = serverFrameAdapter.getAdapter(client);
 			serverFrameAdapter.delete(adapter);
-			System.out.println(this + "> Client with id " + adapter.getSessionID() + " disconnected.");
+			System.out.println(this + "> Client with id " + adapter
+					.getSessionID() + " disconnected.");
 		}
 
 		@Override
 		public void clientConnect(CustomSocket client) {
 			FrameAdapter adapter = serverFrameAdapter.getAdapter(client);
-			System.out.println(this + "> new connection " + client + " --> " + adapter);
+			System.out
+					.println(this + "> new connection " + client + " --> " + adapter);
 		}
 
 		@Override
@@ -76,18 +79,46 @@ public class Server {
 	private ServerFrameAdapterListener serverFrameAdapterListener = new ServerFrameAdapterListener() {
 
 		@Override
-		public void destroyAdapter(ServerFrameAdapter serverAdapter, FrameAdapter adapter) {
+		public void destroyAdapter(ServerFrameAdapter serverAdapter,
+									AuthFrameAdapter adapter) {
 			String name = userList.get(adapter.getSessionID());
 			if (name != null) {
-				serverAdapter.broadcast(FrameQueue.from(new NotificationFrame(name + " left the chat")),
-						false);
+				serverAdapter.broadcast(FrameQueue.from(new NotificationFrame(
+						name + " left the chat")), false);
 			}
 			userList.remove(adapter.getSessionID());
 			sendUserList();
 		}
 
 		@Override
-		public void createAdapter(ServerFrameAdapter serverAdapter, FrameAdapter adapter) {
+		public void createAdapter(ServerFrameAdapter serverAdapter,
+									AuthFrameAdapter adapter) {
+			final AuthFrameAdapter fa = adapter;
+
+			// Start a thread that waits for a few milliseconds. If the client
+			// did not authenticate within this time frame, the connection is
+			// terminated.
+			Thread timeOut = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+
+					try {
+						Thread.sleep(1500);
+						if (!fa.isVersionVerified() || !fa.isAuthenticated()) {
+							fa.getOutgoing()
+									.add(new NotificationFrame(
+											"Timeout waiting for authentication"));
+							fa.send();
+							fa.getSocket().close();
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			timeOut.setDaemon(true);
+			timeOut.start();
 		}
 	};
 
@@ -97,11 +128,35 @@ public class Server {
 	private FrameAdapterListener frameAdapterListener = new FrameAdapterListener() {
 
 		@Override
-		public void process(FrameAdapter adapter) {
-			System.out.println(this + "> executes " + adapter.getIncoming() + " from " + adapter
-					.getSocket());
+		public void process(FrameAdapter fAdapter) {
+			AuthFrameAdapter adapter = (AuthFrameAdapter) fAdapter;
+			System.out
+					.println(this + "> executes " + adapter.getIncoming() + " from " + adapter
+							.getSocket());
 
 			for (Frame frame : adapter.getIncoming()) {
+
+				// disconnect if the version is not verified and the frame is
+				// not a version frame
+				if (!adapter.isVersionVerified() && !(frame instanceof VersionFrame)) {
+					adapter.getOutgoing().add(
+							new NotificationFrame(
+									"The version was not verified"));
+					adapter.send();
+					adapter.disconnect();
+					return;
+				}
+
+				// disconnect if the adapter is not authenticated and the frame
+				// is not a authentication frame
+				if (adapter.isVersionVerified() && !adapter.isAuthenticated() && !(frame instanceof AuthenticationFrame)) {
+					adapter.getOutgoing().add(
+							new NotificationFrame(
+									"Authentication was not initiated"));
+					adapter.send();
+					adapter.disconnect();
+					return;
+				}
 
 				switch (frame.getId()) {
 
@@ -125,44 +180,57 @@ public class Server {
 					case Frame.ID_VERSION:
 						VersionFrame vf = (VersionFrame) frame;
 						if (!vf.isCompatible(VersionFrame.getCurrent())) {
-							System.out.println(this + "> Version control unsuccessful.");
-							adapter.getOutgoing().add(new NotificationFrame("Version control was unsuccessful"));
+							System.out
+									.println(this + "> Version control unsuccessful.");
+							adapter.getOutgoing()
+									.add(new NotificationFrame(
+											"Version control was unsuccessful"));
 							adapter.send();
 							adapter.disconnect();
 						} else {
 							System.out
 									.println(this + "> Version control successful, send sessionID");
-							adapter.getOutgoing().add(new SessionIDFrame(adapter.getSessionID()));
+							adapter.setVersionVerified(true);
+							adapter.getOutgoing().add(
+									new SessionIDFrame(adapter.getSessionID()));
 							adapter.send();
 						}
 						break;
-						
+
 					case Frame.ID_AUTH:
 						AuthenticationFrame af = (AuthenticationFrame) frame;
 						String pwd = authList.get(af.getUsername());
-						
-						// reject access, if password is not matching (or null) or if the user name
+
+						// reject access, if password is not matching (or null)
+						// or if the user name
 						// is already in use
-						if (!af.getPassword().equals(pwd) || 
-								userList.values().contains(af.getUsername())) {
-							adapter.getOutgoing().add(new NotificationFrame("Authentification was unsuccessful"));
+						if (!af.getPassword().equals(pwd) || userList.values()
+								.contains(af.getUsername())) {
+							adapter.getOutgoing()
+									.add(new NotificationFrame(
+											"Authentification was unsuccessful"));
 							adapter.send();
 							adapter.disconnect();
 						} else {
-							serverFrameAdapter.broadcast(FrameQueue.from(
-									new NotificationFrame(af.getUsername() + " joined the chat")),
-									false);
-							userList.put(adapter.getSessionID(), af.getUsername());
+							adapter.setAuthenticated(true);
+							serverFrameAdapter
+									.broadcast(
+											FrameQueue
+													.from(new NotificationFrame(
+															af.getUsername() + " joined the chat")),
+											false);
+							userList.put(adapter.getSessionID(),
+									af.getUsername());
 							sendUserList();
 						}
-						
+
 						break;
-						
+
 					case Frame.ID_MSG:
 						MessageFrame mf = (MessageFrame) frame;
 						mf.setSessionId(adapter.getSessionID());
-						serverFrameAdapter.broadcast(FrameQueue.from(mf), 
-								true, adapter.getSessionID());
+						serverFrameAdapter.broadcast(FrameQueue.from(mf), true,
+								adapter.getSessionID());
 						break;
 				}
 			}
@@ -202,8 +270,7 @@ public class Server {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	/**
 	 * Sends the current user list to all clients
 	 */
@@ -213,7 +280,6 @@ public class Server {
 		queue.add(new UserListFrame(this.userList));
 		serverFrameAdapter.broadcast(queue, true);
 	}
-	
 
 	/**
 	 * Sets the authentication list of the server.
@@ -223,7 +289,7 @@ public class Server {
 	public void setAuthList(HashMap<String, String> authList) {
 		this.authList = authList;
 	}
-	
+
 	/**
 	 * Returns the current user list of the server.
 	 * 

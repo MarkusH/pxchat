@@ -35,6 +35,10 @@ public final class Client {
 	 */
 	private FrameAdapter frameAdapter;
 
+	/**
+	 * The user list is a mapping of session id to user name of the clients
+	 * currently connected to the server
+	 */
 	private HashMap<Integer, String> userList = new HashMap<Integer, String>();
 
 	/**
@@ -52,7 +56,8 @@ public final class Client {
 
 		@Override
 		public void clientRead(CustomSocket client, Object data) {
-			System.out.println(this + "> Message received from server: " + data);
+			System.out
+					.println(this + "> Message received from server: " + data);
 			frameAdapter.receive(data);
 		}
 
@@ -66,13 +71,15 @@ public final class Client {
 
 		@Override
 		public void clientConnect(CustomSocket client) {
-			System.out.println(this + "> Conntected to server: " + client.getRemoteAddress());
+			System.out.println(this + "> Conntected to server: " + client
+					.getRemoteAddress());
 
 			for (ClientListener listener : clientListeners)
 				listener.clientConnect(client.getRemoteAddress());
 
-			frameAdapter.getOutgoing().add(VersionFrame.getCurrent());
-			frameAdapter.getOutgoing().add(new AuthenticationFrame(loginName, loginPassword));
+			frameAdapter.getOutgoing().add(VersionFrame.getCurrent());		
+			frameAdapter.getOutgoing().add(
+					new AuthenticationFrame(loginName, loginPassword));
 			frameAdapter.send();
 		}
 
@@ -94,7 +101,7 @@ public final class Client {
 				switch (frame.getId()) {
 
 					/*
-					 * 
+					 * A new notification was received from the server
 					 */
 					case Frame.ID_NOTIFICATION:
 						NotificationFrame nf = (NotificationFrame) frame;
@@ -104,7 +111,7 @@ public final class Client {
 						break;
 
 					/*
-					 * A new user list is sent
+					 * A new user list was sent from the server
 					 */
 					case Frame.ID_USERLIST:
 						UserListFrame uf = (UserListFrame) frame;
@@ -120,7 +127,8 @@ public final class Client {
 					case Frame.ID_MSG:
 						MessageFrame mf = (MessageFrame) frame;
 						for (ClientListener listener : clientListeners) {
-							listener.messageReceived(userList.get(mf.getSessionId()), 
+							listener.messageReceived(
+									userList.get(mf.getSessionId()),
 									mf.getMessage());
 						}
 						break;
@@ -143,6 +151,11 @@ public final class Client {
 		public static final Client INSTANCE = new Client();
 	}
 
+	/**
+	 * Returns the sole instance of the TCP client.
+	 * 
+	 * @return The intstace of the TCP client
+	 */
 	public static Client getInstance() {
 		return Holder.INSTANCE;
 	}
@@ -159,8 +172,7 @@ public final class Client {
 	 * @throws IOException If there was an error concerning the connection
 	 */
 	public void connect(String host, int port, String name, String password)
-																			throws UnknownHostException,
-																			IOException {
+		throws UnknownHostException, IOException {
 		this.loginName = name;
 		this.loginPassword = password;
 		client.connect(host, port);
@@ -190,11 +202,9 @@ public final class Client {
 	public void removeClientListener(ClientListener listener) {
 		clientListeners.remove(listener);
 	}
-	
-	
+
 	/*
 	 * Client commands
-	 * 
 	 */
 	public void sendMessage(String message) {
 		if (isConnected()) {
