@@ -12,6 +12,7 @@ import pxchat.net.protocol.core.ServerFrameAdapterListener;
 import pxchat.net.protocol.frames.AuthenticationFrame;
 import pxchat.net.protocol.frames.Frame;
 import pxchat.net.protocol.frames.ImageIDFrame;
+import pxchat.net.protocol.frames.ImageStartFrame;
 import pxchat.net.protocol.frames.MessageFrame;
 import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.net.protocol.frames.SessionIDFrame;
@@ -239,6 +240,13 @@ public class Server {
 						mf.setSessionId(adapter.getSessionID());
 						serverFrameAdapter.broadcast(FrameQueue.from(mf), true,
 								adapter.getSessionID());
+						break;
+						
+					case Frame.ID_IMG_START:
+						ImageStartFrame sf = (ImageStartFrame) frame;
+						System.out.println("Received ImageStartFrame with id " + sf.getImageID());
+						adapter.getOutgoing().add(new ImageIDFrame(getNextImageID()));
+						adapter.send();
 						break;
 				}
 			}

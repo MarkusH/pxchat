@@ -52,12 +52,8 @@ public final class Client {
 
 	private int nextImageID = -1;
 	
-	/**
-	 * @return the nextImageID
-	 */
-	public int getNextImageID() {
-		return nextImageID;
-	}
+	private Vector<ImageSender> imageSenders = new Vector<ImageSender>();
+
 
 	/**
 	 * The TCP client listener receiving events from the underlying TCP client.
@@ -146,6 +142,7 @@ public final class Client {
 					case Frame.ID_IMG_ID:
 						ImageIDFrame idf = (ImageIDFrame) frame;
 						nextImageID = idf.getImageID();
+						System.out.println("Received image id");
 						break;
 				}
 			}
@@ -217,6 +214,13 @@ public final class Client {
 	public void removeClientListener(ClientListener listener) {
 		clientListeners.remove(listener);
 	}
+	
+	/**
+	 * @return the nextImageID
+	 */
+	public int getNextImageID() {
+		return nextImageID;
+	}
 
 	/*
 	 * Client commands
@@ -224,6 +228,15 @@ public final class Client {
 	public void sendMessage(String message) {
 		if (isConnected()) {
 			frameAdapter.getOutgoing().add(new MessageFrame(message));
+			frameAdapter.send();
+		}
+	}
+	
+	public void sendImage(int imageID) {
+		if (isConnected()) {
+			ImageSender sender = new ImageSender(imageID);
+			imageSenders.add(sender);
+			frameAdapter.getOutgoing().add(sender.getNextFrame());
 			frameAdapter.send();
 		}
 	}

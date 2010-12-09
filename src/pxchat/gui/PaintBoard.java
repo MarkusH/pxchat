@@ -42,6 +42,7 @@ public class PaintBoard extends JPanel {
 		background = Client.getInstance().getNextImageID();
 		ImageTable.getInstance().put(background, img);
 
+		Client.getInstance().sendImage(background);
 		
 		
 //		try {
