@@ -1,7 +1,9 @@
 package pxchat.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -18,6 +21,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
@@ -30,8 +34,13 @@ import pxchat.net.Client;
 import pxchat.net.ClientListener;
 import pxchat.util.Icons;
 
+/**
+ * @author Florian Bausch
+ * @author Markus Holtermann
+ * 
+ */
 public class ClientMain extends JFrame {
-	// private Logging log = new Logging();
+//	private Logging log = new Logging();
 
 	private JMenuBar mBar;
 	private JMenu mFile, mHelp;
@@ -74,8 +83,11 @@ public class ClientMain extends JFrame {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		SplashScreen splashScreen = new SplashScreen(this);
 		splashScreen.setVisible(true);
+		
 
-		// Create Menu Bar
+		/**************************************************
+		 *  Create Menu Bar
+		 **************************************************/
 		mBar = new JMenuBar();
 		/**
 		 * building the pxchat menu
@@ -87,7 +99,6 @@ public class ClientMain extends JFrame {
 		mNewChat.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				new ConnectionDialog(ClientMain.this);
 			}
 		});
@@ -98,7 +109,6 @@ public class ClientMain extends JFrame {
 		mCloseChat.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
 				Client.getInstance().disconnect();
 			}
 		});
@@ -136,35 +146,53 @@ public class ClientMain extends JFrame {
 		mBar.add(mHelp);
 		this.setJMenuBar(mBar);
 
-		// Layout
-		getContentPane().setLayout(null);
-
+		/**************************************************
+		 * Layout
+		 **************************************************/
+		
+		/**
+		 * We need some panels for grouping
+		 */
+		JPanel panel = new JPanel(), panell = new JPanel(), panelr =  new JPanel(),
+			panelButtons = new JPanel();
+		panel.setLayout(new BorderLayout(10, 10));
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		panell.setLayout(new BorderLayout(10, 10));
+		panelr.setLayout(new BorderLayout(10, 10));
+		panelButtons.setLayout(new GridLayout(2, 1, 10, 10));
+		
+		/**
+		 * the chat log
+		 */
 		chatLog = new JTextPane();
 		chatLog.setEditable(false);
 		chatLogPane = new JScrollPane(chatLog, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		chatLogPane.setBounds(10, 10, 400, 300);
-		getContentPane().add(chatLogPane);
-
+		chatLogPane.setPreferredSize(new Dimension(400, 300));
+		
+		/**
+		 * the input area
+		 */
 		inputArea = new JTextArea("");
 		inputArea.setLineWrap(true);
 		inputArea.setWrapStyleWord(true);
 		inputArea.setEditable(true);
 		inputArea.setEnabled(false);
+		inputAreaPane = new JScrollPane(inputArea,
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		inputAreaPane.setPreferredSize(new Dimension(400, 50));
 		inputArea.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
 			}
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					if (e.isControlDown()) {
 						ClientMain.this.inputArea.append("\n");
@@ -175,23 +203,23 @@ public class ClientMain extends JFrame {
 				}
 			}
 		});
-		inputAreaPane = new JScrollPane(inputArea,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		inputAreaPane.setBounds(10, 320, 400, 100);
-		getContentPane().add(inputAreaPane);
-
+		
+		/**
+		 * the userlist
+		 */
 		userList = new JList();
 		userList.setEnabled(false);
 		userListPane = new JScrollPane(userList, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		userListPane.setBounds(420, 10, 150, 300);
-		getContentPane().add(userListPane);
+		userListPane.setPreferredSize(new Dimension(150, 300));
 
+		/**
+		 * the button to access the whiteboard
+		 */
 		whiteBoardButton = new JButton(I18n.getInstance().getString("whiteBoardButton"), Icons
 				.get("whiteboard.png"));
 		whiteBoardButton.setMnemonic('w');
-		whiteBoardButton.setBounds(420, 320, 150, 30);
+		whiteBoardButton.setPreferredSize(new Dimension(150, 30));
 		// TODO remove the comment from next line as soon as it is possible
 		// whiteBoardButton.setEnabled(false);
 		whiteBoardButton.addActionListener(new ActionListener() {
@@ -200,11 +228,13 @@ public class ClientMain extends JFrame {
 				wb.setVisible(!wb.isVisible());
 			}
 		});
-		getContentPane().add(whiteBoardButton);
 
+		/**
+		 * the button to send a message
+		 */
 		sendButton = new JButton(I18n.getInstance().getString("sendButton"), Icons.get("send.png"));
 		sendButton.setMnemonic('s');
-		sendButton.setBounds(420, 360, 150, 30);
+		sendButton.setPreferredSize(new Dimension(150, 30));
 		sendButton.setEnabled(false);
 		sendButton.addActionListener(new ActionListener() {
 
@@ -214,15 +244,33 @@ public class ClientMain extends JFrame {
 
 			}
 		});
-		getContentPane().add(sendButton);
+		
+		/**
+		 * finally add all panels to the program
+		 */
+		panell.add(inputAreaPane, BorderLayout.SOUTH);
+		panell.add(chatLogPane, BorderLayout.CENTER);
 
-		this.setSize(580, 480);
+		panelButtons.add(whiteBoardButton);
+		panelButtons.add(sendButton);
+
+		panelr.add(userListPane, BorderLayout.CENTER);
+		panelr.add(panelButtons, BorderLayout.SOUTH);
+		
+		panel.add(panell, BorderLayout.CENTER);
+		panel.add(panelr, BorderLayout.EAST);
+		
+		this.getContentPane().add(panel);
+
+		this.pack();
 		this.setResizable(false);
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(size.width / 3 - this.getWidth() / 2,
 				size.height / 2 - this.getHeight() / 2);
 
-		// register a client listener
+		/**
+		 * now we register a client listener
+		 */
 		Client.getInstance().registerClientListener(new ClientListener() {
 
 			@Override
@@ -265,6 +313,9 @@ public class ClientMain extends JFrame {
 			}
 		});
 
+		/**
+		 * and send a notifcation to the splashscreen that we are ready ;-)
+		 */
 		splashScreen.setReady();
 	}
 
