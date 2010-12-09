@@ -17,6 +17,9 @@ import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
@@ -30,6 +33,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -42,7 +46,8 @@ import pxchat.util.Icons;
 import pxchat.util.PicFileFilter;
 
 /**
- * @author MarkusH
+ * @author Florian Bausch
+ * @author Markus Holtermann
  * 
  */
 public class WhiteBoard extends JFrame {
@@ -51,8 +56,8 @@ public class WhiteBoard extends JFrame {
 		Circle, Ellipse, Eraser, Freehand, Line, Rectangle, Text
 	};
 
-	private int sizeX = 800;
-	private int sizeY = 600;
+	private int sizeX = 1024;
+	private int sizeY = 768;
 
 	private PaintBoard paintBoard;
 	private JPanel toolbar, drawColorPanel;
@@ -87,11 +92,14 @@ public class WhiteBoard extends JFrame {
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage(
 				"./data/img/icon/whiteboard.png"));
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
-		setLayout(new BorderLayout(10,10));
+//		setLayout(new BorderLayout(10,10));
 		setResizable(false);
+		
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		paintBoard = new PaintBoard();
-		// paintBoard.setOpaque(false);
 		paintBoard.setBackground(Color.white);
 		paintBoard.setPreferredSize(new Dimension(sizeX, sizeY));
 
@@ -105,8 +113,8 @@ public class WhiteBoard extends JFrame {
 				loadBackground();
 			}
 		});
-		JMenuItem saveMenuItem = new JMenuItem(I18n.getInstance().getString(
-				"wbSaveToFile"), Icons.get("save-16.png"));
+		JMenuItem saveMenuItem = new JMenuItem(I18n.getInstance().getString("wbSaveToFile"),
+				Icons.get("save-16.png"));
 		saveMenuItem.addActionListener(new ActionListener() {
 
 			@Override
@@ -116,8 +124,8 @@ public class WhiteBoard extends JFrame {
 			}
 		});
 
-		JMenuItem clearMenuItem = new JMenuItem(I18n.getInstance().getString(
-				"wbClear"), Icons.get("clear-16.png"));
+		JMenuItem clearMenuItem = new JMenuItem(I18n.getInstance().getString("wbClear"),
+				Icons.get("clear-16.png"));
 		clearMenuItem.addActionListener(new ActionListener() {
 
 			@Override
@@ -135,19 +143,16 @@ public class WhiteBoard extends JFrame {
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
 
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
 
 			}
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
 
 			}
 
@@ -235,8 +240,12 @@ public class WhiteBoard extends JFrame {
 		});
 
 		toolbar = new JPanel();
-		toolbar.setPreferredSize(new Dimension(100, sizeY));
-		toolbar.setLayout(new GridLayout(12, 2, 10, 10));
+		Dimension tbDimension = new Dimension(74,326);
+		toolbar.setMinimumSize(tbDimension);
+		toolbar.setPreferredSize(tbDimension);
+		toolbar.setMaximumSize(tbDimension);
+		toolbar.setLayout(new GridLayout(8, 2, 10, 10));
+		toolbar.setAlignmentY(TOP_ALIGNMENT);
 
 		drawCircle = new JToggleButton("", Icons.get("draw-circle.png"));
 		drawCircle.setToolTipText(I18n.getInstance().getString("wbCircle"));
@@ -247,6 +256,7 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
+
 		drawColor = new JButton("", Icons.get("draw-color.png"));
 		drawColor.setToolTipText(I18n.getInstance().getString("wbChangeColor"));
 		drawColor.addActionListener(new ActionListener() {
@@ -260,6 +270,7 @@ public class WhiteBoard extends JFrame {
 				drawColorPanel.setBackground(currentColor);
 			}
 		});
+
 		drawEllipse = new JToggleButton("", Icons.get("draw-ellipse.png"));
 		drawEllipse.setToolTipText(I18n.getInstance().getString("wbEllipse"));
 		drawEllipse.addActionListener(new ActionListener() {
@@ -269,6 +280,7 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
+
 		drawEraser = new JToggleButton("", Icons.get("draw-eraser.png"));
 		drawEraser.setToolTipText(I18n.getInstance().getString("wbEraser"));
 		drawEraser.addActionListener(new ActionListener() {
@@ -278,6 +290,7 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
+
 		drawFreehand = new JToggleButton("", Icons.get("draw-freehand.png"));
 		drawFreehand.setToolTipText(I18n.getInstance().getString("wbPencil"));
 		drawFreehand.addActionListener(new ActionListener() {
@@ -287,6 +300,7 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
+
 		drawLine = new JToggleButton("", Icons.get("draw-line.png"));
 		drawLine.setToolTipText(I18n.getInstance().getString("wbLine"));
 		drawLine.addActionListener(new ActionListener() {
@@ -298,8 +312,7 @@ public class WhiteBoard extends JFrame {
 		});
 
 		drawRectangle = new JToggleButton("", Icons.get("draw-rectangle.png"));
-		drawRectangle.setToolTipText(I18n.getInstance()
-				.getString("wbRectangle"));
+		drawRectangle.setToolTipText(I18n.getInstance().getString("wbRectangle"));
 		drawRectangle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -307,6 +320,7 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
+
 		drawText = new JToggleButton("", Icons.get("draw-text.png"));
 		drawText.setToolTipText(I18n.getInstance().getString("wbText"));
 		drawText.addActionListener(new ActionListener() {
@@ -316,6 +330,7 @@ public class WhiteBoard extends JFrame {
 
 			}
 		});
+
 		lockCanvas = new JToggleButton("", Icons.get("lock.png"));
 		lockCanvas.setToolTipText(I18n.getInstance().getString("wbLockCanvas"));
 		lockCanvas.addActionListener(new ActionListener() {
@@ -333,6 +348,7 @@ public class WhiteBoard extends JFrame {
 				}
 			}
 		});
+
 		loadImage = new JButton("", Icons.get("load-image.png"));
 		loadImage.setToolTipText(I18n.getInstance().getString("wbInsertImage"));
 		loadImage.addActionListener(new ActionListener() {
@@ -341,6 +357,7 @@ public class WhiteBoard extends JFrame {
 				insertImage();
 			}
 		});
+
 		saveImage = new JButton("", Icons.get("save.png"));
 		saveImage.setToolTipText(I18n.getInstance().getString("wbSaveToFile"));
 		saveImage.addActionListener(new ActionListener() {
@@ -362,21 +379,19 @@ public class WhiteBoard extends JFrame {
 		});
 
 		loadBackground = new JButton("", Icons.get("load-background.png"));
-		loadBackground.setToolTipText(I18n.getInstance().getString(
-				"wbBackground"));
+		loadBackground.setToolTipText(I18n.getInstance().getString("wbBackground"));
 		loadBackground.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				loadBackground();
 			}
 		});
-		
+
 		drawColorPanel = new JPanel();
 		drawColorPanel.setMaximumSize(new Dimension(16, 16));
 		drawColorPanel.setBackground(currentColor);
-		
-		lineWidthSlider = new JSlider(1, 10);
-		lineWidthSlider.setValue(1);
+
+		lineWidthSlider = new JSlider(1, 10, 1);
 		lineWidthSlider.setToolTipText(I18n.getInstance().getString("wbLineWidth"));
 		lineWidthSlider.addChangeListener(new ChangeListener() {
 			
@@ -386,17 +401,17 @@ public class WhiteBoard extends JFrame {
 				lineWidthLabel.setText("" + (int)currentStrokeWidth);
 			}
 		});
-		
+
 		lineWidthLabel = new JLabel("" + (int)currentStrokeWidth, SwingConstants.CENTER);
 		lineWidthLabel.setSize(new Dimension(32, 32));
 		lineWidthLabel.setVerticalAlignment(SwingConstants.CENTER);
-		
+
 		toolbar.add(drawColor);
 		toolbar.add(drawColorPanel);
-		
+
 		toolbar.add(drawFreehand);
 		toolbar.add(drawLine);
-		
+
 		toolbar.add(drawCircle);
 		toolbar.add(drawEllipse);
 
@@ -411,10 +426,10 @@ public class WhiteBoard extends JFrame {
 
 		toolbar.add(clearImage);
 		toolbar.add(loadBackground);
-		
+
 		toolbar.add(lineWidthSlider);
 		toolbar.add(lineWidthLabel);
-		
+
 		ButtonGroup g = new ButtonGroup();
 		g.add(drawCircle);
 		g.add(drawEllipse);
@@ -424,8 +439,11 @@ public class WhiteBoard extends JFrame {
 		g.add(drawRectangle);
 		g.add(drawText);
 
-		this.getContentPane().add(paintBoard, BorderLayout.CENTER);
-		this.getContentPane().add(toolbar, BorderLayout.WEST);
+		panel.add(toolbar);
+		panel.add(Box.createRigidArea(new Dimension(10, 0)));
+		panel.add(paintBoard);
+		
+		this.getContentPane().add(panel);
 		this.pack();
 
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
