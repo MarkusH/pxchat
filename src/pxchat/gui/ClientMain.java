@@ -32,6 +32,7 @@ import javax.swing.text.StyleConstants;
 
 import pxchat.net.Client;
 import pxchat.net.ClientListener;
+import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.util.Icons;
 import pxchat.util.Logging;
 
@@ -171,6 +172,9 @@ public class ClientMain extends JFrame {
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		chatLogPane.setPreferredSize(new Dimension(400, 300));
 		
+		// TODO may fix the autoscroll problems.
+		chatLogPane.setAutoscrolls(true);
+		
 		/**
 		 * the input area
 		 */
@@ -284,7 +288,7 @@ public class ClientMain extends JFrame {
 				inputArea.setEnabled(false);
 				writeNotification(I18n.getInstance().getString("disconnectedFromServer"));
 				userList.setListData(new Object[0]);
-//				log.endLog();
+				log.endLog();
 			}
 
 			@Override
@@ -295,12 +299,36 @@ public class ClientMain extends JFrame {
 				sendButton.setEnabled(true);
 				inputArea.setEnabled(true);
 				writeNotification(I18n.getInstance().getString("connectedToServer") + " " + remoteAddress);
-//				log = new Logging();
+				log = new Logging();
 			}
 
 			@Override
-			public void notification(String message) {
-				writeNotification(message);
+			public void notification(int type) {
+				switch (type) {
+					case NotificationFrame.AUTH_FAIL:
+						writeNotification(I18n.getInstance().getString("authenticationFail"));
+						break;
+					case NotificationFrame.TIMEOUT:
+						writeNotification(I18n.getInstance().getString("timeoutFail"));
+						break;
+					case NotificationFrame.VERSION_FAIL:
+						writeNotification(I18n.getInstance().getString("versionFail"));
+						break;
+				}
+			}
+
+			@Override
+			public void notification(int type, String username) {
+				switch (type) {
+					case NotificationFrame.JOIN:
+						writeNotification(username + " " + I18n.getInstance().getString("joinMessage"));
+						log.logJoin(username);
+						break;
+					case NotificationFrame.LEAVE:
+						writeNotification(username + " " + I18n.getInstance().getString("leaveMessage"));
+						log.logLeave(username);
+						break;
+				}
 			}
 
 			@Override
@@ -314,6 +342,7 @@ public class ClientMain extends JFrame {
 			public void messageReceived(String author, String message) {
 				writeMessage(author, message);
 			}
+
 		});
 
 		/**
@@ -344,7 +373,7 @@ public class ClientMain extends JFrame {
 			System.err.println("Could not write to JTextPane \"chatLog\".");
 		}
 
-//		log.logMessage(msg, author);
+		log.logMessage(msg, author);
 	}
 
 	private void sendMessage() {
@@ -359,7 +388,7 @@ public class ClientMain extends JFrame {
 
 				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n", OWN);
 				Client.getInstance().sendMessage(msg);
-//				log.logMessage(msg, I18n.getInstance().getString("you"));
+				log.logMessage(msg, I18n.getInstance().getString("you"));
 
 			} catch (BadLocationException e) {
 				System.err.println("Could not write to JTextPane \"chatLog\".");
@@ -376,5 +405,4 @@ public class ClientMain extends JFrame {
 		Icons.setFolder("./data/img/icon/");
 		new ClientMain();
 	}
-
 }

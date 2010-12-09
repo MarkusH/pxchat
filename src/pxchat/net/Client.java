@@ -111,8 +111,14 @@ public final class Client {
 					 */
 					case Frame.ID_NOTIFICATION:
 						NotificationFrame nf = (NotificationFrame) frame;
-						for (ClientListener listener : clientListeners) {
-							listener.notification(nf.getMessage());
+						if (nf.getType() == NotificationFrame.AUTH_FAIL || nf.getType() == NotificationFrame.TIMEOUT || nf.getType() == NotificationFrame.VERSION_FAIL) {
+							for (ClientListener listener : clientListeners) {
+								listener.notification(nf.getType());
+							}
+						} else if (nf.getType() == NotificationFrame.JOIN || nf.getType() == NotificationFrame.LEAVE) {
+							for (ClientListener listener : clientListeners) {
+								listener.notification(nf.getType(), nf.getUsername());
+							}
 						}
 						break;
 

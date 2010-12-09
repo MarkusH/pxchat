@@ -26,9 +26,15 @@ public interface ClientListener {
 	public void clientDisconnect();
 
 	/**
-	 * @param message
+	 * @param type
 	 */
-	public void notification(String message);
+	public void notification(int type);
+
+	/**
+	 * @param type
+	 * @param username
+	 */
+	public void notification(int type, String username);
 
 	/**
 	 * This method is called when the user list changes, i.e. a client connected
