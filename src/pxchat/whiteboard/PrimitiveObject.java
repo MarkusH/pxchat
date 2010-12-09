@@ -1,4 +1,4 @@
-package pxchat.gui.whiteboard;
+package pxchat.whiteboard;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

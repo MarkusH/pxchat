@@ -37,13 +37,12 @@ import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import pxchat.gui.whiteboard.CircleObject;
-import pxchat.gui.whiteboard.EllipseObject;
-import pxchat.gui.whiteboard.LineObject;
-import pxchat.gui.whiteboard.PaintBoard;
-import pxchat.gui.whiteboard.RectObject;
 import pxchat.util.Icons;
 import pxchat.util.PicFileFilter;
+import pxchat.whiteboard.CircleObject;
+import pxchat.whiteboard.EllipseObject;
+import pxchat.whiteboard.LineObject;
+import pxchat.whiteboard.RectObject;
 
 /**
  * @author Florian Bausch

@@ -1,4 +1,4 @@
-package pxchat.gui.whiteboard;
+package pxchat.gui;
 
 import java.awt.AlphaComposite;
 import java.awt.Composite;
@@ -12,6 +12,8 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+
+import pxchat.whiteboard.PaintObject;
 
 public class PaintBoard extends JPanel {
 
