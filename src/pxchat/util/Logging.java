@@ -45,8 +45,7 @@ public class Logging {
 				file.mkdir();
 			else
 				if (!file.isDirectory())
-					throw new IOException(
-							file.getAbsolutePath() + " is not a directory");
+					throw new IOException(file.getAbsolutePath() + " is not a directory");
 
 			fUser = new File(userfilename);
 			if (!fUser.exists())

@@ -33,6 +33,7 @@ import javax.swing.text.StyleConstants;
 import pxchat.net.Client;
 import pxchat.net.ClientListener;
 import pxchat.util.Icons;
+import pxchat.util.Logging;
 
 /**
  * @author Florian Bausch
@@ -40,7 +41,7 @@ import pxchat.util.Icons;
  * 
  */
 public class ClientMain extends JFrame {
-//	private Logging log = new Logging();
+	private Logging log;
 
 	private JMenuBar mBar;
 	private JMenu mFile, mHelp;
@@ -283,6 +284,7 @@ public class ClientMain extends JFrame {
 				inputArea.setEnabled(false);
 				writeNotification(I18n.getInstance().getString("disconnectedFromServer"));
 				userList.setListData(new Object[0]);
+//				log.endLog();
 			}
 
 			@Override
@@ -293,6 +295,7 @@ public class ClientMain extends JFrame {
 				sendButton.setEnabled(true);
 				inputArea.setEnabled(true);
 				writeNotification(I18n.getInstance().getString("connectedToServer") + " " + remoteAddress);
+//				log = new Logging();
 			}
 
 			@Override
@@ -341,7 +344,7 @@ public class ClientMain extends JFrame {
 			System.err.println("Could not write to JTextPane \"chatLog\".");
 		}
 
-		// log.logMessage(msg, author);
+//		log.logMessage(msg, author);
 	}
 
 	private void sendMessage() {
@@ -350,20 +353,17 @@ public class ClientMain extends JFrame {
 
 		if (!msg.trim().equals("")) {
 			try {
-				chatLog.getDocument()
-						.insertString(
-								chatLog.getDocument().getLength(),
-								"[" + df.format(new Date()) + "] " + I18n.getInstance().getString(
-										"you") + ": ", OWNNAME);
+				chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
+					"[" + df.format(new Date()) + "] " + I18n.getInstance().getString("you") +
+						": ", OWNNAME);
 
-				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n",
-						OWN);
+				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n", OWN);
 				Client.getInstance().sendMessage(msg);
+//				log.logMessage(msg, I18n.getInstance().getString("you"));
 
 			} catch (BadLocationException e) {
 				System.err.println("Could not write to JTextPane \"chatLog\".");
 			}
-			// log.logMessage(msg, "Sie");
 			inputArea.setText("");
 		}
 	}
