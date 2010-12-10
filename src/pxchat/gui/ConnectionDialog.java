@@ -155,6 +155,22 @@ public class ConnectionDialog extends JDialog {
 		passWordLabel.setLabelFor(passWord);
 		passWord = new JPasswordField("");
 		passWord.addKeyListener(returnKeyListener);
+		passWord.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE && e.isControlDown()) {
+					passWord.setText("");
+				}
+			}
+		});
 		passWord.addFocusListener(new FocusListener() {
 			@Override
 			public void focusLost(FocusEvent e) {
