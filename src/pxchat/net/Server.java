@@ -2,6 +2,7 @@ package pxchat.net;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 
 import pxchat.net.protocol.core.AuthFrameAdapter;
@@ -180,10 +181,6 @@ public class Server {
 					 * the version is compatible to the current version of this
 					 * server, the client will receive a session id. If not, the
 					 * connection is terminated.
-					 * 
-					 * TODO: If another frame is sent before the version frame
-					 * arrives, or the version frame does not arrive after a
-					 * specified timeout, the connection needs to be terminated.
 					 */
 					case Frame.ID_VERSION:
 						VersionFrame vf = (VersionFrame) frame;
@@ -232,10 +229,9 @@ public class Server {
 						ImageStartFrame sf = (ImageStartFrame) frame;
 						System.out.println("Received ImageStartFrame with id " + sf.getImageID());
 						adapter.getOutgoing().add(new ImageIDFrame(getNextImageID()));
-						ImageReceiver newRecv = new ImageReceiver(sf);
+						adapter.send();
+						ImageReceiver newRecv = new ServerImageReceiver(sf, adapter, serverFrameAdapter);
 						imgReceivers.add(newRecv);
-						newRecv.process(adapter, sf);
-//						adapter.send();
 						break;
 						
 					case Frame.ID_IMG_CHUNK:
@@ -247,15 +243,22 @@ public class Server {
 						break;
 						
 					case Frame.ID_IMG_STOP:
-						System.out.println("img stop");
 						ImageStopFrame spf = (ImageStopFrame) frame;
-						for (ImageReceiver recv : imgReceivers) {
-							if (recv.process(adapter, spf)) {
-								imgReceivers.remove(recv);
+						
+						Iterator<ImageReceiver> iterator = imgReceivers.iterator();
+						while (iterator.hasNext()) {
+							ImageReceiver receiver = iterator.next();
+							if (receiver.process(adapter, spf)) {
+								iterator.remove();
 								break;
 							}
 						}
+						
 						System.out.println(imgReceivers);
+						break;
+						
+					case Frame.ID_BACKGROUND:
+						serverFrameAdapter.broadcast(FrameQueue.from(frame), true);
 						break;
 				}
 			}

@@ -165,4 +165,24 @@ LOOP:	for (AuthFrameAdapter adapter : this) {
 		}
 		return count;
 	}
+	
+	public int broadcastTo(FrameQueue queue, boolean immediate, int... toSessionID) {
+		int count = 0;
+		for (AuthFrameAdapter adapter : this) {
+			boolean send = false;
+			for (int i : toSessionID) {
+				if (adapter.getSessionID() == i) {
+					send = true;
+					break;
+				}
+			}
+			if (!send)
+				continue;
+			adapter.getOutgoing().addAll(queue);
+			if (immediate)
+				adapter.send();
+			count++;
+		}
+		return count;
+	}
 }

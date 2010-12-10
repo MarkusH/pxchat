@@ -1,8 +1,8 @@
 package pxchat.net;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
@@ -11,15 +11,18 @@ import pxchat.net.protocol.core.FrameAdapter;
 import pxchat.net.protocol.core.FrameAdapterListener;
 import pxchat.net.protocol.frames.AuthenticationFrame;
 import pxchat.net.protocol.frames.Frame;
+import pxchat.net.protocol.frames.ImageChunkFrame;
 import pxchat.net.protocol.frames.ImageIDFrame;
-import pxchat.net.protocol.frames.ImageSyncFrame;
+import pxchat.net.protocol.frames.ImageStartFrame;
+import pxchat.net.protocol.frames.ImageStopFrame;
 import pxchat.net.protocol.frames.MessageFrame;
 import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.net.protocol.frames.UserListFrame;
 import pxchat.net.protocol.frames.VersionFrame;
-import pxchat.net.tcp.TCPClientListener;
 import pxchat.net.tcp.CustomSocket;
 import pxchat.net.tcp.TCPClient;
+import pxchat.net.tcp.TCPClientListener;
+import pxchat.whiteboard.BackgroundFrame;
 
 /**
  * This class implements the client for pxchat. Only one instance is available
@@ -49,14 +52,35 @@ public final class Client {
 	 * The client listener sending events to the GUI.
 	 */
 	private Vector<ClientListener> clientListeners = new Vector<ClientListener>();
+	
+	/**
+	 * The client listener sending whiteboard related events to the GUI.
+	 */
+	private Vector<WhiteboardClientListener> whiteboardClientListeners = 
+		new Vector<WhiteboardClientListener>();
 
+	/**
+	 * The user name of the client.
+	 */
 	private String loginName = "";
+
+	/**
+	 * The password of the client.
+	 */
 	private String loginPassword = "";
 
+	/**
+	 * The image id that will be used next.
+	 */
 	private int nextImageID = -1;
 	
-	private Vector<ImageSender> imgSenders = new Vector<ImageSender>();
+	private Vector<ImageReceiver> imgReceivers = new Vector<ImageReceiver>();
 
+	/**
+	 * A list of image senders that send local images to the server and thus too
+	 * the connected clients.
+	 */
+	private Vector<ImageSender> imgSenders = new Vector<ImageSender>();
 
 	/**
 	 * The TCP client listener receiving events from the underlying TCP client.
@@ -65,8 +89,7 @@ public final class Client {
 
 		@Override
 		public void clientRead(CustomSocket client, Object data) {
-			System.out
-					.println(this + "> Message received from server: " + data);
+			System.out.println(this + "> Message received from server: " + data);
 			frameAdapter.receive(data);
 		}
 
@@ -80,15 +103,13 @@ public final class Client {
 
 		@Override
 		public void clientConnect(CustomSocket client) {
-			System.out.println(this + "> Conntected to server: " + client
-					.getRemoteAddress());
+			System.out.println(this + "> Conntected to server: " + client.getRemoteAddress());
 
 			for (ClientListener listener : clientListeners)
 				listener.clientConnect(client.getRemoteAddress());
 
-			frameAdapter.getOutgoing().add(VersionFrame.getCurrent());		
-			frameAdapter.getOutgoing().add(
-					new AuthenticationFrame(loginName, loginPassword));
+			frameAdapter.getOutgoing().add(VersionFrame.getCurrent());
+			frameAdapter.getOutgoing().add(new AuthenticationFrame(loginName, loginPassword));
 			frameAdapter.send();
 		}
 
@@ -110,23 +131,32 @@ public final class Client {
 				switch (frame.getId()) {
 
 					/*
-					 * A new notification was received from the server
+					 * A new notification was received from the server. A
+					 * notification is send in the following cases:
+					 * 
+					 * - A user left or joined the chat 
+					 * - The authentication failed 
+					 * - A timeout occurred 
+					 * - The version of this client is not compatible
 					 */
 					case Frame.ID_NOTIFICATION:
 						NotificationFrame nf = (NotificationFrame) frame;
-						if (nf.getType() == NotificationFrame.AUTH_FAIL || nf.getType() == NotificationFrame.TIMEOUT || nf.getType() == NotificationFrame.VERSION_FAIL) {
+						if (nf.getType() == NotificationFrame.AUTH_FAIL || nf.getType() == NotificationFrame.TIMEOUT || nf
+								.getType() == NotificationFrame.VERSION_FAIL) {
 							for (ClientListener listener : clientListeners) {
 								listener.notification(nf.getType());
 							}
-						} else if (nf.getType() == NotificationFrame.JOIN || nf.getType() == NotificationFrame.LEAVE) {
-							for (ClientListener listener : clientListeners) {
-								listener.notification(nf.getType(), nf.getUsername());
+						} else
+							if (nf.getType() == NotificationFrame.JOIN || nf.getType() == NotificationFrame.LEAVE) {
+								for (ClientListener listener : clientListeners) {
+									listener.notification(nf.getType(), nf.getUsername());
+								}
 							}
-						}
 						break;
 
 					/*
-					 * A new user list was sent from the server
+					 * A new user list was sent from the server. This occurs
+					 * when a user joined or left the chat.
 					 */
 					case Frame.ID_USERLIST:
 						UserListFrame uf = (UserListFrame) frame;
@@ -137,36 +167,70 @@ public final class Client {
 						break;
 
 					/*
-					 * A message was received
+					 * A text message was received.
 					 */
 					case Frame.ID_MSG:
 						MessageFrame mf = (MessageFrame) frame;
 						for (ClientListener listener : clientListeners) {
-							listener.messageReceived(
-									userList.get(mf.getSessionId()),
-									mf.getMessage());
+							listener.messageReceived(userList.get(mf.getSessionId()), mf
+									.getMessage());
 						}
 						break;
-						
+
+					/*
+					 * A new image id was sent. This image id will be used when the user
+					 * loads a new image from the local computer. This frame is sent immediately
+					 * after connecting to the server, and after a image sender starts to transfer
+					 * a new image.
+					 */
 					case Frame.ID_IMG_ID:
 						ImageIDFrame idf = (ImageIDFrame) frame;
 						nextImageID = idf.getImageID();
 						System.out.println("Received image id");
 						break;
 						
-//					case Frame.ID_IMG_SYNC:
-//						System.out.println("sync");
-//						ImageSyncFrame sf = (ImageSyncFrame) frame;
-//						for (ImageSender snd : imgSenders) {
-//							if (snd.process(adapter, sf)) {
-//								if (snd.isFinished())
-//									imgSenders.remove(snd);
-//								break;
-//							}
-//						}
-//						System.out.println(imgSenders);
-//						break;
-//						
+						
+					case Frame.ID_IMG_START:
+						ImageStartFrame sf = (ImageStartFrame) frame;
+						System.out.println("Received ImageStartFrame with id " + sf.getImageID());
+						ImageReceiver newRecv = new ImageReceiver(sf);
+						imgReceivers.add(newRecv);
+						break;
+						
+					case Frame.ID_IMG_CHUNK:
+						ImageChunkFrame cf = (ImageChunkFrame) frame;
+						for (ImageReceiver recv : imgReceivers) {
+							if (recv.process(adapter, cf))
+								break;
+						}
+						break;
+						
+					case Frame.ID_IMG_STOP:
+						ImageStopFrame spf = (ImageStopFrame) frame;
+						
+						Iterator<ImageReceiver> iterator = imgReceivers.iterator();
+						while (iterator.hasNext()) {
+							ImageReceiver receiver = iterator.next();
+							if (receiver.process(adapter, spf)) {
+								iterator.remove();
+								break;
+							}
+						}
+						
+						System.out.println(imgReceivers);
+						break;
+						
+					case Frame.ID_BACKGROUND:
+						BackgroundFrame bf = (BackgroundFrame) frame;
+						if (bf.getType() == BackgroundFrame.COLOR)
+							for (WhiteboardClientListener listener : whiteboardClientListeners) {
+								listener.backgroundChanged(bf.getColor());
+							}
+						else
+							for (WhiteboardClientListener listener : whiteboardClientListeners) {
+								listener.backgroundChanged(bf.getImageID());
+							}
+						break;
 				}
 			}
 
@@ -180,7 +244,7 @@ public final class Client {
 			Iterator<ImageSender> iterator = imgSenders.iterator();
 			while (iterator.hasNext()) {
 				ImageSender sender = iterator.next();
-				
+
 				adapter.getOutgoing().add(sender.getNextFrame());
 				if (sender.isFinished())
 					iterator.remove();
@@ -221,7 +285,8 @@ public final class Client {
 	 * @throws IOException If there was an error concerning the connection
 	 */
 	public void connect(String host, int port, String name, String password)
-		throws UnknownHostException, IOException {
+																			throws UnknownHostException,
+																			IOException {
 		this.loginName = name;
 		this.loginPassword = password;
 		client.connect(host, port);
@@ -243,15 +308,24 @@ public final class Client {
 		return client.isConnected();
 	}
 
-	public void registerClientListener(ClientListener listener) {
+	public void registerListener(ClientListener listener) {
 		if (listener != null)
 			clientListeners.add(listener);
 	}
 
-	public void removeClientListener(ClientListener listener) {
+	public void removeListener(ClientListener listener) {
 		clientListeners.remove(listener);
 	}
 	
+	public void registerListener(WhiteboardClientListener listener) {
+		if (listener != null)
+			whiteboardClientListeners.add(listener);
+	}
+
+	public void removeListener(WhiteboardClientListener listener) {
+		whiteboardClientListeners.remove(listener);
+	}
+
 	/**
 	 * @return the nextImageID
 	 */
@@ -268,14 +342,25 @@ public final class Client {
 			frameAdapter.send();
 		}
 	}
-	
+
 	public void sendImage(int imageID) {
 		if (isConnected()) {
 			imgSenders.add(new ImageSender(imageID));
 			frameAdapter.send();
-//			ImageSender sender = new ImageSender(imageID);
-//			imgSenders.add(sender);
-//			sender.process(frameAdapter, null);
+		}
+	}
+	
+	public void sendChangeBackground(Color color) {
+		if (isConnected()) {
+			frameAdapter.getOutgoing().add(new BackgroundFrame(color));
+			frameAdapter.send();
+		}
+	}
+	
+	public void sendChangeBackground(int imageID) {
+		if (isConnected()) {
+			frameAdapter.getOutgoing().add(new BackgroundFrame(imageID));
+			frameAdapter.send();
 		}
 	}
 }

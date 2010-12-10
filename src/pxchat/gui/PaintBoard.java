@@ -24,6 +24,8 @@ public class PaintBoard extends JPanel {
 	// private BufferedImage preview;
 
 	private Vector<PaintObject> previewObjects = new Vector<PaintObject>();
+	
+	private Vector<PaintObject> cache = new Vector<PaintObject>();
 
 	public PaintBoard() {
 		this.board = null;
@@ -70,6 +72,11 @@ public class PaintBoard extends JPanel {
 	public void loadBackground(Color c) {
 		this.background = null;
 		this.setBackground(c);
+	}
+	
+	public void loadBackground(int imageID) {
+		this.setBackground(Color.WHITE);
+		this.background = imageID;
 	}
 
 	/**
@@ -135,6 +142,13 @@ public class PaintBoard extends JPanel {
 		if (this.board == null)
 			this.board = new BufferedImage(getWidth(), getHeight(),
 					BufferedImage.TYPE_4BYTE_ABGR);
+		
+		Graphics2D g = this.board.createGraphics();
+		
+		for (PaintObject obj : cache) {
+			obj.draw(g);
+		}
+		cache.clear();
 	}
 
 	/*
@@ -170,5 +184,9 @@ public class PaintBoard extends JPanel {
 
 	public Vector<PaintObject> getPreviewObjects() {
 		return previewObjects;
+	}
+	
+	public Vector<PaintObject> getCache() {
+		return cache;
 	}
 }

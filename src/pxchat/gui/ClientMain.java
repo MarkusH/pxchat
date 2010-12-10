@@ -276,7 +276,7 @@ public class ClientMain extends JFrame {
 		/**
 		 * now we register a client listener
 		 */
-		Client.getInstance().registerClientListener(new ClientListener() {
+		Client.getInstance().registerListener(new ClientListener() {
 
 			@Override
 			public void clientDisconnect() {

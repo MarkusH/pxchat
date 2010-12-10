@@ -35,6 +35,10 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.sun.corba.se.spi.oa.OAInvocationInfo;
+
+import pxchat.net.Client;
+import pxchat.net.WhiteboardClientListener;
 import pxchat.util.Icons;
 import pxchat.util.PicFileFilter;
 import pxchat.whiteboard.CircleObject;
@@ -394,7 +398,8 @@ public class WhiteBoard extends JFrame {
 					.getInstance().getString("ccDialog"), currentBackgroundColor);
 				if (newColor != null) {
 					currentBackgroundColor = newColor;
-					paintBoard.loadBackground(newColor);
+//					paintBoard.loadBackground(newColor);
+					Client.getInstance().sendChangeBackground(newColor);
 				}
 			}
 		});
@@ -457,6 +462,22 @@ public class WhiteBoard extends JFrame {
 		panel.add(toolbar);
 		panel.add(Box.createRigidArea(new Dimension(10, 0)));
 		panel.add(paintBoard);
+		
+		
+		
+		Client.getInstance().registerListener(new WhiteboardClientListener() {
+			
+			@Override
+			public void backgroundChanged(int imageID) {
+				paintBoard.loadBackground(imageID);
+			}
+			
+			@Override
+			public void backgroundChanged(Color color) {
+				paintBoard.loadBackground(color);
+			}
+		});
+		
 		
 		this.getContentPane().add(panel);
 		this.pack();
