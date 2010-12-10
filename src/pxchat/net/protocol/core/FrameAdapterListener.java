@@ -20,4 +20,12 @@ public interface FrameAdapterListener {
 	 * @param adapter The source of the event.
 	 */
 	public void process(FrameAdapter adapter);
+
+	/**
+	 * This method is called prior to sending data on the connection. The event
+	 * can be used to add data to the outgoing queue of the adapter.
+	 * 
+	 * @param adapter The adapter that will send data.
+	 */
+	public void sending(FrameAdapter adapter);
 }

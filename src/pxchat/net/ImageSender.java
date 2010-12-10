@@ -3,6 +3,7 @@
  */
 package pxchat.net;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -24,39 +25,35 @@ import pxchat.whiteboard.ImageTable;
  */
 public class ImageSender {
 	
-	private static final int CHUNK_SIZE = 10 * 1024;
+	private static final int CHUNK_SIZE = 2 * 1024;
 
 	private int imageID;
 	private ByteBuffer data;
 	
-	private FrameAdapter adapter;
 	
 	boolean started = false;
 	boolean finished = false;
 	
-	private WaitThread waitThread = null;
 	
 	/**
 	 * 
 	 */
-	public ImageSender(int imageID, FrameAdapter adapter) {
-		this.adapter = adapter;
+	public ImageSender(int imageID) {
 		this.imageID = imageID;
 		ByteArrayOutputStream bao = new ByteArrayOutputStream();
 		try {
-			ImageIO.write(ImageTable.getInstance().get(imageID),
-					"jpg", bao);
+			BufferedImage img = ImageTable.getInstance().get(imageID);
+			String format = img.getAlphaRaster() == null ? "jpg" : "png";
+			System.out.println(format);
+			ImageIO.write(img, format, bao);
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		this.data = ByteBuffer.wrap(bao.toByteArray());
-		
-		waitThread = new WaitThread();
-		waitThread.start();
 	}
 	
-	private Frame getNextFrame() {
+	public Frame getNextFrame() {
 		if (!this.started) {
 			this.started = true;
 			return new ImageStartFrame(imageID, data.capacity());
@@ -64,6 +61,7 @@ public class ImageSender {
 		
 		if (data.position() != data.capacity()) {
 			int size = Math.min(CHUNK_SIZE, data.capacity() - data.position());
+			System.out.println(data.position() + " / " + data.capacity());
 			byte chunk[] = new byte[size];
 			data.get(chunk);
 			return new ImageChunkFrame(imageID, chunk);
@@ -98,36 +96,4 @@ public class ImageSender {
 		return this.finished;
 	}
 	
-	private void waitCallback() {
-		waitThread = null;
-		if (!isFinished()) {
-			waitThread = new WaitThread();
-			waitThread.start();
-		}
-	}
-	
-	class WaitThread extends Thread {
-		
-		public WaitThread() {
-			setDaemon(true);
-		}
-		
-		public void run() {
-			if (!adapter.getSocket().isConnected())
-				return;
-			
-			adapter.getOutgoing().add(getNextFrame());
-			adapter.send();
-		
-			if (!isFinished()) {
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			waitCallback();
-		}
-	}
 }

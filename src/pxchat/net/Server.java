@@ -263,6 +263,11 @@ public class Server {
 			// clear all processed frames
 			adapter.getIncoming().clear();
 		}
+
+		@Override
+		public void sending(FrameAdapter adapter) {
+			System.out.println(adapter + "> sending");
+		}
 	};
 
 	/**

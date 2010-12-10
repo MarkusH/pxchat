@@ -90,6 +90,10 @@ public class FrameAdapter {
 	 * @return <code>true</code> if successful, <code>false</code> else
 	 */
 	public synchronized boolean send() {
+		// add data
+		if (listener != null) 
+			listener.sending(this);
+		
 		if ((outgoing != null) && (outgoing.size() > 0)) {
 			boolean result = send(outgoing);
 			outgoing.clear();

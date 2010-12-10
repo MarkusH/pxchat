@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 
 import pxchat.net.protocol.core.FrameAdapter;
@@ -171,6 +172,20 @@ public final class Client {
 
 			adapter.getIncoming().clear();
 		}
+
+		@Override
+		public void sending(FrameAdapter adapter) {
+			System.out.println(adapter + "> sending");
+
+			Iterator<ImageSender> iterator = imgSenders.iterator();
+			while (iterator.hasNext()) {
+				ImageSender sender = iterator.next();
+				
+				adapter.getOutgoing().add(sender.getNextFrame());
+				if (sender.isFinished())
+					iterator.remove();
+			}
+		}
 	};
 
 	/**
@@ -256,7 +271,8 @@ public final class Client {
 	
 	public void sendImage(int imageID) {
 		if (isConnected()) {
-			imgSenders.add(new ImageSender(imageID, frameAdapter));
+			imgSenders.add(new ImageSender(imageID));
+			frameAdapter.send();
 //			ImageSender sender = new ImageSender(imageID);
 //			imgSenders.add(sender);
 //			sender.process(frameAdapter, null);
