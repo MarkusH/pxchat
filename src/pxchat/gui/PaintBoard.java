@@ -1,6 +1,7 @@
 package pxchat.gui;
 
 import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -25,7 +26,6 @@ public class PaintBoard extends JPanel {
 	private Vector<PaintObject> previewObjects = new Vector<PaintObject>();
 
 	public PaintBoard() {
-		this.background = null;
 		this.board = null;
 		// this.preview = null;
 	}
@@ -40,6 +40,7 @@ public class PaintBoard extends JPanel {
 		
 		background = Client.getInstance().getNextImageID();
 		ImageTable.getInstance().put(background, img);
+		this.setBackground(Color.WHITE);
 
 		Client.getInstance().sendImage(background);
 		
@@ -65,6 +66,11 @@ public class PaintBoard extends JPanel {
 //			this.background = img;
 //		}
 //	}
+	
+	public void loadBackground(Color c) {
+		this.background = null;
+		this.setBackground(c);
+	}
 
 	/**
 	 * Clears the board

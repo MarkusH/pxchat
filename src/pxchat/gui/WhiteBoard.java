@@ -61,12 +61,13 @@ public class WhiteBoard extends JFrame {
 	private JToggleButton drawCircle, drawEllipse, drawEraser, drawFreehand,
 			drawLine, drawRectangle, drawText, lockCanvas;
 	private JButton drawColor, loadImage, saveImage, clearImage,
-			loadBackground;
+			loadBackground, loadBackgroundColor;
 	private JSlider lineWidthSlider;
 	private JLabel lineWidthLabel;
 
 	private Tool tool = Tool.Freehand;
 	private Color currentColor = Color.BLACK;
+	private Color currentBackgroundColor = Color.WHITE;
 	/**
 	 * The coordinates of the starting point of a new paint object. It is
 	 * usually set in mousePressed()
@@ -89,7 +90,6 @@ public class WhiteBoard extends JFrame {
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage(
 				"./data/img/icon/whiteboard.png"));
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
-//		setLayout(new BorderLayout(10,10));
 		setResizable(false);
 		
 		JPanel panel = new JPanel();
@@ -237,11 +237,11 @@ public class WhiteBoard extends JFrame {
 		});
 
 		toolbar = new JPanel();
-		Dimension tbDimension = new Dimension(74,326);
+		Dimension tbDimension = new Dimension(74,358);
 		toolbar.setMinimumSize(tbDimension);
 		toolbar.setPreferredSize(tbDimension);
 		toolbar.setMaximumSize(tbDimension);
-		toolbar.setLayout(new GridLayout(8, 2, 10, 10));
+		toolbar.setLayout(new GridLayout(9, 2, 10, 10));
 		toolbar.setAlignmentY(TOP_ALIGNMENT);
 
 		drawCircle = new JToggleButton("", Icons.get("draw-circle.png"));
@@ -383,6 +383,21 @@ public class WhiteBoard extends JFrame {
 				loadBackground();
 			}
 		});
+		
+		loadBackgroundColor = new JButton("BGC");
+		loadBackgroundColor.setToolTipText(I18n.getInstance().getString("wbBackgroundColor"));
+		loadBackgroundColor.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Color newColor = JColorChooser.showDialog(WhiteBoard.this, I18n
+					.getInstance().getString("ccDialog"), currentBackgroundColor);
+				if (newColor != null) {
+					currentBackgroundColor = newColor;
+					paintBoard.loadBackground(newColor);
+				}
+			}
+		});
 
 		drawColorPanel = new JPanel();
 		drawColorPanel.setMaximumSize(new Dimension(16, 16));
@@ -422,7 +437,10 @@ public class WhiteBoard extends JFrame {
 		toolbar.add(saveImage);
 
 		toolbar.add(clearImage);
+		toolbar.add(new JPanel());
+		
 		toolbar.add(loadBackground);
+		toolbar.add(loadBackgroundColor);
 
 		toolbar.add(lineWidthSlider);
 		toolbar.add(lineWidthLabel);
