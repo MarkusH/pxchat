@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Scanner;
 
@@ -19,11 +20,12 @@ import java.util.Scanner;
  */
 public class Logging {
 
-	private File fUser, fMessages;
+	private File fMessages;
 	private String start, end;
-	private Writer oswLog, oswUser, oswMessage;
-	private String logfilename, userfilename, msgfilename;
+	private Writer oswLog, oswMessage;
+	private String logfilename, msgfilename;
 	private static final String encoding = "UTF-8";
+	private String[] participants = null;
 
 	private Calendar cal = Calendar.getInstance();
 	private SimpleDateFormat sdf;
@@ -34,11 +36,10 @@ public class Logging {
 	public Logging() {
 		String time = getFilenameDateTime();
 		logfilename = "log/log" + time + ".xml";
-		userfilename = "log/.usr" + time;
 		msgfilename = "log/.msg" + time;
 
 		start = "\t<start date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n";
-
+		
 		try {
 			File file = new File("log/");
 			if (!file.exists())
@@ -46,12 +47,6 @@ public class Logging {
 			else
 				if (!file.isDirectory())
 					throw new IOException(file.getAbsolutePath() + " is not a directory");
-
-			fUser = new File(userfilename);
-			if (!fUser.exists())
-				fUser.createNewFile();
-			oswUser = new OutputStreamWriter(new FileOutputStream(fUser),
-					encoding);
 
 			fMessages = new File(msgfilename);
 			if (!fMessages.exists())
@@ -89,17 +84,14 @@ public class Logging {
 			 * put all participants in the log This needs a closing of oswUser
 			 * first!
 			 */
-			oswUser.close();
-			Scanner scanner;
 			oswLog.write("\t<participants>\n");
-			scanner = new Scanner(new FileInputStream(fUser), encoding);
-			while (scanner.hasNextLine()) {
-				oswLog.write(scanner.nextLine() + "\n");
+			
+			for (int i = 0; i < participants.length; i++) {
+				oswLog.write("\t\t<name>" + participants[i] + "</name>\n");
 			}
-			scanner.close();
+			
 			oswLog.write("\t</participants>\n");
 			oswLog.flush();
-			fUser.delete();
 
 			/**
 			 * let us write the duration of this chat
@@ -113,6 +105,7 @@ public class Logging {
 			 * close that OutputStreamWriter first.
 			 */
 			oswMessage.close();
+			Scanner scanner;
 			oswLog.write("\t<chat>\n");
 			scanner = new Scanner(new FileInputStream(fMessages), encoding);
 			while (scanner.hasNextLine()) {
@@ -157,12 +150,24 @@ public class Logging {
 		}
 	}
 
-	private void logParticipant(String user) {
-		try {
-			oswUser.write("\t\t<name date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\">" + user + "</name>\n");
-			oswUser.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
+	public void logParticipants(String[] userList) {
+		if (participants == null) {
+			Arrays.sort(userList);
+			participants = userList;
+		} else {
+			String[] tmp = new String[participants.length + userList.length];
+			System.arraycopy(participants, 0, tmp, 0, participants.length);
+			System.arraycopy(userList, 0, tmp, participants.length, userList.length);
+			Arrays.sort(tmp);
+			int k = 0;
+			for (int i = 0; i < tmp.length; i++) {
+				if (i > 0 && tmp[i].equals(tmp[i -1])) {
+					continue;
+				}
+				tmp[k++] = tmp[i];
+			}
+			participants = new String[k];
+			System.arraycopy(tmp, 0, participants, 0, k);
 		}
 	}
 
@@ -179,7 +184,6 @@ public class Logging {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		logParticipant(user);
 	}
 
 	/**

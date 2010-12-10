@@ -336,6 +336,7 @@ public class ClientMain extends JFrame {
 				ClientMain.this.userList.setListData(
 						newUserList.values().toArray(
 						new String[newUserList.size()]));
+				log.logParticipants(newUserList.values().toArray(new String[newUserList.size()]));
 			}
 
 			@Override
