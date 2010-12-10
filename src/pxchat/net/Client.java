@@ -10,6 +10,7 @@ import pxchat.net.protocol.core.FrameAdapterListener;
 import pxchat.net.protocol.frames.AuthenticationFrame;
 import pxchat.net.protocol.frames.Frame;
 import pxchat.net.protocol.frames.ImageIDFrame;
+import pxchat.net.protocol.frames.ImageSyncFrame;
 import pxchat.net.protocol.frames.MessageFrame;
 import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.net.protocol.frames.UserListFrame;
@@ -52,7 +53,7 @@ public final class Client {
 
 	private int nextImageID = -1;
 	
-	private Vector<ImageSender> imageSenders = new Vector<ImageSender>();
+	private Vector<ImageSender> imgSenders = new Vector<ImageSender>();
 
 
 	/**
@@ -150,6 +151,20 @@ public final class Client {
 						nextImageID = idf.getImageID();
 						System.out.println("Received image id");
 						break;
+						
+					case Frame.ID_IMG_SYNC:
+						System.out.println("sync");
+						ImageSyncFrame sf = (ImageSyncFrame) frame;
+						for (ImageSender snd : imgSenders) {
+							if (snd.process(adapter, sf)) {
+								if (snd.isFinished())
+									imgSenders.remove(snd);
+								break;
+							}
+						}
+						System.out.println(imgSenders);
+						break;
+						
 				}
 			}
 
@@ -241,9 +256,8 @@ public final class Client {
 	public void sendImage(int imageID) {
 		if (isConnected()) {
 			ImageSender sender = new ImageSender(imageID);
-			imageSenders.add(sender);
-			frameAdapter.getOutgoing().add(sender.getNextFrame());
-			frameAdapter.send();
+			imgSenders.add(sender);
+			sender.process(frameAdapter, null);
 		}
 	}
 }

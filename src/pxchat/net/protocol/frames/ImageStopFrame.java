@@ -15,6 +15,7 @@ public class ImageStopFrame extends Frame {
 	 * 
 	 */
 	public ImageStopFrame(int imageID) {
+		this.id = Frame.ID_IMG_STOP;
 		this.imageID = imageID;
 	}
 

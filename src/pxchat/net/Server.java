@@ -2,6 +2,7 @@ package pxchat.net;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Vector;
 
 import pxchat.net.protocol.core.AuthFrameAdapter;
 import pxchat.net.protocol.core.FrameAdapter;
@@ -11,8 +12,10 @@ import pxchat.net.protocol.core.ServerFrameAdapter;
 import pxchat.net.protocol.core.ServerFrameAdapterListener;
 import pxchat.net.protocol.frames.AuthenticationFrame;
 import pxchat.net.protocol.frames.Frame;
+import pxchat.net.protocol.frames.ImageChunkFrame;
 import pxchat.net.protocol.frames.ImageIDFrame;
 import pxchat.net.protocol.frames.ImageStartFrame;
+import pxchat.net.protocol.frames.ImageStopFrame;
 import pxchat.net.protocol.frames.MessageFrame;
 import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.net.protocol.frames.SessionIDFrame;
@@ -42,6 +45,10 @@ public class Server {
 
 	private HashMap<String, String> authList = new HashMap<String, String>();
 	private HashMap<Integer, String> userList = new HashMap<Integer, String>();
+	
+	
+	private Vector<ImageReceiver> imgReceivers = new Vector<ImageReceiver>();
+	
 	
 	private int nextImageID = 0;
 	
@@ -225,7 +232,30 @@ public class Server {
 						ImageStartFrame sf = (ImageStartFrame) frame;
 						System.out.println("Received ImageStartFrame with id " + sf.getImageID());
 						adapter.getOutgoing().add(new ImageIDFrame(getNextImageID()));
-						adapter.send();
+						ImageReceiver newRecv = new ImageReceiver(sf);
+						imgReceivers.add(newRecv);
+						newRecv.process(adapter, sf);
+//						adapter.send();
+						break;
+						
+					case Frame.ID_IMG_CHUNK:
+						ImageChunkFrame cf = (ImageChunkFrame) frame;
+						for (ImageReceiver recv : imgReceivers) {
+							if (recv.process(adapter, cf))
+								break;
+						}
+						break;
+						
+					case Frame.ID_IMG_STOP:
+						System.out.println("img stop");
+						ImageStopFrame spf = (ImageStopFrame) frame;
+						for (ImageReceiver recv : imgReceivers) {
+							if (recv.process(adapter, spf)) {
+								imgReceivers.remove(recv);
+								break;
+							}
+						}
+						System.out.println(imgReceivers);
 						break;
 				}
 			}
