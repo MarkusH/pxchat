@@ -1,5 +1,6 @@
 package pxchat.net.protocol.core;
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 import pxchat.net.protocol.frames.Frame;
@@ -19,5 +20,4 @@ public class FrameQueue extends LinkedList<Frame> {
 		}
 		return result;
 	}
-
 }

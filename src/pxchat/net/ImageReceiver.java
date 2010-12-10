@@ -40,8 +40,8 @@ public class ImageReceiver {
 	public boolean process(FrameAdapter adapter, ImageStartFrame frame) {
 		if (frame.getImageID() == this.imageID) {
 			System.out.println("started");
-			adapter.getOutgoing().add(new ImageSyncFrame(this.imageID, adapter.getSessionID()));
-			adapter.send();
+//			adapter.getOutgoing().add(new ImageSyncFrame(this.imageID, adapter.getSessionID()));
+//			adapter.send();
 			return true;
 		}
 		return false;
@@ -51,8 +51,8 @@ public class ImageReceiver {
 		if (frame.getImageID() == this.imageID) {
 			data.put(frame.getData());
 			System.out.println("chunk received: " + data.position() + " / " + data.capacity());
-			adapter.getOutgoing().add(new ImageSyncFrame(this.imageID, adapter.getSessionID()));
-			adapter.send();
+//			adapter.getOutgoing().add(new ImageSyncFrame(this.imageID, adapter.getSessionID()));
+//			adapter.send();
 			return true;
 		}
 		
@@ -75,7 +75,7 @@ public class ImageReceiver {
 				ImageTable.getInstance().put(this.imageID, img);
 				System.out.println("image loaded");
 				try {
-					ImageIO.write(img, "jpg", new File("test.png"));
+					ImageIO.write(img, "jpg", new File("test.jpg"));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

@@ -29,13 +29,18 @@ public class ImageSender {
 	private int imageID;
 	private ByteBuffer data;
 	
+	private FrameAdapter adapter;
+	
 	boolean started = false;
 	boolean finished = false;
+	
+	private WaitThread waitThread = null;
 	
 	/**
 	 * 
 	 */
-	public ImageSender(int imageID) {
+	public ImageSender(int imageID, FrameAdapter adapter) {
+		this.adapter = adapter;
 		this.imageID = imageID;
 		ByteArrayOutputStream bao = new ByteArrayOutputStream();
 		try {
@@ -43,10 +48,12 @@ public class ImageSender {
 					"jpg", bao);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.data = ByteBuffer.wrap(bao.toByteArray());
+		
+		waitThread = new WaitThread();
+		waitThread.start();
 	}
 	
 	private Frame getNextFrame() {
@@ -71,23 +78,56 @@ public class ImageSender {
 		return null;
 	}
 	
-	public boolean process(FrameAdapter adapter, ImageSyncFrame frame) {
-		
-		if (frame == null || frame.getImageID() == this.imageID) {
-			Frame next = getNextFrame();
-			if (next != null) {
-				System.out.println("send");
-				adapter.getOutgoing().add(next);
-				adapter.send();
-			}
-			
-			return true;
-		}
-		
-		return false;
-	}
+//	public boolean process(FrameAdapter adapter, ImageSyncFrame frame) {
+//		
+//		if (frame == null || frame.getImageID() == this.imageID) {
+//			Frame next = getNextFrame();
+//			if (next != null) {
+//				System.out.println("send");
+//				adapter.getOutgoing().add(next);
+//				adapter.send();
+//			}
+//			
+//			return true;
+//		}
+//		
+//		return false;
+//	}
 
 	public boolean isFinished() {
 		return this.finished;
+	}
+	
+	private void waitCallback() {
+		waitThread = null;
+		if (!isFinished()) {
+			waitThread = new WaitThread();
+			waitThread.start();
+		}
+	}
+	
+	class WaitThread extends Thread {
+		
+		public WaitThread() {
+			setDaemon(true);
+		}
+		
+		public void run() {
+			if (!adapter.getSocket().isConnected())
+				return;
+			
+			adapter.getOutgoing().add(getNextFrame());
+			adapter.send();
+		
+			if (!isFinished()) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			waitCallback();
+		}
 	}
 }

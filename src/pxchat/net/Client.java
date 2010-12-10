@@ -2,6 +2,7 @@ package pxchat.net;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -152,19 +153,19 @@ public final class Client {
 						System.out.println("Received image id");
 						break;
 						
-					case Frame.ID_IMG_SYNC:
-						System.out.println("sync");
-						ImageSyncFrame sf = (ImageSyncFrame) frame;
-						for (ImageSender snd : imgSenders) {
-							if (snd.process(adapter, sf)) {
-								if (snd.isFinished())
-									imgSenders.remove(snd);
-								break;
-							}
-						}
-						System.out.println(imgSenders);
-						break;
-						
+//					case Frame.ID_IMG_SYNC:
+//						System.out.println("sync");
+//						ImageSyncFrame sf = (ImageSyncFrame) frame;
+//						for (ImageSender snd : imgSenders) {
+//							if (snd.process(adapter, sf)) {
+//								if (snd.isFinished())
+//									imgSenders.remove(snd);
+//								break;
+//							}
+//						}
+//						System.out.println(imgSenders);
+//						break;
+//						
 				}
 			}
 
@@ -255,9 +256,10 @@ public final class Client {
 	
 	public void sendImage(int imageID) {
 		if (isConnected()) {
-			ImageSender sender = new ImageSender(imageID);
-			imgSenders.add(sender);
-			sender.process(frameAdapter, null);
+			imgSenders.add(new ImageSender(imageID, frameAdapter));
+//			ImageSender sender = new ImageSender(imageID);
+//			imgSenders.add(sender);
+//			sender.process(frameAdapter, null);
 		}
 	}
 }
