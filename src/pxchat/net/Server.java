@@ -118,6 +118,12 @@ public class Server {
 		@Override
 		public void clientConnecting(CustomSocket client) {
 		}
+
+		@Override
+		public void clientClearToSend(CustomSocket client) {
+			// TODO Auto-generated method stub
+			
+		}
 	};
 
 	/**

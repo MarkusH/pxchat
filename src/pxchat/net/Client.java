@@ -119,6 +119,11 @@ public final class Client {
 			System.out.println(this + "> Connecting to server");
 			frameAdapter.reset();
 		}
+
+		@Override
+		public void clientClearToSend(CustomSocket client) {
+			frameAdapter.send();
+		}
 	};
 
 	private FrameAdapterListener adapterListener = new FrameAdapterListener() {

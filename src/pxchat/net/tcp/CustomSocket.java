@@ -249,8 +249,8 @@ public class CustomSocket {
 			
 			writeThread = null;
 			
-//			if (tcpClientListener != null)
-//				tcpClientListener.clientClearToSend(CustomSocket.this);
+			if (tcpClientListener != null)
+				tcpClientListener.clientClearToSend(CustomSocket.this);
 		}
 	}
 

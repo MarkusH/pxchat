@@ -40,4 +40,6 @@ public interface TCPClientListener {
 	 * @param data The data received
 	 */
 	public void clientRead(CustomSocket client, Object data);
+	
+	public void clientClearToSend(CustomSocket client);
 }
