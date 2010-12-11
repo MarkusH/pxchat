@@ -118,7 +118,7 @@ public class PaintBoard extends JPanel {
 	/**
 	 * Updates the actual board
 	 */
-	private void updateBoard() {
+	private synchronized void updateBoard() {
 		if (this.board == null)
 			this.board = new BufferedImage(getWidth(), getHeight(),
 					BufferedImage.TYPE_4BYTE_ABGR);
@@ -127,10 +127,16 @@ public class PaintBoard extends JPanel {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		for (PaintObject obj : cache) {
-			obj.draw(g);
+		System.out.println("update locking");
+		synchronized (this) {
+			System.out.println("update locked");
+			for (PaintObject obj : cache) {
+				obj.draw(g);
+			}
+			cache.clear();
 		}
-		cache.clear();
+		System.out.println("update unlocked");
+
 	}
 
 	/*
@@ -156,7 +162,9 @@ public class PaintBoard extends JPanel {
 			g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
 
 		// draw board
-		updateBoard();
+//		synchronized (this) {
+			updateBoard();
+//		}
 		g.drawImage(this.board, 0, 0, null);
 
 		// draw preview

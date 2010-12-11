@@ -19,7 +19,7 @@ public class PointObject extends PrimitiveObject {
 	@Override
 	public void draw(Graphics2D g) {
 		beginDraw(g);
-		g.drawRect(point.x, point.y, 0, 0);
+		g.drawRect(point.x, point.y, 1, 1);
 		endDraw(g);
 	}
 

@@ -45,6 +45,7 @@ import pxchat.whiteboard.CircleObject;
 import pxchat.whiteboard.EllipseObject;
 import pxchat.whiteboard.LineObject;
 import pxchat.whiteboard.PaintObject;
+import pxchat.whiteboard.PointObject;
 import pxchat.whiteboard.RectObject;
 
 /**
@@ -162,6 +163,13 @@ public class WhiteBoard extends JFrame {
 				maybeShowPopup(e);
 
 				startPoint = currentPoint = new Point(e.getX(), e.getY());
+				
+				switch (tool) {
+					case Freehand:
+						Client.getInstance().sendPaintObject(new PointObject(startPoint, currentColor, currentStrokeWidth));
+						break;
+				}
+
 			}
 
 			@Override
@@ -216,6 +224,15 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				switch (tool) {
+					case Freehand:
+						Point newPoint = new Point(e.getX(), e.getY());
+//						paintBoard.getCache().add(new LineObject(currentPoint, 
+//								newPoint, currentColor, currentStrokeWidth));
+//						paintBoard.repaint();
+						Client.getInstance().sendPaintObject(new LineObject(currentPoint, 
+								newPoint, currentColor, currentStrokeWidth));
+						currentPoint = new Point(e.getX(), e.getY());
+						break;
 					case Circle:
 						currentPoint = new Point(e.getX(), e.getY());
 						paintBoard.getPreviewObjects().clear();
@@ -487,12 +504,19 @@ public class WhiteBoard extends JFrame {
 
 			@Override
 			public void paintRequest() {
-				paintBoard.repaint();
+//				synchronized (paintBoard) {
+					paintBoard.repaint();
+//				}
 			}
 
 			@Override
 			public void paintObjectReceived(PaintObject object) {
-				paintBoard.getCache().add(object);
+				System.out.println("received locking");
+				synchronized (paintBoard) {
+					System.out.println("received locked");
+					paintBoard.getCache().add(object);				
+				}
+				System.out.println("reiceved unlocked");
 			}
 		});
 

@@ -77,7 +77,11 @@ public class FrameAdapter {
 	 */
 	protected boolean send(FrameQueue queue) {
 		try {
-			return socket.writeObject(queue);
+			System.out.println(this + "> send " + queue);
+			
+			boolean res = socket.writeObject(queue);
+			System.out.println("send done");
+			return res;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

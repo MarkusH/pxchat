@@ -110,10 +110,14 @@ public class CustomSocket {
 	 */
 	public synchronized boolean writeObject(Object object) throws IOException {
 		if (isConnected()) {
+			System.out.println("write... connected");
 			if (cOut == null)
 				cOut = new CipherOutputStream(socket.getOutputStream(), cipherOut);
+			System.out.println("cipher ready");
 			ObjectOutputStream stream = new ObjectOutputStream(cOut);
+			System.out.println("out genereted");
 			stream.writeObject(object);
+			System.out.println("written");
 			// stream.flush();
 
 			return true;
@@ -131,7 +135,7 @@ public class CustomSocket {
 		}
 	}
 
-	private synchronized void readCallback(Object object) {
+	private void readCallback(Object object) {
 		if (tcpClientListener != null)
 			tcpClientListener.clientRead(this, object);
 		doRead();
