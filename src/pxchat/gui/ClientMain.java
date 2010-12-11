@@ -26,7 +26,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
-import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
@@ -358,6 +357,7 @@ public class ClientMain extends JFrame {
 			chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
 				"[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] " + msg + "\n",
 				NOTIFY);
+			this.scrollChatLog();
 		} catch (BadLocationException e) {
 			System.err.println("Could not write to JTextPane \"chatLog\".");
 		}
@@ -402,11 +402,11 @@ public class ClientMain extends JFrame {
 			inputArea.setText("");
 		}
 	}
-	
+
 	private void scrollChatLog() {
-		chatLog.scrollRectToVisible(new Rectangle(chatLog.getWidth() - chatLogPane
-			.getWidth(), chatLog.getHeight() - chatLogPane.getHeight(), chatLogPane
-			.getWidth(), chatLogPane.getHeight()));
+		chatLog.scrollRectToVisible(new Rectangle(chatLog.getWidth() - chatLogPane.getWidth(),
+				chatLog.getHeight() - chatLogPane.getHeight(), chatLogPane.getWidth(), chatLogPane
+						.getHeight()));
 	}
 
 	/**
