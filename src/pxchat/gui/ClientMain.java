@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
@@ -85,10 +87,9 @@ public class ClientMain extends JFrame {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		SplashScreen splashScreen = new SplashScreen(this);
 		splashScreen.setVisible(true);
-		
 
 		/**************************************************
-		 *  Create Menu Bar
+		 * Create Menu Bar
 		 **************************************************/
 		mBar = new JMenuBar();
 		/**
@@ -141,7 +142,7 @@ public class ClientMain extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, I18n.getInstance().getString("aboutText"), I18n
 						.getInstance().getString("aboutInfo"), JOptionPane.INFORMATION_MESSAGE,
-						Icons.get("about-64.png"));
+					Icons.get("about-64.png"));
 			}
 		});
 		mHelp.add(mAbout);
@@ -151,18 +152,17 @@ public class ClientMain extends JFrame {
 		/**************************************************
 		 * Layout
 		 **************************************************/
-		
+
 		/**
 		 * We need some panels for grouping
 		 */
-		JPanel panel = new JPanel(), panell = new JPanel(), panelr =  new JPanel(),
-			panelButtons = new JPanel();
+		JPanel panel = new JPanel(), panell = new JPanel(), panelr = new JPanel(), panelButtons = new JPanel();
 		panel.setLayout(new BorderLayout(10, 10));
 		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		panell.setLayout(new BorderLayout(10, 10));
 		panelr.setLayout(new BorderLayout(10, 10));
 		panelButtons.setLayout(new GridLayout(2, 1, 10, 10));
-		
+
 		/**
 		 * the chat log
 		 */
@@ -171,10 +171,10 @@ public class ClientMain extends JFrame {
 		chatLogPane = new JScrollPane(chatLog, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		chatLogPane.setPreferredSize(new Dimension(400, 300));
-		
+
 		// TODO may fix the autoscroll problems.
 		chatLogPane.setAutoscrolls(true);
-		
+
 		/**
 		 * the input area
 		 */
@@ -208,7 +208,7 @@ public class ClientMain extends JFrame {
 				}
 			}
 		});
-		
+
 		/**
 		 * the userlist
 		 */
@@ -249,7 +249,7 @@ public class ClientMain extends JFrame {
 
 			}
 		});
-		
+
 		/**
 		 * finally add all panels to the program
 		 */
@@ -261,17 +261,17 @@ public class ClientMain extends JFrame {
 
 		panelr.add(userListPane, BorderLayout.CENTER);
 		panelr.add(panelButtons, BorderLayout.SOUTH);
-		
+
 		panel.add(panell, BorderLayout.CENTER);
 		panel.add(panelr, BorderLayout.EAST);
-		
+
 		this.getContentPane().add(panel);
 
 		this.pack();
 		this.setResizable(false);
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(size.width / 3 - this.getWidth() / 2,
-				size.height / 2 - this.getHeight() / 2);
+			size.height / 2 - this.getHeight() / 2);
 
 		/**
 		 * now we register a client listener
@@ -321,11 +321,13 @@ public class ClientMain extends JFrame {
 			public void notification(int type, String username) {
 				switch (type) {
 					case NotificationFrame.JOIN:
-						writeNotification(username + " " + I18n.getInstance().getString("joinMessage"));
+						writeNotification(username + " " + I18n.getInstance().getString(
+							"joinMessage"));
 						log.logJoin(username);
 						break;
 					case NotificationFrame.LEAVE:
-						writeNotification(username + " " + I18n.getInstance().getString("leaveMessage"));
+						writeNotification(username + " " + I18n.getInstance().getString(
+							"leaveMessage"));
 						log.logLeave(username);
 						break;
 				}
@@ -333,9 +335,8 @@ public class ClientMain extends JFrame {
 
 			@Override
 			public void userListChanged(HashMap<Integer, String> newUserList) {
-				ClientMain.this.userList.setListData(
-						newUserList.values().toArray(
-						new String[newUserList.size()]));
+				ClientMain.this.userList.setListData(newUserList.values().toArray(
+					new String[newUserList.size()]));
 				log.logParticipants(newUserList.values().toArray(new String[newUserList.size()]));
 			}
 
@@ -355,8 +356,8 @@ public class ClientMain extends JFrame {
 	public void writeNotification(String msg) {
 		try {
 			chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
-					"[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] " + msg + "\n",
-					NOTIFY);
+				"[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] " + msg + "\n",
+				NOTIFY);
 		} catch (BadLocationException e) {
 			System.err.println("Could not write to JTextPane \"chatLog\".");
 		}
@@ -364,12 +365,12 @@ public class ClientMain extends JFrame {
 
 	public void writeMessage(String author, String msg) {
 		try {
-			chatLog.getDocument().insertString(
-							chatLog.getDocument().getLength(),
-							"[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] " + author + ": ",
-							FOREIGNNAME);
+			chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
+				"[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] " + author + ": ",
+				FOREIGNNAME);
 			chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n",
-					FOREIGN);
+				FOREIGN);
+			this.scrollChatLog();
 		} catch (BadLocationException e) {
 			System.err.println("Could not write to JTextPane \"chatLog\".");
 		}
@@ -383,11 +384,15 @@ public class ClientMain extends JFrame {
 
 		if (!msg.trim().equals("")) {
 			try {
-				chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
-					"[" + df.format(new Date()) + "] " + I18n.getInstance().getString("you") +
-						": ", OWNNAME);
+				chatLog.getDocument()
+						.insertString(
+							chatLog.getDocument().getLength(),
+							"[" + df.format(new Date()) + "] " + I18n.getInstance()
+									.getString("you") + ": ", OWNNAME);
 
-				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n", OWN);
+				chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n",
+					OWN);
+				this.scrollChatLog();
 				Client.getInstance().sendMessage(msg);
 				log.logMessage(msg, I18n.getInstance().getString("you"));
 
@@ -396,6 +401,12 @@ public class ClientMain extends JFrame {
 			}
 			inputArea.setText("");
 		}
+	}
+	
+	private void scrollChatLog() {
+		chatLog.scrollRectToVisible(new Rectangle(chatLog.getWidth() - chatLogPane
+			.getWidth(), chatLog.getHeight() - chatLogPane.getHeight(), chatLogPane
+			.getWidth(), chatLogPane.getHeight()));
 	}
 
 	/**
