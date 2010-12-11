@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -33,6 +34,11 @@ public class CustomSocket {
 	private CipherOutputStream cOut;
 
 	protected TCPClientListener tcpClientListener;
+	
+	// begin test
+	private ConcurrentLinkedQueue<Object> outgoing = new ConcurrentLinkedQueue<Object>();
+	private Thread writeThread = null;
+	// end test
 
 	/**
 	 * Constructs a new custom socket with a specified listener. No connection
@@ -109,20 +115,38 @@ public class CustomSocket {
 	 * @throws IOException
 	 */
 	public synchronized boolean writeObject(Object object) throws IOException {
-		if (isConnected()) {
-			System.out.println("write... connected");
-			if (cOut == null)
-				cOut = new CipherOutputStream(socket.getOutputStream(), cipherOut);
-			System.out.println("cipher ready");
-			ObjectOutputStream stream = new ObjectOutputStream(cOut);
-			System.out.println("out genereted");
-			stream.writeObject(object);
-			System.out.println("written");
-			// stream.flush();
-
-			return true;
+		
+		if (!isConnected())
+			return false;
+		outgoing.add(object);
+		
+		if (writeThread == null) {
+			writeThread = new WriteThread();
+			writeThread.start();
+		} else {	
+			synchronized (writeThread) {
+				if (!writeThread.isAlive()) {
+					writeThread = new WriteThread();
+					writeThread.start();
+				}
+			}
 		}
-		return false;
+		return true;
+		
+//		if (isConnected()) {
+//			System.out.println("write... connected");
+//			if (cOut == null)
+//				cOut = new CipherOutputStream(socket.getOutputStream(), cipherOut);
+//			System.out.println("cipher ready");
+//			ObjectOutputStream stream = new ObjectOutputStream(cOut);
+//			System.out.println("out genereted");
+//			stream.writeObject(object);
+//			System.out.println("written");
+//			// stream.flush();
+//
+//			return true;
+//		}
+//		return false;
 	}
 
 	/**
@@ -186,6 +210,47 @@ public class CustomSocket {
 			} catch (Exception e) {
 				readCallback(e);
 			}
+		}
+	}
+	
+	class WriteThread extends Thread {
+		
+		public WriteThread() {
+			this.setDaemon(true);
+		}
+
+		@Override
+		public void run() {
+			if (cOut == null)
+				try {
+					cOut = new CipherOutputStream(socket.getOutputStream(), cipherOut);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			
+			while (!outgoing.isEmpty()) {
+				try {
+					ObjectOutputStream stream = null;
+					try {
+						stream = new ObjectOutputStream(cOut);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+					Object o = outgoing.poll();
+					stream.writeObject(o);
+					System.out.println("write " + o);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			writeThread = null;
+			
+//			if (tcpClientListener != null)
+//				tcpClientListener.clientClearToSend(CustomSocket.this);
 		}
 	}
 

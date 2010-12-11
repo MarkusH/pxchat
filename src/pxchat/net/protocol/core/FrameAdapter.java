@@ -99,7 +99,13 @@ public class FrameAdapter {
 			listener.sending(this);
 		
 		if ((outgoing != null) && (outgoing.size() > 0)) {
-			boolean result = send(outgoing);
+			
+			
+			FrameQueue tmp = outgoing;
+			boolean result = send(tmp);
+			outgoing = new FrameQueue();
+			
+//			boolean result = send(outgoing);
 			outgoing.clear();
 			return result;
 		}
