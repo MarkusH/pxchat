@@ -44,6 +44,7 @@ import pxchat.util.PicFileFilter;
 import pxchat.whiteboard.CircleObject;
 import pxchat.whiteboard.EllipseObject;
 import pxchat.whiteboard.LineObject;
+import pxchat.whiteboard.PaintObject;
 import pxchat.whiteboard.RectObject;
 
 /**
@@ -62,10 +63,10 @@ public class WhiteBoard extends JFrame {
 
 	private PaintBoard paintBoard;
 	private JPanel toolbar, drawColorPanel;
-	private JToggleButton drawCircle, drawEllipse, drawEraser, drawFreehand,
-			drawLine, drawRectangle, drawText, lockCanvas;
-	private JButton drawColor, loadImage, saveImage, clearImage,
-			loadBackground, loadBackgroundColor;
+	private JToggleButton drawCircle, drawEllipse, drawEraser, drawFreehand, drawLine,
+			drawRectangle, drawText, lockCanvas;
+	private JButton drawColor, loadImage, saveImage, clearImage, loadBackground,
+			loadBackgroundColor;
 	private JSlider lineWidthSlider;
 	private JLabel lineWidthLabel;
 
@@ -91,11 +92,10 @@ public class WhiteBoard extends JFrame {
 
 	public WhiteBoard() {
 		super(I18n.getInstance().getString("wbTitle"));
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage(
-				"./data/img/icon/whiteboard.png"));
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage("./data/img/icon/whiteboard.png"));
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setResizable(false);
-		
+
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -105,8 +105,8 @@ public class WhiteBoard extends JFrame {
 		paintBoard.setPreferredSize(new Dimension(sizeX, sizeY));
 
 		final JPopupMenu popup = new JPopupMenu();
-		JMenuItem backgroundMenuItem = new JMenuItem(I18n.getInstance()
-				.getString("wbBackground"), Icons.get("load-background-16.png"));
+		JMenuItem backgroundMenuItem = new JMenuItem(I18n.getInstance().getString("wbBackground"),
+				Icons.get("load-background-16.png"));
 		backgroundMenuItem.addActionListener(new ActionListener() {
 
 			@Override
@@ -114,8 +114,8 @@ public class WhiteBoard extends JFrame {
 				loadBackground();
 			}
 		});
-		JMenuItem saveMenuItem = new JMenuItem(I18n.getInstance().getString("wbSaveToFile"),
-				Icons.get("save-16.png"));
+		JMenuItem saveMenuItem = new JMenuItem(I18n.getInstance().getString("wbSaveToFile"), Icons
+				.get("save-16.png"));
 		saveMenuItem.addActionListener(new ActionListener() {
 
 			@Override
@@ -125,8 +125,8 @@ public class WhiteBoard extends JFrame {
 			}
 		});
 
-		JMenuItem clearMenuItem = new JMenuItem(I18n.getInstance().getString("wbClear"),
-				Icons.get("clear-16.png"));
+		JMenuItem clearMenuItem = new JMenuItem(I18n.getInstance().getString("wbClear"), Icons
+				.get("clear-16.png"));
 		clearMenuItem.addActionListener(new ActionListener() {
 
 			@Override
@@ -170,18 +170,30 @@ public class WhiteBoard extends JFrame {
 
 				switch (tool) {
 					case Circle:
+						Client.getInstance().sendPaintObject(
+								new CircleObject(startPoint, currentPoint, currentColor,
+										currentStrokeWidth));
 						paintBoard.getPreviewObjects().clear();
 						paintBoard.repaint();
 						break;
 					case Ellipse:
+						Client.getInstance().sendPaintObject(
+								new EllipseObject(startPoint, currentPoint, currentColor,
+										currentStrokeWidth));
 						paintBoard.getPreviewObjects().clear();
 						paintBoard.repaint();
 						break;
 					case Line:
+						Client.getInstance().sendPaintObject(
+								new LineObject(startPoint, currentPoint, currentColor,
+										currentStrokeWidth));
 						paintBoard.getPreviewObjects().clear();
 						paintBoard.repaint();
 						break;
 					case Rectangle:
+						Client.getInstance().sendPaintObject(
+								new RectObject(startPoint, currentPoint, currentColor,
+										currentStrokeWidth));
 						paintBoard.getPreviewObjects().clear();
 						paintBoard.repaint();
 						break;
@@ -208,32 +220,32 @@ public class WhiteBoard extends JFrame {
 						currentPoint = new Point(e.getX(), e.getY());
 						paintBoard.getPreviewObjects().clear();
 						paintBoard.getPreviewObjects().add(
-								new CircleObject(startPoint, currentPoint,
-										currentColor, currentStrokeWidth));
+								new CircleObject(startPoint, currentPoint, currentColor,
+										currentStrokeWidth));
 						paintBoard.repaint();
 						break;
 					case Ellipse:
 						currentPoint = new Point(e.getX(), e.getY());
 						paintBoard.getPreviewObjects().clear();
 						paintBoard.getPreviewObjects().add(
-								new EllipseObject(startPoint, currentPoint,
-										currentColor, currentStrokeWidth));
+								new EllipseObject(startPoint, currentPoint, currentColor,
+										currentStrokeWidth));
 						paintBoard.repaint();
 						break;
 					case Line:
 						currentPoint = new Point(e.getX(), e.getY());
 						paintBoard.getPreviewObjects().clear();
 						paintBoard.getPreviewObjects().add(
-								new LineObject(startPoint, currentPoint,
-										currentColor, currentStrokeWidth));
+								new LineObject(startPoint, currentPoint, currentColor,
+										currentStrokeWidth));
 						paintBoard.repaint();
 						break;
 					case Rectangle:
 						currentPoint = new Point(e.getX(), e.getY());
 						paintBoard.getPreviewObjects().clear();
 						paintBoard.getPreviewObjects().add(
-								new RectObject(startPoint, currentPoint,
-										currentColor, currentStrokeWidth));
+								new RectObject(startPoint, currentPoint, currentColor,
+										currentStrokeWidth));
 						paintBoard.repaint();
 						break;
 				}
@@ -241,7 +253,7 @@ public class WhiteBoard extends JFrame {
 		});
 
 		toolbar = new JPanel();
-		Dimension tbDimension = new Dimension(74,358);
+		Dimension tbDimension = new Dimension(74, 358);
 		toolbar.setMinimumSize(tbDimension);
 		toolbar.setPreferredSize(tbDimension);
 		toolbar.setMaximumSize(tbDimension);
@@ -263,8 +275,8 @@ public class WhiteBoard extends JFrame {
 		drawColor.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Color newColor = JColorChooser.showDialog(WhiteBoard.this, I18n
-						.getInstance().getString("ccDialog"), currentColor);
+				Color newColor = JColorChooser.showDialog(WhiteBoard.this, I18n.getInstance()
+						.getString("ccDialog"), currentColor);
 				if (newColor != null) {
 					currentColor = newColor;
 				}
@@ -339,12 +351,10 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (lockCanvas.isSelected()) {
-					lockCanvas.setToolTipText(I18n.getInstance().getString(
-							"wbUnlockCanvas"));
+					lockCanvas.setToolTipText(I18n.getInstance().getString("wbUnlockCanvas"));
 					lockCanvas.setIcon(Icons.get("unlock.png"));
 				} else {
-					lockCanvas.setToolTipText(I18n.getInstance().getString(
-							"wbLockCanvas"));
+					lockCanvas.setToolTipText(I18n.getInstance().getString("wbLockCanvas"));
 					lockCanvas.setIcon(Icons.get("lock.png"));
 				}
 			}
@@ -387,18 +397,18 @@ public class WhiteBoard extends JFrame {
 				loadBackground();
 			}
 		});
-		
+
 		loadBackgroundColor = new JButton("BGC");
 		loadBackgroundColor.setToolTipText(I18n.getInstance().getString("wbBackgroundColor"));
 		loadBackgroundColor.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Color newColor = JColorChooser.showDialog(WhiteBoard.this, I18n
-					.getInstance().getString("ccDialog"), currentBackgroundColor);
+				Color newColor = JColorChooser.showDialog(WhiteBoard.this, I18n.getInstance()
+						.getString("ccDialog"), currentBackgroundColor);
 				if (newColor != null) {
 					currentBackgroundColor = newColor;
-//					paintBoard.loadBackground(newColor);
+					// paintBoard.loadBackground(newColor);
 					Client.getInstance().sendChangeBackground(newColor);
 				}
 			}
@@ -411,15 +421,15 @@ public class WhiteBoard extends JFrame {
 		lineWidthSlider = new JSlider(1, 10, 1);
 		lineWidthSlider.setToolTipText(I18n.getInstance().getString("wbLineWidth"));
 		lineWidthSlider.addChangeListener(new ChangeListener() {
-			
+
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				currentStrokeWidth = lineWidthSlider.getValue();
-				lineWidthLabel.setText("" + (int)currentStrokeWidth);
+				lineWidthLabel.setText("" + (int) currentStrokeWidth);
 			}
 		});
 
-		lineWidthLabel = new JLabel("" + (int)currentStrokeWidth, SwingConstants.CENTER);
+		lineWidthLabel = new JLabel("" + (int) currentStrokeWidth, SwingConstants.CENTER);
 		lineWidthLabel.setSize(new Dimension(32, 32));
 		lineWidthLabel.setVerticalAlignment(SwingConstants.CENTER);
 
@@ -443,7 +453,7 @@ public class WhiteBoard extends JFrame {
 
 		toolbar.add(clearImage);
 		toolbar.add(new JPanel());
-		
+
 		toolbar.add(loadBackground);
 		toolbar.add(loadBackgroundColor);
 
@@ -462,37 +472,35 @@ public class WhiteBoard extends JFrame {
 		panel.add(toolbar);
 		panel.add(Box.createRigidArea(new Dimension(10, 0)));
 		panel.add(paintBoard);
-		
-		
-		
+
 		Client.getInstance().registerListener(new WhiteboardClientListener() {
-			
+
 			@Override
 			public void backgroundChanged(int imageID) {
 				paintBoard.loadBackground(imageID);
-				paintBoard.repaint();
-				System.out.println("set background to id");
 			}
-			
+
 			@Override
 			public void backgroundChanged(Color color) {
 				paintBoard.loadBackground(color);
-				paintBoard.repaint();
 			}
 
 			@Override
 			public void paintRequest() {
 				paintBoard.repaint();
 			}
+
+			@Override
+			public void paintObjectReceived(PaintObject object) {
+				paintBoard.getCache().add(object);
+			}
 		});
-		
-		
+
 		this.getContentPane().add(panel);
 		this.pack();
 
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-		setLocation((d.width - getSize().width) / 2,
-				(d.height - getSize().height) / 2);
+		setLocation((d.width - getSize().width) / 2, (d.height - getSize().height) / 2);
 	}
 
 	private void clearImage() {
@@ -513,8 +521,7 @@ public class WhiteBoard extends JFrame {
 				format = name.substring(name.lastIndexOf(".") + 1);
 			}
 			try {
-				ImageIO.write(paintBoard.saveImage(), format,
-						fc.getSelectedFile());
+				ImageIO.write(paintBoard.saveImage(), format, fc.getSelectedFile());
 			} catch (IOException e) {
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(WhiteBoard.this, e.getMessage());
@@ -530,7 +537,7 @@ public class WhiteBoard extends JFrame {
 		JFileChooser fc = new JFileChooser();
 		fc.setFileFilter(new PicFileFilter());
 		if (fc.showOpenDialog(WhiteBoard.this) == JFileChooser.APPROVE_OPTION) {
-			
+
 			paintBoard.loadBackground(fc.getSelectedFile());
 			paintBoard.repaint();
 		}

@@ -73,7 +73,7 @@ public class Server {
 	 * A queue of all draw commands in the correct order. Each new client will
 	 * receive this queue in order to synchronize with the others.
 	 */
-	private FrameQueue drawCache = new FrameQueue();
+	private FrameQueue paintObjectCache = new FrameQueue();
 
 	/**
 	 * The next image id that will be send the the client requesting it.
@@ -247,7 +247,7 @@ public class Server {
 						} else {
 							adapter.setAuthenticated(true);
 							// synchronize the whiteboard
-							adapter.getOutgoing().addAll(drawCache);
+							adapter.getOutgoing().addAll(paintObjectCache);
 							if (backgroundCache != null)
 								adapter.getOutgoing().add(backgroundCache);
 							serverFrameAdapter.broadcast(FrameQueue.from(new NotificationFrame(
@@ -301,6 +301,15 @@ public class Server {
 
 					case Frame.ID_BACKGROUND:
 						backgroundCache = (BackgroundFrame) frame;
+						serverFrameAdapter.broadcastToAuth(FrameQueue.from(frame), true);
+						break;
+						
+					case Frame.ID_CIRCLE:
+					case Frame.ID_ELLIPSE:
+					case Frame.ID_RECT:
+					case Frame.ID_LINE:
+					case Frame.ID_POINT:
+						paintObjectCache.add(frame);
 						serverFrameAdapter.broadcastToAuth(FrameQueue.from(frame), true);
 						break;
 				}

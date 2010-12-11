@@ -23,6 +23,7 @@ import pxchat.net.tcp.CustomSocket;
 import pxchat.net.tcp.TCPClient;
 import pxchat.net.tcp.TCPClientListener;
 import pxchat.whiteboard.BackgroundFrame;
+import pxchat.whiteboard.PaintObject;
 
 /**
  * This class implements the client for pxchat. Only one instance is available
@@ -125,6 +126,8 @@ public final class Client {
 		@Override
 		public void process(FrameAdapter adapter) {
 			System.out.println(this + " executes " + adapter.getIncoming());
+			
+			boolean doPaintRequest = false;
 
 			for (Frame frame : adapter.getIncoming()) {
 
@@ -212,9 +215,7 @@ public final class Client {
 						while (iterator.hasNext()) {
 							ImageReceiver receiver = iterator.next();
 							if (receiver.process(adapter, spf)) {
-								for (WhiteboardClientListener listener : whiteboardClientListeners) {
-									listener.paintRequest();
-								}
+								doPaintRequest = true;
 								iterator.remove();
 								break;
 							}
@@ -225,6 +226,7 @@ public final class Client {
 						
 					case Frame.ID_BACKGROUND:
 						BackgroundFrame bf = (BackgroundFrame) frame;
+						doPaintRequest = true;
 						if (bf.getType() == BackgroundFrame.COLOR)
 							for (WhiteboardClientListener listener : whiteboardClientListeners) {
 								listener.backgroundChanged(bf.getColor());
@@ -234,9 +236,24 @@ public final class Client {
 								listener.backgroundChanged(bf.getImageID());
 							}
 						break;
+						
+					case Frame.ID_CIRCLE:
+					case Frame.ID_ELLIPSE:
+					case Frame.ID_RECT:
+					case Frame.ID_LINE:
+					case Frame.ID_POINT:
+						doPaintRequest = true;
+						for (WhiteboardClientListener listener : whiteboardClientListeners) {
+							listener.paintObjectReceived((PaintObject) frame);
+						}
+						break;
 				}
 			}
-
+			if (doPaintRequest) {
+				for (WhiteboardClientListener listener : whiteboardClientListeners) {
+					listener.paintRequest();
+				}
+			}
 			adapter.getIncoming().clear();
 		}
 
@@ -363,6 +380,13 @@ public final class Client {
 	public void sendChangeBackground(int imageID) {
 		if (isConnected()) {
 			frameAdapter.getOutgoing().add(new BackgroundFrame(imageID));
+			frameAdapter.send();
+		}
+	}
+	
+	public void sendPaintObject(PaintObject object) {
+		if (isConnected()) {
+			frameAdapter.getOutgoing().add(object);
 			frameAdapter.send();
 		}
 	}

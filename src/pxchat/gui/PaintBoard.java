@@ -124,6 +124,8 @@ public class PaintBoard extends JPanel {
 					BufferedImage.TYPE_4BYTE_ABGR);
 		
 		Graphics2D g = this.board.createGraphics();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		for (PaintObject obj : cache) {
 			obj.draw(g);
