@@ -226,12 +226,11 @@ public class WhiteBoard extends JFrame {
 				switch (tool) {
 					case Freehand:
 						Point newPoint = new Point(e.getX(), e.getY());
-//						paintBoard.getCache().add(new LineObject(currentPoint, 
-//								newPoint, currentColor, currentStrokeWidth));
-//						paintBoard.repaint();
-						Client.getInstance().sendPaintObject(new LineObject(currentPoint, 
-								newPoint, currentColor, currentStrokeWidth));
-						currentPoint = new Point(e.getX(), e.getY());
+						if (newPoint.distance(currentPoint) > 10.0) {
+							Client.getInstance().sendPaintObject(new LineObject(currentPoint, 
+									newPoint, currentColor, currentStrokeWidth));
+							currentPoint = new Point(e.getX(), e.getY());
+						}
 						break;
 					case Circle:
 						currentPoint = new Point(e.getX(), e.getY());
