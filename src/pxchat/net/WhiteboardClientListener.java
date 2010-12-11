@@ -12,4 +12,6 @@ public interface WhiteboardClientListener {
 
 	public void backgroundChanged(Color color);
 	public void backgroundChanged(int imageID);	
+	
+	public void paintRequest();
 }

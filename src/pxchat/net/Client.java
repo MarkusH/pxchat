@@ -212,6 +212,9 @@ public final class Client {
 						while (iterator.hasNext()) {
 							ImageReceiver receiver = iterator.next();
 							if (receiver.process(adapter, spf)) {
+								for (WhiteboardClientListener listener : whiteboardClientListeners) {
+									listener.paintRequest();
+								}
 								iterator.remove();
 								break;
 							}

@@ -166,6 +166,17 @@ LOOP:	for (AuthFrameAdapter adapter : this) {
 		return count;
 	}
 	
+	/**
+	 * Broadcasts data to all frame adapters specified in the toSessionID array
+	 * and returns the number of clients reached. If <code>immediate</code> is
+	 * set, this method calls the {@link FrameAdapter#send()} method.
+	 * 
+	 * @param queue The data to enqueue in the outgoing buffer of the frame
+	 *            adapters
+	 * @param immediate If <code>true</code>, the data is send immediately
+	 * @param toSessionID A list of session ids to send data to
+	 * @return The number of clients reached by the broadcast
+	 */
 	public int broadcastTo(FrameQueue queue, boolean immediate, int... toSessionID) {
 		int count = 0;
 		for (AuthFrameAdapter adapter : this) {
@@ -177,6 +188,27 @@ LOOP:	for (AuthFrameAdapter adapter : this) {
 				}
 			}
 			if (!send)
+				continue;
+			adapter.getOutgoing().addAll(queue);
+			if (immediate)
+				adapter.send();
+			count++;
+		}
+		return count;
+	}
+	
+	/**
+	 * Broadcasts data to all authenticated adapters of this server adapter.
+	 * 
+	 * @param queue The data to enqueue in the outgoing buffer of the frame
+	 *            adapters
+	 * @param immediate If <code>true</code>, the data is send immediately
+	 * @return The number of clients reached by the broadcast
+	 */
+	public int broadcastToAuth(FrameQueue queue, boolean immediate) {
+		int count = 0;
+		for (AuthFrameAdapter adapter : this) {
+			if (!adapter.isAuthenticated())
 				continue;
 			adapter.getOutgoing().addAll(queue);
 			if (immediate)

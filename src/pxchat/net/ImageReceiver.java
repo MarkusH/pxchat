@@ -63,12 +63,12 @@ public class ImageReceiver {
 			if (img != null) {
 				ImageTable.getInstance().put(this.imageID, img);
 				System.out.println("image loaded");
-				try {
-					ImageIO.write(img, "jpg", new File(Client.getInstance().isConnected() ? "client.jpg" : "server.jpg"));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+//				try {
+//					ImageIO.write(img, "jpg", new File(Client.getInstance().isConnected() ? "client.jpg" : "server.jpg"));
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 			}
 			return true;
 		}

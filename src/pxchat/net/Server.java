@@ -25,6 +25,7 @@ import pxchat.net.protocol.frames.VersionFrame;
 import pxchat.net.tcp.CustomSocket;
 import pxchat.net.tcp.TCPServer;
 import pxchat.net.tcp.TCPServerListener;
+import pxchat.whiteboard.BackgroundFrame;
 
 /**
  * This class implements the server for pxchat. It uses a TCP server to listen
@@ -44,15 +45,46 @@ public class Server {
 	 */
 	private ServerFrameAdapter serverFrameAdapter;
 
+	/**
+	 * A mapping of user name to password used to authenticate with the server.
+	 * Each pair can only be connected once.
+	 */
 	private HashMap<String, String> authList = new HashMap<String, String>();
+
+	/**
+	 * A mapping of session id to user name of the clients currently connected.
+	 */
 	private HashMap<Integer, String> userList = new HashMap<Integer, String>();
+
+	/**
+	 * A list of image receivers receiving and transferring images from and to
+	 * clients.
+	 */
+	private Vector<ServerImageReceiver> imgReceivers = new Vector<ServerImageReceiver>();
+
 	
+	/**
+	 * The current background of the whiteboard. Only the current frame has to
+	 * be cached because setting the background does not have any side-effects.
+	 */
+	private BackgroundFrame backgroundCache;
 	
-	private Vector<ImageReceiver> imgReceivers = new Vector<ImageReceiver>();
-	
-	
+	/**
+	 * A queue of all draw commands in the correct order. Each new client will
+	 * receive this queue in order to synchronize with the others.
+	 */
+	private FrameQueue drawCache = new FrameQueue();
+
+	/**
+	 * The next image id that will be send the the client requesting it.
+	 */
 	private int nextImageID = 0;
-	
+
+	/**
+	 * Generates a unique image id.
+	 * 
+	 * @return The next image id
+	 */
 	private synchronized int getNextImageID() {
 		return nextImageID++;
 	}
@@ -65,6 +97,7 @@ public class Server {
 
 		@Override
 		public void clientRead(CustomSocket client, Object data) {
+			// pass the event to the corresponding adapter
 			serverFrameAdapter.getAdapter(client).receive(data);
 		}
 
@@ -72,15 +105,14 @@ public class Server {
 		public void clientDisconnect(CustomSocket client) {
 			AuthFrameAdapter adapter = serverFrameAdapter.getAdapter(client);
 			serverFrameAdapter.delete(adapter);
-			System.out.println(this + "> Client with id " + adapter
-					.getSessionID() + " disconnected.");
+			System.out
+					.println(this + "> Client with id " + adapter.getSessionID() + " disconnected.");
 		}
 
 		@Override
 		public void clientConnect(CustomSocket client) {
 			FrameAdapter adapter = serverFrameAdapter.getAdapter(client);
-			System.out
-					.println(this + "> new connection " + client + " --> " + adapter);
+			System.out.println(this + "> new connection " + client + " --> " + adapter);
 		}
 
 		@Override
@@ -95,19 +127,18 @@ public class Server {
 	private ServerFrameAdapterListener serverFrameAdapterListener = new ServerFrameAdapterListener() {
 
 		@Override
-		public void destroyAdapter(ServerFrameAdapter serverAdapter,
-									AuthFrameAdapter adapter) {
+		public void destroyAdapter(ServerFrameAdapter serverAdapter, AuthFrameAdapter adapter) {
 			String name = userList.get(adapter.getSessionID());
 			if (name != null) {
-				serverAdapter.broadcast(FrameQueue.from(new NotificationFrame(NotificationFrame.LEAVE, name)), false);
+				serverAdapter.broadcast(FrameQueue.from(new NotificationFrame(
+						NotificationFrame.LEAVE, name)), false);
 			}
 			userList.remove(adapter.getSessionID());
 			sendUserList();
 		}
 
 		@Override
-		public void createAdapter(ServerFrameAdapter serverAdapter,
-									AuthFrameAdapter adapter) {
+		public void createAdapter(ServerFrameAdapter serverAdapter, AuthFrameAdapter adapter) {
 			final AuthFrameAdapter fa = adapter;
 
 			// Start a thread that waits for a few milliseconds. If the client
@@ -143,16 +174,16 @@ public class Server {
 		@Override
 		public void process(FrameAdapter fAdapter) {
 			AuthFrameAdapter adapter = (AuthFrameAdapter) fAdapter;
-			System.out
-					.println(this + "> executes " + adapter.getIncoming() + " from " + adapter
-							.getSocket());
+			System.out.println(this + "> executes " + adapter.getIncoming() + " from " + adapter
+					.getSocket());
 
 			for (Frame frame : adapter.getIncoming()) {
 
 				// disconnect if the version is not verified and the frame is
 				// not a version frame
 				if (!adapter.isVersionVerified() && !(frame instanceof VersionFrame)) {
-					adapter.getOutgoing().add(new NotificationFrame(NotificationFrame.VERSION_FAIL));
+					adapter.getOutgoing()
+							.add(new NotificationFrame(NotificationFrame.VERSION_FAIL));
 					adapter.send();
 					adapter.disconnect();
 					return;
@@ -186,11 +217,13 @@ public class Server {
 						VersionFrame vf = (VersionFrame) frame;
 						if (!vf.isCompatible(VersionFrame.getCurrent())) {
 							System.out.println(this + "> Version control unsuccessful.");
-							adapter.getOutgoing().add(new NotificationFrame(NotificationFrame.VERSION_FAIL));
+							adapter.getOutgoing().add(
+									new NotificationFrame(NotificationFrame.VERSION_FAIL));
 							adapter.send();
 							adapter.disconnect();
 						} else {
-							System.out.println(this + "> Version control successful, send sessionID");
+							System.out
+									.println(this + "> Version control successful, send sessionID");
 							adapter.setVersionVerified(true);
 							adapter.getOutgoing().add(new SessionIDFrame(adapter.getSessionID()));
 							adapter.getOutgoing().add(new ImageIDFrame(getNextImageID()));
@@ -205,15 +238,21 @@ public class Server {
 						// reject access, if password is not matching (or null)
 						// or if the user name
 						// is already in use
-						if (!af.getPassword().equals(pwd) || userList.values().contains(af.getUsername())) {
-							adapter.getOutgoing().add(new NotificationFrame(NotificationFrame.AUTH_FAIL));
+						if (!af.getPassword().equals(pwd) || userList.values().contains(
+								af.getUsername())) {
+							adapter.getOutgoing().add(
+									new NotificationFrame(NotificationFrame.AUTH_FAIL));
 							adapter.send();
 							adapter.disconnect();
 						} else {
 							adapter.setAuthenticated(true);
-							serverFrameAdapter.broadcast(FrameQueue.from(new NotificationFrame(NotificationFrame.JOIN,
-									af.getUsername())),false);
-							userList.put(adapter.getSessionID(),af.getUsername());
+							// synchronize the whiteboard
+							adapter.getOutgoing().addAll(drawCache);
+							if (backgroundCache != null)
+								adapter.getOutgoing().add(backgroundCache);
+							serverFrameAdapter.broadcast(FrameQueue.from(new NotificationFrame(
+									NotificationFrame.JOIN, af.getUsername())), false);
+							userList.put(adapter.getSessionID(), af.getUsername());
 							sendUserList();
 						}
 
@@ -222,18 +261,20 @@ public class Server {
 					case Frame.ID_MSG:
 						MessageFrame mf = (MessageFrame) frame;
 						mf.setSessionId(adapter.getSessionID());
-						serverFrameAdapter.broadcast(FrameQueue.from(mf), true,adapter.getSessionID());
+						serverFrameAdapter.broadcast(FrameQueue.from(mf), true, adapter
+								.getSessionID());
 						break;
-						
+
 					case Frame.ID_IMG_START:
 						ImageStartFrame sf = (ImageStartFrame) frame;
 						System.out.println("Received ImageStartFrame with id " + sf.getImageID());
 						adapter.getOutgoing().add(new ImageIDFrame(getNextImageID()));
 						adapter.send();
-						ImageReceiver newRecv = new ServerImageReceiver(sf, adapter, serverFrameAdapter);
+						ServerImageReceiver newRecv = new ServerImageReceiver(sf, adapter,
+								serverFrameAdapter);
 						imgReceivers.add(newRecv);
 						break;
-						
+
 					case Frame.ID_IMG_CHUNK:
 						ImageChunkFrame cf = (ImageChunkFrame) frame;
 						for (ImageReceiver recv : imgReceivers) {
@@ -241,24 +282,26 @@ public class Server {
 								break;
 						}
 						break;
-						
+
 					case Frame.ID_IMG_STOP:
 						ImageStopFrame spf = (ImageStopFrame) frame;
-						
-						Iterator<ImageReceiver> iterator = imgReceivers.iterator();
+
+						Iterator<ServerImageReceiver> iterator = imgReceivers.iterator();
 						while (iterator.hasNext()) {
 							ImageReceiver receiver = iterator.next();
 							if (receiver.process(adapter, spf)) {
+								
 								iterator.remove();
 								break;
 							}
 						}
-						
+
 						System.out.println(imgReceivers);
 						break;
-						
+
 					case Frame.ID_BACKGROUND:
-						serverFrameAdapter.broadcast(FrameQueue.from(frame), true);
+						backgroundCache = (BackgroundFrame) frame;
+						serverFrameAdapter.broadcastToAuth(FrameQueue.from(frame), true);
 						break;
 				}
 			}
@@ -278,7 +321,8 @@ public class Server {
 	 */
 	public Server() {
 		server = new TCPServer(tcpServerListener);
-		serverFrameAdapter = new ServerFrameAdapter(serverFrameAdapterListener, frameAdapterListener);
+		serverFrameAdapter = new ServerFrameAdapter(serverFrameAdapterListener,
+				frameAdapterListener);
 	}
 
 	/**

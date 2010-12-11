@@ -470,11 +470,19 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void backgroundChanged(int imageID) {
 				paintBoard.loadBackground(imageID);
+				paintBoard.repaint();
+				System.out.println("set background to id");
 			}
 			
 			@Override
 			public void backgroundChanged(Color color) {
 				paintBoard.loadBackground(color);
+				paintBoard.repaint();
+			}
+
+			@Override
+			public void paintRequest() {
+				paintBoard.repaint();
 			}
 		});
 		

@@ -44,30 +44,10 @@ public class PaintBoard extends JPanel {
 		ImageTable.getInstance().put(background, img);
 		this.setBackground(Color.WHITE);
 
+		Client.getInstance().sendChangeBackground(background);
 		Client.getInstance().sendImage(background);
-		
-		
-//		try {
-//			loadBackgroundImage(ImageIO.read(file));
-//		} catch (IOException e) {
-//			loadBackgroundImage(null);
-//		}
 	}
 
-//	public void loadBackgroundImage(BufferedImage img) {
-//		if (img == null) {
-//			this.background = new BufferedImage(getWidth(), getHeight(),
-//					BufferedImage.TYPE_4BYTE_ABGR);
-//			Graphics2D g = this.background.createGraphics();
-//			Composite comp = g.getComposite();
-//			g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR,
-//					0.0f));
-//			g.fillRect(0, 0, getWidth(), getHeight());
-//			g.setComposite(comp);
-//		} else {
-//			this.background = img;
-//		}
-//	}
 	
 	public void loadBackground(Color c) {
 		this.background = null;
@@ -75,8 +55,8 @@ public class PaintBoard extends JPanel {
 	}
 	
 	public void loadBackground(int imageID) {
-		this.setBackground(Color.WHITE);
 		this.background = imageID;
+		this.setBackground(Color.WHITE);
 	}
 
 	/**
