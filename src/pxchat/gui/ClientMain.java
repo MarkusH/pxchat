@@ -220,7 +220,8 @@ public class ClientMain extends JFrame {
 		whiteBoardButton = new JButton(I18n.getInstance().getString("whiteBoardButton"), Icons
 				.get("whiteboard.png"));
 		whiteBoardButton.setMnemonic('w');
-		whiteBoardButton.setPreferredSize(new Dimension(150, 30));whiteBoardButton.setEnabled(false);
+		whiteBoardButton.setPreferredSize(new Dimension(150, 30));
+		whiteBoardButton.setEnabled(false);
 		whiteBoardButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
