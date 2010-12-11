@@ -4,9 +4,9 @@
 <pxchatlog>
 	<!-- all participants of the chat -->
 	<participants>
-		<name date="01/04/2010" time="10:21:14">John Doe</name>
-		<name date="01/04/2010" time="10:21:14">Jane Doe</name>
-		<name date="01/04/2010" time="10:24:53">Joe Everybody</name>
+		<name>John Doe</name>
+		<name>Jane Doe</name>
+		<name>Joe Everybody</name>
 	</participants>
 	<!-- duration -->
 	<start date="01/04/2010" time="10:21:14" />

@@ -11,11 +11,6 @@
 <!ELEMENT leave EMPTY>
 
 <!-- all attributes -->
-<!ATTLIST name
-	date	CDATA	#REQUIRED
-	time	CDATA	#REQUIRED
->
-
 <!ATTLIST start
 	date	CDATA	#REQUIRED
 	time	CDATA	#REQUIRED
