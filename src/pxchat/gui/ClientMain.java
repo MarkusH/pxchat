@@ -171,9 +171,6 @@ public class ClientMain extends JFrame {
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		chatLogPane.setPreferredSize(new Dimension(400, 300));
 
-		// TODO may fix the autoscroll problems.
-		chatLogPane.setAutoscrolls(true);
-
 		/**
 		 * the input area
 		 */
@@ -223,9 +220,7 @@ public class ClientMain extends JFrame {
 		whiteBoardButton = new JButton(I18n.getInstance().getString("whiteBoardButton"), Icons
 				.get("whiteboard.png"));
 		whiteBoardButton.setMnemonic('w');
-		whiteBoardButton.setPreferredSize(new Dimension(150, 30));
-		// TODO remove the comment from next line as soon as it is possible
-		// whiteBoardButton.setEnabled(false);
+		whiteBoardButton.setPreferredSize(new Dimension(150, 30));whiteBoardButton.setEnabled(false);
 		whiteBoardButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
