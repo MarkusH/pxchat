@@ -2,6 +2,7 @@ package pxchat.net.protocol.core;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import pxchat.net.protocol.frames.Frame;
 
@@ -11,7 +12,7 @@ import pxchat.net.protocol.frames.Frame;
  * 
  * @author Markus Döllinger
  */
-public class FrameQueue extends LinkedList<Frame> {
+public class FrameQueue extends ConcurrentLinkedQueue<Frame> { // LinkedList<Frame> {
 	
 	public static FrameQueue from(Frame... frames) {
 		FrameQueue result = new FrameQueue();
