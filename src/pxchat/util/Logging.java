@@ -11,7 +11,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.Scanner;
 
 /**
@@ -26,9 +26,6 @@ public class Logging {
 	private String logfilename, msgfilename;
 	private static final String encoding = "UTF-8";
 	private String[] participants = null;
-
-	private Calendar cal = Calendar.getInstance();
-	private SimpleDateFormat sdf;
 
 	/**
 	 * 
@@ -202,8 +199,7 @@ public class Logging {
 	}
 
 	private String formatDateTime(String format) {
-		sdf = new SimpleDateFormat(format);
-		return sdf.format(cal.getTime());
+		return new SimpleDateFormat(format).format(new Date());
 	}
 
 	private String getFilenameDateTime() {
