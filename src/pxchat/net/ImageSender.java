@@ -27,7 +27,7 @@ import pxchat.whiteboard.ImageTable;
  */
 public class ImageSender {
 
-	private static final int CHUNK_SIZE = 2 * 1024;
+	private static final int CHUNK_SIZE = 10 * 1024;
 
 	private int imageID;
 	private ByteBuffer data;
