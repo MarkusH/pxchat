@@ -15,6 +15,7 @@ import pxchat.net.protocol.frames.ImageChunkFrame;
 import pxchat.net.protocol.frames.ImageIDFrame;
 import pxchat.net.protocol.frames.ImageStartFrame;
 import pxchat.net.protocol.frames.ImageStopFrame;
+import pxchat.net.protocol.frames.LockFrame;
 import pxchat.net.protocol.frames.MessageFrame;
 import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.net.protocol.frames.UserListFrame;
@@ -242,6 +243,13 @@ public final class Client {
 							}
 						break;
 						
+					case Frame.ID_LOCK:
+						LockFrame lf = (LockFrame) frame;
+						for (WhiteboardClientListener listener : whiteboardClientListeners) {
+							listener.changeControlsLock(lf.getLock());
+						}
+						break;
+						
 					case Frame.ID_CIRCLE:
 					case Frame.ID_ELLIPSE:
 					case Frame.ID_RECT:
@@ -292,7 +300,7 @@ public final class Client {
 	/**
 	 * Returns the sole instance of the TCP client.
 	 * 
-	 * @return The intstace of the TCP client
+	 * @return The instance of the TCP client
 	 */
 	public static Client getInstance() {
 		return Holder.INSTANCE;
@@ -392,6 +400,13 @@ public final class Client {
 	public void sendPaintObject(PaintObject object) {
 		if (isConnected()) {
 			frameAdapter.getOutgoing().add(object);
+			frameAdapter.send();
+		}
+	}
+
+	public void sendWhiteboardControlsLock(boolean lock) {
+		if (isConnected()) {
+			frameAdapter.getOutgoing().add(new LockFrame(lock, loginName));
 			frameAdapter.send();
 		}
 	}

@@ -35,8 +35,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.sun.corba.se.spi.oa.OAInvocationInfo;
-
 import pxchat.net.Client;
 import pxchat.net.WhiteboardClientListener;
 import pxchat.util.Icons;
@@ -369,9 +367,11 @@ public class WhiteBoard extends JFrame {
 				if (lockCanvas.isSelected()) {
 					lockCanvas.setToolTipText(I18n.getInstance().getString("wbUnlockCanvas"));
 					lockCanvas.setIcon(Icons.get("unlock.png"));
+					Client.getInstance().sendWhiteboardControlsLock(true);
 				} else {
 					lockCanvas.setToolTipText(I18n.getInstance().getString("wbLockCanvas"));
 					lockCanvas.setIcon(Icons.get("lock.png"));
+					Client.getInstance().sendWhiteboardControlsLock(false);
 				}
 			}
 		});
@@ -414,7 +414,7 @@ public class WhiteBoard extends JFrame {
 			}
 		});
 
-		loadBackgroundColor = new JButton("BGC");
+		loadBackgroundColor = new JButton("", Icons.get("background-color.png"));
 		loadBackgroundColor.setToolTipText(I18n.getInstance().getString("wbBackgroundColor"));
 		loadBackgroundColor.addActionListener(new ActionListener() {
 
@@ -517,6 +517,12 @@ public class WhiteBoard extends JFrame {
 				}
 				System.out.println("reiceved unlocked");
 			}
+
+			@Override
+			public void changeControlsLock(boolean lock) {
+				WhiteBoard.this.lockControls(lock);
+			}
+
 		});
 
 		this.getContentPane().add(panel);

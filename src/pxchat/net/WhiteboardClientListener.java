@@ -9,6 +9,7 @@ import pxchat.whiteboard.PaintObject;
 
 /**
  * @author Markus Döllinger
+ * @author Markus Holtermann
  */
 public interface WhiteboardClientListener {
 
@@ -18,4 +19,6 @@ public interface WhiteboardClientListener {
 	public void paintRequest();
 	
 	public void paintObjectReceived(PaintObject object);
+	
+	public void changeControlsLock(boolean lock);
 }

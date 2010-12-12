@@ -17,6 +17,7 @@ import pxchat.net.protocol.frames.ImageChunkFrame;
 import pxchat.net.protocol.frames.ImageIDFrame;
 import pxchat.net.protocol.frames.ImageStartFrame;
 import pxchat.net.protocol.frames.ImageStopFrame;
+import pxchat.net.protocol.frames.LockFrame;
 import pxchat.net.protocol.frames.MessageFrame;
 import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.net.protocol.frames.SessionIDFrame;
@@ -223,8 +224,7 @@ public class Server {
 						VersionFrame vf = (VersionFrame) frame;
 						if (!vf.isCompatible(VersionFrame.getCurrent())) {
 							System.out.println(this + "> Version control unsuccessful.");
-							adapter.getOutgoing().add(
-									new NotificationFrame(NotificationFrame.VERSION_FAIL));
+							adapter.getOutgoing().add(new NotificationFrame(NotificationFrame.VERSION_FAIL));
 							adapter.send();
 							adapter.disconnect();
 						} else {
@@ -244,20 +244,18 @@ public class Server {
 						// reject access, if password is not matching (or null)
 						// or if the user name
 						// is already in use
-						if (!af.getPassword().equals(pwd) || userList.values().contains(
-								af.getUsername())) {
-							adapter.getOutgoing().add(
-									new NotificationFrame(NotificationFrame.AUTH_FAIL));
+						if (!af.getPassword().equals(pwd) || userList.values().contains(af.getUsername())) {
+							adapter.getOutgoing().add(new NotificationFrame(NotificationFrame.AUTH_FAIL));
 							adapter.send();
 							adapter.disconnect();
 						} else {
 							adapter.setAuthenticated(true);
 							// synchronize the whiteboard
 							adapter.getOutgoing().addAll(paintObjectCache);
-							if (backgroundCache != null)
+							if (backgroundCache != null) {
 								adapter.getOutgoing().add(backgroundCache);
-							serverFrameAdapter.broadcast(FrameQueue.from(new NotificationFrame(
-									NotificationFrame.JOIN, af.getUsername())), false);
+							}
+							serverFrameAdapter.broadcast(FrameQueue.from(new NotificationFrame(NotificationFrame.JOIN, af.getUsername())), false);
 							userList.put(adapter.getSessionID(), af.getUsername());
 							sendUserList();
 						}
@@ -267,8 +265,7 @@ public class Server {
 					case Frame.ID_MSG:
 						MessageFrame mf = (MessageFrame) frame;
 						mf.setSessionId(adapter.getSessionID());
-						serverFrameAdapter.broadcast(FrameQueue.from(mf), true, adapter
-								.getSessionID());
+						serverFrameAdapter.broadcast(FrameQueue.from(mf), true, adapter.getSessionID());
 						break;
 
 					case Frame.ID_IMG_START:
@@ -276,16 +273,16 @@ public class Server {
 						System.out.println("Received ImageStartFrame with id " + sf.getImageID());
 						adapter.getOutgoing().add(new ImageIDFrame(getNextImageID()));
 						adapter.send();
-						ServerImageReceiver newRecv = new ServerImageReceiver(sf, adapter,
-								serverFrameAdapter);
+						ServerImageReceiver newRecv = new ServerImageReceiver(sf, adapter, serverFrameAdapter);
 						imgReceivers.add(newRecv);
 						break;
 
 					case Frame.ID_IMG_CHUNK:
 						ImageChunkFrame cf = (ImageChunkFrame) frame;
 						for (ImageReceiver recv : imgReceivers) {
-							if (recv.process(adapter, cf))
+							if (recv.process(adapter, cf)){
 								break;
+							}
 						}
 						break;
 
@@ -296,7 +293,6 @@ public class Server {
 						while (iterator.hasNext()) {
 							ImageReceiver receiver = iterator.next();
 							if (receiver.process(adapter, spf)) {
-								
 								iterator.remove();
 								break;
 							}
@@ -310,6 +306,11 @@ public class Server {
 						serverFrameAdapter.broadcastToAuth(FrameQueue.from(frame), true);
 						break;
 						
+					case Frame.ID_LOCK:
+						LockFrame lf = (LockFrame) frame;
+						serverFrameAdapter.broadcast(FrameQueue.from(lf), true, adapter.getSessionID());
+						break;
+
 					case Frame.ID_CIRCLE:
 					case Frame.ID_ELLIPSE:
 					case Frame.ID_RECT:

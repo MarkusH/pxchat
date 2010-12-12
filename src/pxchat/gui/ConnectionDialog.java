@@ -96,7 +96,7 @@ public class ConnectionDialog extends JDialog {
 		 */
 		hostAddressLabel = new JLabel(I18n.getInstance().getString("cdHost"));
 		hostAddressLabel.setLabelFor(hostAddress);
-		hostAddress = new JTextField("pxchat.example.com");
+		hostAddress = new JTextField("localhost");
 		hostAddress.addKeyListener(returnKeyListener);
 		hostAddress.addFocusListener(new FocusListener() {
 			@Override
