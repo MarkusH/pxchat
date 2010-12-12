@@ -24,7 +24,7 @@ public class PaintBoard extends JPanel {
 	// private BufferedImage preview;
 
 	private Vector<PaintObject> previewObjects = new Vector<PaintObject>();
-	
+
 	private Vector<PaintObject> cache = new Vector<PaintObject>();
 
 	public PaintBoard() {
@@ -33,6 +33,7 @@ public class PaintBoard extends JPanel {
 	}
 
 	public void loadBackground(File file) {
+
 		BufferedImage img = null;
 		try {
 			img = ImageIO.read(file);
@@ -40,20 +41,59 @@ public class PaintBoard extends JPanel {
 			return;
 		}
 		
+		int owidth = img.getWidth();
+		int oheight = img.getHeight();
+		
+		float width = 0;
+		float height = 0;
+		float ratio = (float)img.getWidth()/(float)img.getHeight();
+		boolean resized = false;
+		float stdratio = (float) (4.0/3.0);
+		
+		if(ratio >= stdratio && owidth > 1024) {
+			width = 1024;
+			height = (1024/ratio);
+			resized = true;
+		}
+		if(ratio < stdratio && !resized && (oheight > 768 || owidth > 1024)) {
+			width = 768*ratio;
+			height = 768;
+			resized = true;
+		}
+		if(!resized) {
+			width = img.getWidth();
+			height = img.getHeight();
+		}
+		
+		BufferedImage downSampleImg = new BufferedImage((int)width, (int)height,
+				BufferedImage.TYPE_INT_RGB);
+		
+
+		if (resized) {
+			Graphics2D g = downSampleImg.createGraphics();
+			g.drawImage(img, 0, 0, (int)width, (int)height, null);
+			g.dispose();
+		}
+
 		background = Client.getInstance().getNextImageID();
-		ImageTable.getInstance().put(background, img);
+
+		if (resized) {
+			ImageTable.getInstance().put(background, downSampleImg);
+		} else {
+			ImageTable.getInstance().put(background, img);
+		}
+
 		this.setBackground(Color.WHITE);
 
 		Client.getInstance().sendChangeBackground(background);
 		Client.getInstance().sendImage(background);
 	}
 
-	
 	public void loadBackground(Color c) {
 		this.background = null;
 		this.setBackground(c);
 	}
-	
+
 	public void loadBackground(int imageID) {
 		this.background = imageID;
 		this.setBackground(Color.WHITE);
@@ -122,11 +162,11 @@ public class PaintBoard extends JPanel {
 		if (this.board == null)
 			this.board = new BufferedImage(getWidth(), getHeight(),
 					BufferedImage.TYPE_4BYTE_ABGR);
-		
+
 		Graphics2D g = this.board.createGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
-		
+
 		System.out.println("update locking");
 		synchronized (this) {
 			System.out.println("update locked");
@@ -153,18 +193,18 @@ public class PaintBoard extends JPanel {
 				RenderingHints.VALUE_ANTIALIAS_ON);
 
 		// draw background
-//		if (this.background == null)
-//			loadBackgroundImage(null);
-//		g.drawImage(this.background, 0, 0, getWidth(), getHeight(), null);
-		
+		// if (this.background == null)
+		// loadBackgroundImage(null);
+		// g.drawImage(this.background, 0, 0, getWidth(), getHeight(), null);
+
 		BufferedImage img = ImageTable.getInstance().get(background);
 		if (img != null)
 			g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
 
 		// draw board
-//		synchronized (this) {
-			updateBoard();
-//		}
+		// synchronized (this) {
+		updateBoard();
+		// }
 		g.drawImage(this.board, 0, 0, null);
 
 		// draw preview
@@ -175,7 +215,7 @@ public class PaintBoard extends JPanel {
 	public Vector<PaintObject> getPreviewObjects() {
 		return previewObjects;
 	}
-	
+
 	public Vector<PaintObject> getCache() {
 		return cache;
 	}
