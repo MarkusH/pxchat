@@ -59,25 +59,17 @@ public class PaintBoard extends JPanel {
 			width = 768*ratio;
 			height = 768;
 			resized = true;
-		}
-		if(!resized) {
-			width = img.getWidth();
-			height = img.getHeight();
-		}
-		
-		BufferedImage downSampleImg = new BufferedImage((int)width, (int)height,
-				BufferedImage.TYPE_INT_RGB);
-		
+		}	
 
+		background = Client.getInstance().getNextImageID();
+		
 		if (resized) {
+			BufferedImage downSampleImg = new BufferedImage((int)width, (int)height,
+					BufferedImage.TYPE_INT_RGB);
 			Graphics2D g = downSampleImg.createGraphics();
 			g.drawImage(img, 0, 0, (int)width, (int)height, null);
 			g.dispose();
-		}
 
-		background = Client.getInstance().getNextImageID();
-
-		if (resized) {
 			ImageTable.getInstance().put(background, downSampleImg);
 		} else {
 			ImageTable.getInstance().put(background, img);
