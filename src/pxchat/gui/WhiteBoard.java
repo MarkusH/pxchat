@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -577,6 +578,8 @@ public class WhiteBoard extends JFrame {
 			String name = fc.getSelectedFile().getName();
 			if (name.contains(".")) {
 				format = name.substring(name.lastIndexOf(".") + 1);
+			} else {
+				fc.setSelectedFile(new File(fc.getSelectedFile().getAbsolutePath() + ".png"));
 			}
 			try {
 				ImageIO.write(paintBoard.saveImage(), format, fc.getSelectedFile());
