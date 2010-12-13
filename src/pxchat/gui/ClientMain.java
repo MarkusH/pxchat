@@ -36,6 +36,7 @@ import pxchat.net.ClientListener;
 import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.util.Icons;
 import pxchat.util.Logging;
+import pxchat.whiteboard.ImageTable;
 
 /**
  * @author Florian Bausch
@@ -53,20 +54,20 @@ public class ClientMain extends JFrame {
 	}
 
 	private Logging log;
-	
+
 	private JMenuBar mBar;
 	private JMenu mFile, mHelp;
 	private JMenuItem mNewChat, mCloseChat, mExit, mAbout;
-	
+
 	private JTextArea inputArea;
 	private JTextPane chatLog;
 	private JScrollPane chatLogPane, inputAreaPane, userListPane;
 	private JList userList;
-	
+
 	private JButton whiteBoardButton, sendButton;
-	
+
 	private WhiteBoard wb = new WhiteBoard();
-	
+
 	private static final SimpleAttributeSet OWN = new SimpleAttributeSet(),
 			FOREIGN = new SimpleAttributeSet(), OWNNAME = new SimpleAttributeSet(),
 			FOREIGNNAME = new SimpleAttributeSet(), NOTIFY = new SimpleAttributeSet();
@@ -286,6 +287,7 @@ public class ClientMain extends JFrame {
 
 			@Override
 			public void clientConnect(String remoteAddress) {
+				chatLog.setText("");
 				mCloseChat.setEnabled(true);
 				mNewChat.setEnabled(false);
 				whiteBoardButton.setEnabled(true);
@@ -300,12 +302,14 @@ public class ClientMain extends JFrame {
 				mNewChat.setEnabled(true);
 				mCloseChat.setEnabled(false);
 				whiteBoardButton.setEnabled(false);
-				wb.setVisible(false);
 				sendButton.setEnabled(false);
 				inputArea.setEnabled(false);
 				writeNotification(I18n.getInstance().getString("disconnectedFromServer"));
 				userList.setListData(new Object[0]);
 				log.endLog();
+				wb.dispose();
+				wb = new WhiteBoard();
+				ImageTable.getInstance().clear();
 			}
 
 			@Override
@@ -360,6 +364,9 @@ public class ClientMain extends JFrame {
 	}
 
 	private void scrollChatLog() {
+		chatLog.scrollRectToVisible(new Rectangle(chatLog.getWidth() - chatLogPane.getWidth(),
+				chatLog.getHeight() - chatLogPane.getHeight(), chatLogPane.getWidth(), chatLogPane
+						.getHeight()));
 		chatLog.scrollRectToVisible(new Rectangle(chatLog.getWidth() - chatLogPane.getWidth(),
 				chatLog.getHeight() - chatLogPane.getHeight(), chatLogPane.getWidth(), chatLogPane
 						.getHeight()));

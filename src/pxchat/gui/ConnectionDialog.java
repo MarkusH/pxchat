@@ -219,6 +219,11 @@ public class ConnectionDialog extends JDialog {
 		}
 		user = userName.getText();
 		pass = String.valueOf(passWord.getPassword());
+		
+		if (host.equals("") || user.equals("") || pass.equals("")) {
+			JOptionPane.showMessageDialog(this, I18n.getInstance().getString("cdInputFail"));
+			return;
+		}
 
 		try {
 			Client.getInstance().connect(host, port, user, pass);

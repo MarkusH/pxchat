@@ -37,4 +37,8 @@ public class ImageTable {
 	public BufferedImage put(Integer key, BufferedImage image) {
 		return table.put(key, image);
 	}
+	
+	public void clear() {
+		this.table.clear();
+	}
 }
