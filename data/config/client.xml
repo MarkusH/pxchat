@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE client SYSTEM "../xml/client.dtd">
+<client>
+	<config>
+		<setting key="defaultProfile" value="local" />
+	</config>
+	<profiles>
+		<profile name="local" host="localhost" port="12345" username=" password="" />
+	</profiles>
+</client>

@@ -11,9 +11,11 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -33,7 +35,10 @@ public class ConnectionDialog extends JDialog {
 	private JButton connectButton, abortButton;
 	private JTextField hostAddress, portNumber, userName;
 	private JPasswordField passWord;
-	private JLabel hostAddressLabel, portNumberLabel, userNameLabel, passWordLabel;
+	private JLabel profileLabel, hostAddressLabel, portNumberLabel, userNameLabel, passWordLabel;
+	private JComboBox profileComboBox;
+	private ClientMain parent;
+	private String defaultProfile;
 
 	private KeyListener returnKeyListener = new KeyListener() {
 		@Override
@@ -61,12 +66,32 @@ public class ConnectionDialog extends JDialog {
 
 	public ConnectionDialog(ClientMain parent) {
 		super(parent, I18n.getInstance().getString("cdTitle"));
+		this.parent = parent;
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setResizable(false);
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(5, 2, 10, 10));
+		panel.setLayout(new GridLayout(6, 2, 10, 10));
 		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		
+		/**
+		 * profile combobox
+		 */
+		defaultProfile = parent.getConfig("defaultProfile");
+		profileLabel = new JLabel(I18n.getInstance().getString("cdProfile"));
+		profileLabel.setLabelFor(profileComboBox);
+		profileComboBox = new JComboBox(parent.getProfileNames());
+		profileComboBox.setSelectedItem(defaultProfile);
+		profileComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				HashMap<String, String> profile = ConnectionDialog.this.parent.getProfile(profileComboBox.getSelectedItem().toString());
+				hostAddress.setText(profile.get("host"));
+				portNumber.setText(profile.get("port"));
+				userName.setText(profile.get("username"));
+				passWord.setText(profile.get("password"));
+			}
+		});
 
 		/**
 		 * connect button
@@ -99,7 +124,7 @@ public class ConnectionDialog extends JDialog {
 		 */
 		hostAddressLabel = new JLabel(I18n.getInstance().getString("cdHost"));
 		hostAddressLabel.setLabelFor(hostAddress);
-		hostAddress = new JTextField("localhost");
+		hostAddress = new JTextField(parent.getProfile(defaultProfile).get("host"));
 		hostAddress.addKeyListener(returnKeyListener);
 		hostAddress.addFocusListener(new FocusListener() {
 			@Override
@@ -118,7 +143,7 @@ public class ConnectionDialog extends JDialog {
 		 */
 		portNumberLabel = new JLabel(I18n.getInstance().getString("cdPort"));
 		portNumberLabel.setLabelFor(portNumber);
-		portNumber = new JTextField("12345");
+		portNumber = new JTextField(parent.getProfile(defaultProfile).get("port"));
 		portNumber.addKeyListener(returnKeyListener);
 		portNumber.addFocusListener(new FocusListener() {
 			@Override
@@ -137,7 +162,7 @@ public class ConnectionDialog extends JDialog {
 		 */
 		userNameLabel = new JLabel(I18n.getInstance().getString("cdUser"));
 		userNameLabel.setLabelFor(userName);
-		userName = new JTextField("");
+		userName = new JTextField(parent.getProfile(defaultProfile).get("username"));
 		userName.addKeyListener(returnKeyListener);
 		userName.addFocusListener(new FocusListener() {
 			@Override
@@ -156,7 +181,7 @@ public class ConnectionDialog extends JDialog {
 		 */
 		passWordLabel = new JLabel(I18n.getInstance().getString("cdPassWord"));
 		passWordLabel.setLabelFor(passWord);
-		passWord = new JPasswordField("");
+		passWord = new JPasswordField(parent.getProfile(defaultProfile).get("password"));
 		passWord.addKeyListener(returnKeyListener);
 		passWord.addKeyListener(new KeyListener() {
 			@Override
@@ -186,7 +211,8 @@ public class ConnectionDialog extends JDialog {
 			}
 		});
 
-
+		panel.add(profileLabel);
+		panel.add(profileComboBox);
 		panel.add(hostAddressLabel);
 		panel.add(hostAddress);
 		panel.add(portNumberLabel);

@@ -33,7 +33,7 @@ public class ServerMain {
 	public static void main(String[] args) {
 		System.out.println("Started pxchat server...");
 
-		File file = new File("xml/server.xml");
+		File file = new File("data/config/server.xml");
 		Document doc = null;
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

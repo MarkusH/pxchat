@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT client (config, profiles)>
+<!ELEMENT config (setting)*>
+<!ELEMENT setting EMPTY>
+<!ELEMENT profiles (profile)*>
+<!ELEMENT profile EMPTY>
+
+<!ATTLIST setting
+	key			CDATA	#REQUIRED
+	value		CDATA	#REQUIRED
+>
+<!ATTLIST profile
+	name		CDATA	#REQUIRED
+	host		CDATA	#REQUIRED
+	port		CDATA	#REQUIRED
+	username	CDATA	#REQUIRED
+	password	CDATA	#REQUIRED
+>
