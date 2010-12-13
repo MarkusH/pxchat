@@ -249,6 +249,9 @@ public class CustomSocket {
 			
 			writeThread = null;
 			
+			// TODO: mabye use some sleep here in order to give time to other threads
+			// especially on the server this should be good.
+			
 			if (tcpClientListener != null)
 				tcpClientListener.clientClearToSend(CustomSocket.this);
 		}
