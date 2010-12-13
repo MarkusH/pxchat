@@ -21,25 +21,6 @@ public final class Icons {
 	private static HashMap<String, Icon> icons = new HashMap<String, Icon>();
 	private static String folder = "";
 
-	private Icons() {
-	}
-
-	/**
-	 * Adds all images in this folder.
-	 * 
-	 * @param folder The folder name
-	 */
-	public static void addFolder(String folder) {
-		File dir = new File(folder);
-		if (dir.isDirectory()) {
-			for (File file : dir.listFiles()) {
-				if (file.isFile()) {
-					addIcon(file.getAbsolutePath());
-				}
-			}
-		}
-	}
-
 	/**
 	 * Adds an icon if it is not already cached.
 	 * 
@@ -61,6 +42,22 @@ public final class Icons {
 		if (icon != null)
 			icons.put(file.getName(), icon);
 		return icon;
+	}
+
+	/**
+	 * Adds all images in this folder.
+	 * 
+	 * @param folder The folder name
+	 */
+	public static void addFolder(String folder) {
+		File dir = new File(folder);
+		if (dir.isDirectory()) {
+			for (File file : dir.listFiles()) {
+				if (file.isFile()) {
+					addIcon(file.getAbsolutePath());
+				}
+			}
+		}
 	}
 
 	/**
@@ -101,5 +98,8 @@ public final class Icons {
 	 */
 	public static void setFolder(String folder) {
 		Icons.folder = folder + (folder.endsWith("/") ? "" : "/");
+	}
+
+	private Icons() {
 	}
 }

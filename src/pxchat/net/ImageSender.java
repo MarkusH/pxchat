@@ -5,18 +5,15 @@ package pxchat.net;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
-import pxchat.net.protocol.core.FrameAdapter;
 import pxchat.net.protocol.frames.Frame;
 import pxchat.net.protocol.frames.ImageChunkFrame;
 import pxchat.net.protocol.frames.ImageStartFrame;
 import pxchat.net.protocol.frames.ImageStopFrame;
-import pxchat.net.protocol.frames.ImageSyncFrame;
 import pxchat.whiteboard.ImageTable;
 
 /**

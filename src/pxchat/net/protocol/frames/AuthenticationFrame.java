@@ -11,12 +11,12 @@ public class AuthenticationFrame extends Frame {
 		this.id = Frame.ID_AUTH;
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
 	public String getPassword() {
 		return password;
+	}
+
+	public String getUsername() {
+		return username;
 	}
 
 }

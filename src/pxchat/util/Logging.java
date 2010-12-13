@@ -25,7 +25,7 @@ public class Logging {
 	private Writer oswLog, oswMessage;
 	private String logfilename, msgfilename;
 	private static final String encoding = "UTF-8";
-	private String[] participants = null;
+	private String[] participants = new String[0];
 
 	/**
 	 * 
@@ -131,41 +131,20 @@ public class Logging {
 		}
 	}
 
-	/**
-	 * Add a simple log message to the history
-	 * 
-	 * @param message the message to store
-	 * @param author the author of the message
-	 */
-	public void logMessage(String message, String author) {
-		try {
-			oswMessage
-					.write("\t\t<message author=\"" + author + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\">" + message + "</message>\n");
-			oswMessage.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	private String formatDateTime(String format) {
+		return new SimpleDateFormat(format).format(new Date());
 	}
 
-	public void logParticipants(String[] userList) {
-		if (participants == null) {
-			Arrays.sort(userList);
-			participants = userList;
-		} else {
-			String[] tmp = new String[participants.length + userList.length];
-			System.arraycopy(participants, 0, tmp, 0, participants.length);
-			System.arraycopy(userList, 0, tmp, participants.length, userList.length);
-			Arrays.sort(tmp);
-			int k = 0;
-			for (int i = 0; i < tmp.length; i++) {
-				if (i > 0 && tmp[i].equals(tmp[i -1])) {
-					continue;
-				}
-				tmp[k++] = tmp[i];
-			}
-			participants = new String[k];
-			System.arraycopy(tmp, 0, participants, 0, k);
-		}
+	private String getFilenameDateTime() {
+		return formatDateTime("yyyyMMddHHmmss");
+	}
+
+	private String getLogDate() {
+		return formatDateTime("dd/MM/yyyy");
+	}
+
+	private String getLogTime() {
+		return formatDateTime("HH:mm:ss");
 	}
 
 	/**
@@ -198,20 +177,41 @@ public class Logging {
 		}
 	}
 
-	private String formatDateTime(String format) {
-		return new SimpleDateFormat(format).format(new Date());
+	/**
+	 * Add a simple log message to the history
+	 * 
+	 * @param message the message to store
+	 * @param author the author of the message
+	 */
+	public void logMessage(String message, String author) {
+		try {
+			oswMessage
+					.write("\t\t<message author=\"" + author + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\">" + message + "</message>\n");
+			oswMessage.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
-	private String getFilenameDateTime() {
-		return formatDateTime("yyyyMMddHHmmss");
-	}
-
-	private String getLogDate() {
-		return formatDateTime("dd/MM/yyyy");
-	}
-
-	private String getLogTime() {
-		return formatDateTime("HH:mm:ss");
+	public void logParticipants(String[] userList) {
+		if (participants.length == 0) {
+			Arrays.sort(userList);
+			participants = userList;
+		} else {
+			String[] tmp = new String[participants.length + userList.length];
+			System.arraycopy(participants, 0, tmp, 0, participants.length);
+			System.arraycopy(userList, 0, tmp, participants.length, userList.length);
+			Arrays.sort(tmp);
+			int k = 0;
+			for (int i = 0; i < tmp.length; i++) {
+				if (i > 0 && tmp[i].equals(tmp[i -1])) {
+					continue;
+				}
+				tmp[k++] = tmp[i];
+			}
+			participants = new String[k];
+			System.arraycopy(tmp, 0, participants, 0, k);
+		}
 	}
 
 }

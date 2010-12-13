@@ -15,6 +15,13 @@ public class CircleObject extends PrimitiveObject {
 
 	private transient Shape circle;
 
+	public CircleObject(Point center, int radius, Color color, float width) {
+		super(color, width);
+		this.id = Frame.ID_CIRCLE;
+		this.center = center;
+		this.radius = radius;
+	}
+
 	public CircleObject(Point center, Point arc, Color color, float width) {
 		super(color, width);
 		this.id = Frame.ID_CIRCLE;
@@ -23,13 +30,6 @@ public class CircleObject extends PrimitiveObject {
 		this.radius = (int) Math
 				.round(Math
 						.sqrt((center.x - arc.x) * (center.x - arc.x) + (center.y - arc.y) * (center.y - arc.y)));
-	}
-
-	public CircleObject(Point center, int radius, Color color, float width) {
-		super(color, width);
-		this.id = Frame.ID_CIRCLE;
-		this.center = center;
-		this.radius = radius;
 	}
 
 	@Override

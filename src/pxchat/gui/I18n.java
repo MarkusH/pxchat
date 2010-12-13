@@ -8,19 +8,19 @@ import java.util.ResourceBundle;
 
 public final class I18n {
 
+	private static class Holder {
+		public static final I18n INSTANCE = new I18n();
+	}
+	public static I18n getInstance() {
+		return Holder.INSTANCE;
+	}
+
 	private Locale locale;
+
 	private ResourceBundle bundle;
 
 	private I18n() {
 		setLocale(Locale.getDefault());
-	}
-
-	private static class Holder {
-		public static final I18n INSTANCE = new I18n();
-	}
-
-	public static I18n getInstance() {
-		return Holder.INSTANCE;
 	}
 
 	public String getString(String key) {

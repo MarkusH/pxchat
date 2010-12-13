@@ -11,19 +11,7 @@ package pxchat.net.tcp;
  */
 public interface TCPClientListener {
 
-	/**
-	 * This method is called when the <code>client</code> disconnects.
-	 * 
-	 * @param client The source of the event
-	 */
-	public void clientDisconnect(CustomSocket client);
-
-	/**
-	 * This method is called when the <code>client</code> is connecting.
-	 * 
-	 * @param client The source of the event
-	 */
-	public void clientConnecting(CustomSocket client);
+	public void clientClearToSend(CustomSocket client);
 
 	/**
 	 * This method is called when the <code>client</code> connected.
@@ -33,6 +21,20 @@ public interface TCPClientListener {
 	public void clientConnect(CustomSocket client);
 
 	/**
+	 * This method is called when the <code>client</code> is connecting.
+	 * 
+	 * @param client The source of the event
+	 */
+	public void clientConnecting(CustomSocket client);
+
+	/**
+	 * This method is called when the <code>client</code> disconnects.
+	 * 
+	 * @param client The source of the event
+	 */
+	public void clientDisconnect(CustomSocket client);
+	
+	/**
 	 * This method is called when the <code>client</code> receives
 	 * <code>data</code>.
 	 * 
@@ -40,6 +42,4 @@ public interface TCPClientListener {
 	 * @param data The data received
 	 */
 	public void clientRead(CustomSocket client, Object data);
-	
-	public void clientClearToSend(CustomSocket client);
 }

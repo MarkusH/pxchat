@@ -12,11 +12,32 @@ import java.util.Vector;
  */
 public class TCPServer {
 
+	class AcceptThread extends Thread {
+
+		CustomSocket socket;
+
+		public AcceptThread() {
+			this.setDaemon(true);
+		}
+
+		@Override
+		public void run() {
+			try {
+				socket = new CustomSocket(serverSocket.accept(), clientListener);
+
+			} catch (IOException e) {
+				acceptCallback(e);
+				return;
+			}
+			acceptCallback(socket);
+		}
+	}
 	private ServerSocket serverSocket = null;
 	private Vector<CustomSocket> clients = new Vector<CustomSocket>();
-	private AcceptThread acceptThread = null;
 
+	private AcceptThread acceptThread = null;
 	private boolean closing = false;
+
 	private boolean listening = false;
 
 	private TCPServerListener tcpServerListener;
@@ -24,16 +45,9 @@ public class TCPServer {
 	private TCPClientListener clientListener = new TCPClientListener() {
 
 		@Override
-		public void clientDisconnect(CustomSocket client) {
-			clients.remove(client);
-			if (tcpServerListener != null)
-				tcpServerListener.clientDisconnect(client);
-		}
-
-		@Override
-		public void clientRead(CustomSocket client, Object data) {
-			if (tcpServerListener != null)
-				tcpServerListener.clientRead(client, data);
+		public void clientClearToSend(CustomSocket client) {
+			// TODO Auto-generated method stub
+			
 		}
 
 		@Override
@@ -47,9 +61,16 @@ public class TCPServer {
 		}
 
 		@Override
-		public void clientClearToSend(CustomSocket client) {
-			// TODO Auto-generated method stub
-			
+		public void clientDisconnect(CustomSocket client) {
+			clients.remove(client);
+			if (tcpServerListener != null)
+				tcpServerListener.clientDisconnect(client);
+		}
+
+		@Override
+		public void clientRead(CustomSocket client, Object data) {
+			if (tcpServerListener != null)
+				tcpServerListener.clientRead(client, data);
 		}
 	};
 
@@ -63,18 +84,20 @@ public class TCPServer {
 		this.tcpServerListener = tcpServerListener;
 	}
 
-	/**
-	 * Lets this server listen on the specified <code>port</code>.
-	 * 
-	 * @param port The port to listen on.
-	 * @throws IOException
-	 */
-	public synchronized void listen(int port) throws IOException {
-		if ((serverSocket == null) || (!this.listening)) {
-			this.listening = false;
-			serverSocket = new ServerSocket(port);
-			this.listening = true;
-			doAccept();
+	private synchronized void acceptCallback(CustomSocket socket) {
+		clients.add(socket);
+		if (tcpServerListener != null)
+			tcpServerListener.clientConnecting(socket);
+		if (tcpServerListener != null)
+			tcpServerListener.clientConnect(socket);
+		doAccept();
+	}
+
+	private synchronized void acceptCallback(IOException e) {
+		if (closing) {
+			closing = false;
+		} else {
+			e.printStackTrace();
 		}
 	}
 
@@ -129,41 +152,18 @@ public class TCPServer {
 		acceptThread.start();
 	}
 
-	private synchronized void acceptCallback(CustomSocket socket) {
-		clients.add(socket);
-		if (tcpServerListener != null)
-			tcpServerListener.clientConnecting(socket);
-		if (tcpServerListener != null)
-			tcpServerListener.clientConnect(socket);
-		doAccept();
-	}
-
-	private synchronized void acceptCallback(IOException e) {
-		if (closing) {
-			closing = false;
-		} else {
-			e.printStackTrace();
-		}
-	}
-
-	class AcceptThread extends Thread {
-
-		CustomSocket socket;
-
-		public AcceptThread() {
-			this.setDaemon(true);
-		}
-
-		@Override
-		public void run() {
-			try {
-				socket = new CustomSocket(serverSocket.accept(), clientListener);
-
-			} catch (IOException e) {
-				acceptCallback(e);
-				return;
-			}
-			acceptCallback(socket);
+	/**
+	 * Lets this server listen on the specified <code>port</code>.
+	 * 
+	 * @param port The port to listen on.
+	 * @throws IOException
+	 */
+	public synchronized void listen(int port) throws IOException {
+		if ((serverSocket == null) || (!this.listening)) {
+			this.listening = false;
+			serverSocket = new ServerSocket(port);
+			this.listening = true;
+			doAccept();
 		}
 	}
 }

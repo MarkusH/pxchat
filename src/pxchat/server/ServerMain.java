@@ -43,9 +43,8 @@ public class ServerMain {
 			builder.setErrorHandler(new ErrorHandler() {
 
 				@Override
-				public void warning(SAXParseException e) throws SAXException {
-					System.out.println("Warning validating the config file:");
-					e.printStackTrace();
+				public void error(SAXParseException e) throws SAXException {
+					throw e;
 				}
 
 				@Override
@@ -56,8 +55,9 @@ public class ServerMain {
 				}
 
 				@Override
-				public void error(SAXParseException e) throws SAXException {
-					throw e;
+				public void warning(SAXParseException e) throws SAXException {
+					System.out.println("Warning validating the config file:");
+					e.printStackTrace();
 				}
 			});
 			doc = builder.parse(file);

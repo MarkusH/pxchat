@@ -26,6 +26,14 @@ public interface ClientListener {
 	public void clientDisconnect();
 
 	/**
+	 * This method is called when a message is received.
+	 * 
+	 * @param author The author of the message
+	 * @param message The message itself
+	 */
+	public void messageReceived(String author, String message);
+
+	/**
 	 * @param type
 	 */
 	public void notification(int type);
@@ -35,7 +43,7 @@ public interface ClientListener {
 	 * @param username
 	 */
 	public void notification(int type, String username);
-
+	
 	/**
 	 * This method is called when the user list changes, i.e. a client connected
 	 * or disconnected
@@ -43,13 +51,5 @@ public interface ClientListener {
 	 * @param newUserList
 	 */
 	public void userListChanged(HashMap<Integer, String> newUserList);
-	
-	/**
-	 * This method is called when a message is received.
-	 * 
-	 * @param author The author of the message
-	 * @param message The message itself
-	 */
-	public void messageReceived(String author, String message);
 
 }

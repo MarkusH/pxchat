@@ -1,7 +1,5 @@
 package pxchat.net.protocol.core;
 
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import pxchat.net.protocol.frames.Frame;

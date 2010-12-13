@@ -15,6 +15,7 @@ import pxchat.net.protocol.frames.ImageChunkFrame;
 import pxchat.net.protocol.frames.ImageIDFrame;
 import pxchat.net.protocol.frames.ImageStartFrame;
 import pxchat.net.protocol.frames.ImageStopFrame;
+import pxchat.net.protocol.frames.LockFrame;
 import pxchat.net.protocol.frames.MessageFrame;
 import pxchat.net.protocol.frames.NotificationFrame;
 import pxchat.net.protocol.frames.UserListFrame;
@@ -33,6 +34,19 @@ import pxchat.whiteboard.PaintObject;
  */
 public final class Client {
 
+	private static class Holder {
+		public static final Client INSTANCE = new Client();
+	}
+
+	/**
+	 * Returns the sole instance of the TCP client.
+	 * 
+	 * @return The instance of the TCP client
+	 */
+	public static Client getInstance() {
+		return Holder.INSTANCE;
+	}
+
 	/**
 	 * The underlying TCP client.
 	 */
@@ -42,7 +56,7 @@ public final class Client {
 	 * The frame adapter controlling the data flow.
 	 */
 	private FrameAdapter frameAdapter;
-
+	
 	/**
 	 * The user list is a mapping of session id to user name of the clients
 	 * currently connected to the server
@@ -53,7 +67,7 @@ public final class Client {
 	 * The client listener sending events to the GUI.
 	 */
 	private Vector<ClientListener> clientListeners = new Vector<ClientListener>();
-	
+
 	/**
 	 * The client listener sending whiteboard related events to the GUI.
 	 */
@@ -64,7 +78,7 @@ public final class Client {
 	 * The user name of the client.
 	 */
 	private String loginName = "";
-
+	
 	/**
 	 * The password of the client.
 	 */
@@ -74,7 +88,7 @@ public final class Client {
 	 * The image id that will be used next.
 	 */
 	private int nextImageID = -1;
-	
+
 	private Vector<ImageReceiver> imgReceivers = new Vector<ImageReceiver>();
 
 	/**
@@ -89,17 +103,8 @@ public final class Client {
 	private TCPClientListener tcpClientListener = new TCPClientListener() {
 
 		@Override
-		public void clientRead(CustomSocket client, Object data) {
-			System.out.println(this + "> Message received from server: " + data);
-			frameAdapter.receive(data);
-		}
-
-		@Override
-		public void clientDisconnect(CustomSocket client) {
-			System.out.println(this + "> Client disconnected");
-
-			for (ClientListener listener : clientListeners)
-				listener.clientDisconnect();
+		public void clientClearToSend(CustomSocket client) {
+			frameAdapter.send();
 		}
 
 		@Override
@@ -121,8 +126,17 @@ public final class Client {
 		}
 
 		@Override
-		public void clientClearToSend(CustomSocket client) {
-			frameAdapter.send();
+		public void clientDisconnect(CustomSocket client) {
+			System.out.println(this + "> Client disconnected");
+
+			for (ClientListener listener : clientListeners)
+				listener.clientDisconnect();
+		}
+
+		@Override
+		public void clientRead(CustomSocket client, Object data) {
+			System.out.println(this + "> Message received from server: " + data);
+			frameAdapter.receive(data);
 		}
 	};
 
@@ -242,6 +256,13 @@ public final class Client {
 							}
 						break;
 						
+					case Frame.ID_LOCK:
+						LockFrame lf = (LockFrame) frame;
+						for (WhiteboardClientListener listener : whiteboardClientListeners) {
+							listener.changeControlsLock(lf.getLock());
+						}
+						break;
+						
 					case Frame.ID_CIRCLE:
 					case Frame.ID_ELLIPSE:
 					case Frame.ID_RECT:
@@ -285,19 +306,6 @@ public final class Client {
 		frameAdapter = new FrameAdapter(client, adapterListener);
 	}
 
-	private static class Holder {
-		public static final Client INSTANCE = new Client();
-	}
-
-	/**
-	 * Returns the sole instance of the TCP client.
-	 * 
-	 * @return The intstace of the TCP client
-	 */
-	public static Client getInstance() {
-		return Holder.INSTANCE;
-	}
-
 	/**
 	 * Connects to the specified host on the defined port. It uses the login
 	 * credentials to establish a connection.
@@ -325,6 +333,13 @@ public final class Client {
 	}
 
 	/**
+	 * @return the nextImageID
+	 */
+	public int getNextImageID() {
+		return nextImageID;
+	}
+
+	/**
 	 * Returns the connection state of the client.
 	 * 
 	 * @return <code>true</code> if it is connected
@@ -337,27 +352,41 @@ public final class Client {
 		if (listener != null)
 			clientListeners.add(listener);
 	}
-
-	public void removeListener(ClientListener listener) {
-		clientListeners.remove(listener);
-	}
 	
 	public void registerListener(WhiteboardClientListener listener) {
 		if (listener != null)
 			whiteboardClientListeners.add(listener);
 	}
 
+	public void removeListener(ClientListener listener) {
+		clientListeners.remove(listener);
+	}
+
 	public void removeListener(WhiteboardClientListener listener) {
 		whiteboardClientListeners.remove(listener);
 	}
 
-	/**
-	 * @return the nextImageID
-	 */
-	public int getNextImageID() {
-		return nextImageID;
+	public void sendChangeBackground(Color color) {
+		if (isConnected()) {
+			frameAdapter.getOutgoing().add(new BackgroundFrame(color));
+			frameAdapter.send();
+		}
 	}
 
+	public void sendChangeBackground(int imageID) {
+		if (isConnected()) {
+			frameAdapter.getOutgoing().add(new BackgroundFrame(imageID));
+			frameAdapter.send();
+		}
+	}
+	
+	public void sendImage(int imageID) {
+		if (isConnected()) {
+			imgSenders.add(new ImageSender(imageID));
+			frameAdapter.send();
+		}
+	}
+	
 	/*
 	 * Client commands
 	 */
@@ -367,31 +396,17 @@ public final class Client {
 			frameAdapter.send();
 		}
 	}
-
-	public void sendImage(int imageID) {
-		if (isConnected()) {
-			imgSenders.add(new ImageSender(imageID));
-			frameAdapter.send();
-		}
-	}
-	
-	public void sendChangeBackground(Color color) {
-		if (isConnected()) {
-			frameAdapter.getOutgoing().add(new BackgroundFrame(color));
-			frameAdapter.send();
-		}
-	}
-	
-	public void sendChangeBackground(int imageID) {
-		if (isConnected()) {
-			frameAdapter.getOutgoing().add(new BackgroundFrame(imageID));
-			frameAdapter.send();
-		}
-	}
 	
 	public void sendPaintObject(PaintObject object) {
 		if (isConnected()) {
 			frameAdapter.getOutgoing().add(object);
+			frameAdapter.send();
+		}
+	}
+
+	public void sendWhiteboardControlsLock(boolean lock) {
+		if (isConnected()) {
+			frameAdapter.getOutgoing().add(new LockFrame(lock, loginName));
 			frameAdapter.send();
 		}
 	}

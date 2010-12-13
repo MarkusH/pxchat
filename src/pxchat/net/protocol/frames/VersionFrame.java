@@ -2,7 +2,11 @@ package pxchat.net.protocol.frames;
 
 public class VersionFrame extends Frame {
 
+	public static VersionFrame getCurrent() {
+		return new VersionFrame(0, 1);
+	}
 	private int major;
+
 	private int minor;
 
 	VersionFrame(int major, int minor) {
@@ -15,16 +19,8 @@ public class VersionFrame extends Frame {
 		return major;
 	}
 
-	public void setMajor(int major) {
-		this.major = major;
-	}
-
 	public int getMinor() {
 		return minor;
-	}
-
-	public void setMinor(int minor) {
-		this.minor = minor;
 	}
 
 	public boolean isCompatible(VersionFrame ver) {
@@ -33,9 +29,13 @@ public class VersionFrame extends Frame {
 		else
 			return false;
 	}
+
+	public void setMajor(int major) {
+		this.major = major;
+	}
 	
-	public static VersionFrame getCurrent() {
-		return new VersionFrame(0, 1);
+	public void setMinor(int minor) {
+		this.minor = minor;
 	}
 
 }

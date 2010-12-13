@@ -5,7 +5,6 @@ package pxchat.net;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -15,7 +14,6 @@ import pxchat.net.protocol.core.FrameAdapter;
 import pxchat.net.protocol.frames.ImageChunkFrame;
 import pxchat.net.protocol.frames.ImageStartFrame;
 import pxchat.net.protocol.frames.ImageStopFrame;
-import pxchat.net.protocol.frames.ImageSyncFrame;
 import pxchat.whiteboard.ImageTable;
 
 

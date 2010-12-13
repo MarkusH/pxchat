@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -34,8 +35,6 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import com.sun.corba.se.spi.oa.OAInvocationInfo;
 
 import pxchat.net.Client;
 import pxchat.net.WhiteboardClientListener;
@@ -74,6 +73,8 @@ public class WhiteBoard extends JFrame {
 	private Tool tool = Tool.Freehand;
 	private Color currentColor = Color.BLACK;
 	private Color currentBackgroundColor = Color.WHITE;
+	
+	private boolean lock = false;
 	/**
 	 * The coordinates of the starting point of a new paint object. It is
 	 * usually set in mousePressed()
@@ -143,8 +144,14 @@ public class WhiteBoard extends JFrame {
 
 		paintBoard.addMouseListener(new MouseAdapter() {
 
+			private void maybeShowPopup(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					popup.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+
 			@Override
-			public void mouseExited(MouseEvent e) {
+			public void mouseClicked(MouseEvent e) {
 
 			}
 
@@ -154,7 +161,7 @@ public class WhiteBoard extends JFrame {
 			}
 
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mouseExited(MouseEvent e) {
 
 			}
 
@@ -162,55 +169,51 @@ public class WhiteBoard extends JFrame {
 			public void mousePressed(MouseEvent e) {
 				maybeShowPopup(e);
 
-				startPoint = currentPoint = new Point(e.getX(), e.getY());
-				
-				switch (tool) {
-					case Freehand:
-						Client.getInstance().sendPaintObject(new PointObject(startPoint, currentColor, currentStrokeWidth));
-						break;
+				if (!lock) {
+					startPoint = currentPoint = new Point(e.getX(), e.getY());
+					switch (tool) {
+						case Freehand:
+							Client.getInstance().sendPaintObject(new PointObject(startPoint, currentColor, currentStrokeWidth));
+							break;
+					}
 				}
-
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				maybeShowPopup(e);
 
-				switch (tool) {
-					case Circle:
-						Client.getInstance().sendPaintObject(
-								new CircleObject(startPoint, currentPoint, currentColor,
-										currentStrokeWidth));
-						paintBoard.getPreviewObjects().clear();
-						paintBoard.repaint();
-						break;
-					case Ellipse:
-						Client.getInstance().sendPaintObject(
-								new EllipseObject(startPoint, currentPoint, currentColor,
-										currentStrokeWidth));
-						paintBoard.getPreviewObjects().clear();
-						paintBoard.repaint();
-						break;
-					case Line:
-						Client.getInstance().sendPaintObject(
-								new LineObject(startPoint, currentPoint, currentColor,
-										currentStrokeWidth));
-						paintBoard.getPreviewObjects().clear();
-						paintBoard.repaint();
-						break;
-					case Rectangle:
-						Client.getInstance().sendPaintObject(
-								new RectObject(startPoint, currentPoint, currentColor,
-										currentStrokeWidth));
-						paintBoard.getPreviewObjects().clear();
-						paintBoard.repaint();
-						break;
-				}
-			}
-
-			private void maybeShowPopup(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					popup.show(e.getComponent(), e.getX(), e.getY());
+				if (!lock) {
+					switch (tool) {
+						case Circle:
+							Client.getInstance().sendPaintObject(
+									new CircleObject(startPoint, currentPoint, currentColor,
+											currentStrokeWidth));
+							paintBoard.getPreviewObjects().clear();
+							paintBoard.repaint();
+							break;
+						case Ellipse:
+							Client.getInstance().sendPaintObject(
+									new EllipseObject(startPoint, currentPoint, currentColor,
+											currentStrokeWidth));
+							paintBoard.getPreviewObjects().clear();
+							paintBoard.repaint();
+							break;
+						case Line:
+							Client.getInstance().sendPaintObject(
+									new LineObject(startPoint, currentPoint, currentColor,
+											currentStrokeWidth));
+							paintBoard.getPreviewObjects().clear();
+							paintBoard.repaint();
+							break;
+						case Rectangle:
+							Client.getInstance().sendPaintObject(
+									new RectObject(startPoint, currentPoint, currentColor,
+											currentStrokeWidth));
+							paintBoard.getPreviewObjects().clear();
+							paintBoard.repaint();
+							break;
+					}
 				}
 			}
 		});
@@ -218,53 +221,55 @@ public class WhiteBoard extends JFrame {
 		paintBoard.addMouseMotionListener(new MouseMotionListener() {
 
 			@Override
-			public void mouseMoved(MouseEvent e) {
+			public void mouseDragged(MouseEvent e) {
+				if (!lock) {
+					switch (tool) {
+						case Freehand:
+							Point newPoint = new Point(e.getX(), e.getY());
+							if (newPoint.distance(currentPoint) > 10.0) {
+								Client.getInstance().sendPaintObject(new LineObject(currentPoint, 
+										newPoint, currentColor, currentStrokeWidth));
+								currentPoint = new Point(e.getX(), e.getY());
+							}
+							break;
+						case Circle:
+							currentPoint = new Point(e.getX(), e.getY());
+							paintBoard.getPreviewObjects().clear();
+							paintBoard.getPreviewObjects().add(
+									new CircleObject(startPoint, currentPoint, currentColor,
+											currentStrokeWidth));
+							paintBoard.repaint();
+							break;
+						case Ellipse:
+							currentPoint = new Point(e.getX(), e.getY());
+							paintBoard.getPreviewObjects().clear();
+							paintBoard.getPreviewObjects().add(
+									new EllipseObject(startPoint, currentPoint, currentColor,
+											currentStrokeWidth));
+							paintBoard.repaint();
+							break;
+						case Line:
+							currentPoint = new Point(e.getX(), e.getY());
+							paintBoard.getPreviewObjects().clear();
+							paintBoard.getPreviewObjects().add(
+									new LineObject(startPoint, currentPoint, currentColor,
+											currentStrokeWidth));
+							paintBoard.repaint();
+							break;
+						case Rectangle:
+							currentPoint = new Point(e.getX(), e.getY());
+							paintBoard.getPreviewObjects().clear();
+							paintBoard.getPreviewObjects().add(
+									new RectObject(startPoint, currentPoint, currentColor,
+											currentStrokeWidth));
+							paintBoard.repaint();
+							break;
+					}
+				}
 			}
 
 			@Override
-			public void mouseDragged(MouseEvent e) {
-				switch (tool) {
-					case Freehand:
-						Point newPoint = new Point(e.getX(), e.getY());
-						if (newPoint.distance(currentPoint) > 10.0) {
-							Client.getInstance().sendPaintObject(new LineObject(currentPoint, 
-									newPoint, currentColor, currentStrokeWidth));
-							currentPoint = new Point(e.getX(), e.getY());
-						}
-						break;
-					case Circle:
-						currentPoint = new Point(e.getX(), e.getY());
-						paintBoard.getPreviewObjects().clear();
-						paintBoard.getPreviewObjects().add(
-								new CircleObject(startPoint, currentPoint, currentColor,
-										currentStrokeWidth));
-						paintBoard.repaint();
-						break;
-					case Ellipse:
-						currentPoint = new Point(e.getX(), e.getY());
-						paintBoard.getPreviewObjects().clear();
-						paintBoard.getPreviewObjects().add(
-								new EllipseObject(startPoint, currentPoint, currentColor,
-										currentStrokeWidth));
-						paintBoard.repaint();
-						break;
-					case Line:
-						currentPoint = new Point(e.getX(), e.getY());
-						paintBoard.getPreviewObjects().clear();
-						paintBoard.getPreviewObjects().add(
-								new LineObject(startPoint, currentPoint, currentColor,
-										currentStrokeWidth));
-						paintBoard.repaint();
-						break;
-					case Rectangle:
-						currentPoint = new Point(e.getX(), e.getY());
-						paintBoard.getPreviewObjects().clear();
-						paintBoard.getPreviewObjects().add(
-								new RectObject(startPoint, currentPoint, currentColor,
-										currentStrokeWidth));
-						paintBoard.repaint();
-						break;
-				}
+			public void mouseMoved(MouseEvent e) {
 			}
 		});
 
@@ -282,7 +287,6 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				tool = Tool.Circle;
-
 			}
 		});
 
@@ -291,8 +295,7 @@ public class WhiteBoard extends JFrame {
 		drawColor.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Color newColor = JColorChooser.showDialog(WhiteBoard.this, I18n.getInstance()
-						.getString("ccDialog"), currentColor);
+				Color newColor = JColorChooser.showDialog(WhiteBoard.this, I18n.getInstance().getString("ccDialog"), currentColor);
 				if (newColor != null) {
 					currentColor = newColor;
 				}
@@ -306,7 +309,6 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				tool = Tool.Ellipse;
-
 			}
 		});
 
@@ -316,7 +318,6 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				tool = Tool.Eraser;
-
 			}
 		});
 
@@ -326,7 +327,6 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				tool = Tool.Freehand;
-
 			}
 		});
 
@@ -336,7 +336,6 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				tool = Tool.Line;
-
 			}
 		});
 
@@ -346,7 +345,6 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				tool = Tool.Rectangle;
-
 			}
 		});
 
@@ -356,22 +354,22 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				tool = Tool.Text;
-
 			}
 		});
 
 		lockCanvas = new JToggleButton("", Icons.get("lock.png"));
 		lockCanvas.setToolTipText(I18n.getInstance().getString("wbLockCanvas"));
 		lockCanvas.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (lockCanvas.isSelected()) {
 					lockCanvas.setToolTipText(I18n.getInstance().getString("wbUnlockCanvas"));
 					lockCanvas.setIcon(Icons.get("unlock.png"));
+					Client.getInstance().sendWhiteboardControlsLock(true);
 				} else {
 					lockCanvas.setToolTipText(I18n.getInstance().getString("wbLockCanvas"));
 					lockCanvas.setIcon(Icons.get("lock.png"));
+					Client.getInstance().sendWhiteboardControlsLock(false);
 				}
 			}
 		});
@@ -397,7 +395,6 @@ public class WhiteBoard extends JFrame {
 		clearImage = new JButton("", Icons.get("clear.png"));
 		clearImage.setToolTipText(I18n.getInstance().getString("wbClear"));
 		clearImage.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				clearImage();
@@ -414,10 +411,9 @@ public class WhiteBoard extends JFrame {
 			}
 		});
 
-		loadBackgroundColor = new JButton("BGC");
+		loadBackgroundColor = new JButton("", Icons.get("background-color.png"));
 		loadBackgroundColor.setToolTipText(I18n.getInstance().getString("wbBackgroundColor"));
 		loadBackgroundColor.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Color newColor = JColorChooser.showDialog(WhiteBoard.this, I18n.getInstance()
@@ -437,7 +433,6 @@ public class WhiteBoard extends JFrame {
 		lineWidthSlider = new JSlider(1, 10, 1);
 		lineWidthSlider.setToolTipText(I18n.getInstance().getString("wbLineWidth"));
 		lineWidthSlider.addChangeListener(new ChangeListener() {
-
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				currentStrokeWidth = lineWidthSlider.getValue();
@@ -492,20 +487,18 @@ public class WhiteBoard extends JFrame {
 		Client.getInstance().registerListener(new WhiteboardClientListener() {
 
 			@Override
-			public void backgroundChanged(int imageID) {
-				paintBoard.loadBackground(imageID);
-			}
-
-			@Override
 			public void backgroundChanged(Color color) {
 				paintBoard.loadBackground(color);
 			}
 
 			@Override
-			public void paintRequest() {
-//				synchronized (paintBoard) {
-					paintBoard.repaint();
-//				}
+			public void backgroundChanged(int imageID) {
+				paintBoard.loadBackground(imageID);
+			}
+
+			@Override
+			public void changeControlsLock(boolean lock) {
+				WhiteBoard.this.lockControls(lock);
 			}
 
 			@Override
@@ -517,6 +510,14 @@ public class WhiteBoard extends JFrame {
 				}
 				System.out.println("reiceved unlocked");
 			}
+
+			@Override
+			public void paintRequest() {
+//				synchronized (paintBoard) {
+					paintBoard.repaint();
+//				}
+			}
+
 		});
 
 		this.getContentPane().add(panel);
@@ -534,24 +535,6 @@ public class WhiteBoard extends JFrame {
 		// TODO insert image
 	}
 
-	private void saveImage() {
-		JFileChooser fc = new JFileChooser();
-		fc.setFileFilter(new PicFileFilter());
-		if (fc.showSaveDialog(WhiteBoard.this) == JFileChooser.APPROVE_OPTION) {
-			String format = "png";
-			String name = fc.getSelectedFile().getName();
-			if (name.contains(".")) {
-				format = name.substring(name.lastIndexOf(".") + 1);
-			}
-			try {
-				ImageIO.write(paintBoard.saveImage(), format, fc.getSelectedFile());
-			} catch (IOException e) {
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(WhiteBoard.this, e.getMessage());
-			}
-		}
-	}
-
 	private void loadBackground() {
 		// TODO need some option to set the background to a specific color
 		// 1) Display a dialog to choose "Image" or "Color"
@@ -566,7 +549,12 @@ public class WhiteBoard extends JFrame {
 		}
 	}
 
+	public void lockControls() {
+		lockControls(true);
+	}
+
 	public void lockControls(Boolean lock) {
+		this.lock = lock;
 		drawCircle.setEnabled(!lock);
 		drawEllipse.setEnabled(!lock);
 		drawEraser.setEnabled(!lock);
@@ -579,10 +567,27 @@ public class WhiteBoard extends JFrame {
 		loadImage.setEnabled(!lock);
 		clearImage.setEnabled(!lock);
 		loadBackground.setEnabled(!lock);
+		loadBackgroundColor.setEnabled(!lock);
 	}
 
-	public void lockControls() {
-		lockControls(true);
+	private void saveImage() {
+		JFileChooser fc = new JFileChooser();
+		fc.setFileFilter(new PicFileFilter());
+		if (fc.showSaveDialog(WhiteBoard.this) == JFileChooser.APPROVE_OPTION) {
+			String format = "png";
+			String name = fc.getSelectedFile().getName();
+			if (name.contains(".")) {
+				format = name.substring(name.lastIndexOf(".") + 1);
+			} else {
+				fc.setSelectedFile(new File(fc.getSelectedFile().getAbsolutePath() + ".png"));
+			}
+			try {
+				ImageIO.write(paintBoard.saveImage(), format, fc.getSelectedFile());
+			} catch (IOException e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(WhiteBoard.this, e.getMessage());
+			}
+		}
 	}
 
 	public void unlockControls() {
