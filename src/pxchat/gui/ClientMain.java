@@ -43,23 +43,34 @@ import pxchat.util.Logging;
  * 
  */
 public class ClientMain extends JFrame {
-	private Logging log;
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// I18n.getInstance().setLocale(new Locale("de", "DE"));
+		Icons.setFolder("./data/img/icon/");
+		new ClientMain();
+	}
 
+	private Logging log;
+	
 	private JMenuBar mBar;
 	private JMenu mFile, mHelp;
 	private JMenuItem mNewChat, mCloseChat, mExit, mAbout;
-
+	
 	private JTextArea inputArea;
 	private JTextPane chatLog;
 	private JScrollPane chatLogPane, inputAreaPane, userListPane;
 	private JList userList;
+	
 	private JButton whiteBoardButton, sendButton;
-
+	
 	private WhiteBoard wb = new WhiteBoard();
-
-	private static SimpleAttributeSet OWN = new SimpleAttributeSet(),
+	
+	private static final SimpleAttributeSet OWN = new SimpleAttributeSet(),
 			FOREIGN = new SimpleAttributeSet(), OWNNAME = new SimpleAttributeSet(),
 			FOREIGNNAME = new SimpleAttributeSet(), NOTIFY = new SimpleAttributeSet();
+
 	static {
 		StyleConstants.setForeground(OWN, Color.blue);
 		StyleConstants.setFontSize(OWN, 12);
@@ -185,14 +196,6 @@ public class ClientMain extends JFrame {
 		inputAreaPane.setPreferredSize(new Dimension(400, 50));
 		inputArea.addKeyListener(new KeyListener() {
 			@Override
-			public void keyTyped(KeyEvent e) {
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-			}
-
-			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					if (e.isControlDown()) {
@@ -202,6 +205,14 @@ public class ClientMain extends JFrame {
 					ClientMain.this.sendMessage();
 					e.setKeyCode(0);
 				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+
+			@Override
+			public void keyTyped(KeyEvent e) {
 			}
 		});
 
@@ -274,6 +285,17 @@ public class ClientMain extends JFrame {
 		Client.getInstance().registerListener(new ClientListener() {
 
 			@Override
+			public void clientConnect(String remoteAddress) {
+				mCloseChat.setEnabled(true);
+				mNewChat.setEnabled(false);
+				whiteBoardButton.setEnabled(true);
+				sendButton.setEnabled(true);
+				inputArea.setEnabled(true);
+				writeNotification(I18n.getInstance().getString("connectedToServer") + " " + remoteAddress);
+				log = new Logging();
+			}
+
+			@Override
 			public void clientDisconnect() {
 				mNewChat.setEnabled(true);
 				mCloseChat.setEnabled(false);
@@ -287,14 +309,8 @@ public class ClientMain extends JFrame {
 			}
 
 			@Override
-			public void clientConnect(String remoteAddress) {
-				mCloseChat.setEnabled(true);
-				mNewChat.setEnabled(false);
-				whiteBoardButton.setEnabled(true);
-				sendButton.setEnabled(true);
-				inputArea.setEnabled(true);
-				writeNotification(I18n.getInstance().getString("connectedToServer") + " " + remoteAddress);
-				log = new Logging();
+			public void messageReceived(String author, String message) {
+				writeMessage(author, message);
 			}
 
 			@Override
@@ -335,11 +351,6 @@ public class ClientMain extends JFrame {
 				log.logParticipants(newUserList.values().toArray(new String[newUserList.size()]));
 			}
 
-			@Override
-			public void messageReceived(String author, String message) {
-				writeMessage(author, message);
-			}
-
 		});
 
 		/**
@@ -348,30 +359,10 @@ public class ClientMain extends JFrame {
 		splashScreen.setReady();
 	}
 
-	public void writeNotification(String msg) {
-		try {
-			chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
-				"[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] " + msg + "\n",
-				NOTIFY);
-			this.scrollChatLog();
-		} catch (BadLocationException e) {
-			System.err.println("Could not write to JTextPane \"chatLog\".");
-		}
-	}
-
-	public void writeMessage(String author, String msg) {
-		try {
-			chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
-				"[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] " + author + ": ",
-				FOREIGNNAME);
-			chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n",
-				FOREIGN);
-			this.scrollChatLog();
-		} catch (BadLocationException e) {
-			System.err.println("Could not write to JTextPane \"chatLog\".");
-		}
-
-		log.logMessage(msg, author);
+	private void scrollChatLog() {
+		chatLog.scrollRectToVisible(new Rectangle(chatLog.getWidth() - chatLogPane.getWidth(),
+				chatLog.getHeight() - chatLogPane.getHeight(), chatLogPane.getWidth(), chatLogPane
+						.getHeight()));
 	}
 
 	private void sendMessage() {
@@ -399,18 +390,29 @@ public class ClientMain extends JFrame {
 		}
 	}
 
-	private void scrollChatLog() {
-		chatLog.scrollRectToVisible(new Rectangle(chatLog.getWidth() - chatLogPane.getWidth(),
-				chatLog.getHeight() - chatLogPane.getHeight(), chatLogPane.getWidth(), chatLogPane
-						.getHeight()));
+	public void writeMessage(String author, String msg) {
+		try {
+			chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
+				"[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] " + author + ": ",
+				FOREIGNNAME);
+			chatLog.getDocument().insertString(chatLog.getDocument().getLength(), msg + "\n",
+				FOREIGN);
+			this.scrollChatLog();
+		} catch (BadLocationException e) {
+			System.err.println("Could not write to JTextPane \"chatLog\".");
+		}
+
+		log.logMessage(msg, author);
 	}
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// I18n.getInstance().setLocale(new Locale("de", "DE"));
-		Icons.setFolder("./data/img/icon/");
-		new ClientMain();
+	public void writeNotification(String msg) {
+		try {
+			chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
+				"[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] " + msg + "\n",
+				NOTIFY);
+			this.scrollChatLog();
+		} catch (BadLocationException e) {
+			System.err.println("Could not write to JTextPane \"chatLog\".");
+		}
 	}
 }

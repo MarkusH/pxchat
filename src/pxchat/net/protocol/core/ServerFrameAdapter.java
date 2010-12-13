@@ -39,106 +39,6 @@ public class ServerFrameAdapter extends Vector<AuthFrameAdapter> {
 	}
 
 	/**
-	 * Creates and returns a new unique session id. This method is thread-safe.
-	 * 
-	 * @return A new session id
-	 */
-	protected synchronized int getNewSessionID() {
-		return ++nextSessionID;
-	}
-
-	/**
-	 * Returns the index of the frame adapter associated with the specified
-	 * socket. If there is no adapter registered for the socket, a new one is
-	 * created.
-	 * 
-	 * @param socket The socket to search the index for
-	 * @return The index of the socket
-	 */
-	public int indexOfSocket(CustomSocket socket) {
-
-		int result = 0;
-		while ((result < this.size()) && (this.get(result).getSocket() != socket))
-			result++;
-
-		// create a new frame adapter
-		if (result == this.size()) {
-			AuthFrameAdapter newAdapter = new AuthFrameAdapter(socket, adapterListener);
-			newAdapter.setSessionID(getNewSessionID());
-
-			this.add(newAdapter);
-			result = this.indexOf(newAdapter);
-
-			if (serverListener != null)
-				serverListener.createAdapter(this, newAdapter);
-		}
-
-		return result;
-	}
-
-	/**
-	 * Returns the adapter associated with the specified socket. If there is no
-	 * adapter registered for the socket, a new one is created.
-	 * 
-	 * @param socket The socket to return the adapter for
-	 * @return The frame adapter associated with the socket
-	 */
-	public AuthFrameAdapter getAdapter(CustomSocket socket) {
-		return this.get(indexOfSocket(socket));
-	}
-
-	/**
-	 * Returns the adapter associated with the specified session id.
-	 * 
-	 * @param sessionID The session id to return the adapter for
-	 * @return The frame adapter associated with the socket
-	 */
-	public AuthFrameAdapter getAdapter(int sessionID) {
-		return this.get(indexOfSessionID(sessionID));
-	}
-
-	/**
-	 * Removes the frame adapter with the specified index from the server
-	 * adapter.
-	 * 
-	 * @param index The index of the frame adapter
-	 */
-	public void delete(int index) {
-		AuthFrameAdapter candidate = this.get(index);
-
-		if (candidate != null) {
-			if (serverListener != null)
-				serverListener.destroyAdapter(this, candidate);
-
-			this.remove(candidate);
-			candidate = null;
-		}
-	}
-
-	/**
-	 * Removes the specified frame adapter from the server adapter.
-	 * 
-	 * @param adapter The frame adapter to remove
-	 */
-	public void delete(AuthFrameAdapter adapter) {
-		this.delete(this.indexOf(adapter));
-	}
-
-	/**
-	 * Returns the index of the frame adapter with the specified session id.
-	 * 
-	 * @param sessionID The session id of the adapter
-	 * @return The index of the adapter
-	 */
-	public int indexOfSessionID(int sessionID) {
-		for (AuthFrameAdapter adapter : this) {
-			if (adapter.getSessionID() == sessionID)
-				return this.indexOf(adapter);
-		}
-		return -1;
-	}
-
-	/**
 	 * Broadcasts data to all frame adapters registered with this server adapter
 	 * and returns the number of clients reached. If <code>immediate</code> is
 	 * set, this method calls the {@link FrameAdapter#send()} method.
@@ -165,7 +65,7 @@ LOOP:	for (AuthFrameAdapter adapter : this) {
 		}
 		return count;
 	}
-	
+
 	/**
 	 * Broadcasts data to all frame adapters specified in the toSessionID array
 	 * and returns the number of clients reached. If <code>immediate</code> is
@@ -196,7 +96,7 @@ LOOP:	for (AuthFrameAdapter adapter : this) {
 		}
 		return count;
 	}
-	
+
 	/**
 	 * Broadcasts data to all authenticated adapters of this server adapter.
 	 * 
@@ -216,5 +116,105 @@ LOOP:	for (AuthFrameAdapter adapter : this) {
 			count++;
 		}
 		return count;
+	}
+
+	/**
+	 * Removes the specified frame adapter from the server adapter.
+	 * 
+	 * @param adapter The frame adapter to remove
+	 */
+	public void delete(AuthFrameAdapter adapter) {
+		this.delete(this.indexOf(adapter));
+	}
+
+	/**
+	 * Removes the frame adapter with the specified index from the server
+	 * adapter.
+	 * 
+	 * @param index The index of the frame adapter
+	 */
+	public void delete(int index) {
+		AuthFrameAdapter candidate = this.get(index);
+
+		if (candidate != null) {
+			if (serverListener != null)
+				serverListener.destroyAdapter(this, candidate);
+
+			this.remove(candidate);
+			candidate = null;
+		}
+	}
+
+	/**
+	 * Returns the adapter associated with the specified socket. If there is no
+	 * adapter registered for the socket, a new one is created.
+	 * 
+	 * @param socket The socket to return the adapter for
+	 * @return The frame adapter associated with the socket
+	 */
+	public AuthFrameAdapter getAdapter(CustomSocket socket) {
+		return this.get(indexOfSocket(socket));
+	}
+
+	/**
+	 * Returns the adapter associated with the specified session id.
+	 * 
+	 * @param sessionID The session id to return the adapter for
+	 * @return The frame adapter associated with the socket
+	 */
+	public AuthFrameAdapter getAdapter(int sessionID) {
+		return this.get(indexOfSessionID(sessionID));
+	}
+
+	/**
+	 * Creates and returns a new unique session id. This method is thread-safe.
+	 * 
+	 * @return A new session id
+	 */
+	protected synchronized int getNewSessionID() {
+		return ++nextSessionID;
+	}
+	
+	/**
+	 * Returns the index of the frame adapter with the specified session id.
+	 * 
+	 * @param sessionID The session id of the adapter
+	 * @return The index of the adapter
+	 */
+	public int indexOfSessionID(int sessionID) {
+		for (AuthFrameAdapter adapter : this) {
+			if (adapter.getSessionID() == sessionID)
+				return this.indexOf(adapter);
+		}
+		return -1;
+	}
+	
+	/**
+	 * Returns the index of the frame adapter associated with the specified
+	 * socket. If there is no adapter registered for the socket, a new one is
+	 * created.
+	 * 
+	 * @param socket The socket to search the index for
+	 * @return The index of the socket
+	 */
+	public int indexOfSocket(CustomSocket socket) {
+
+		int result = 0;
+		while ((result < this.size()) && (this.get(result).getSocket() != socket))
+			result++;
+
+		// create a new frame adapter
+		if (result == this.size()) {
+			AuthFrameAdapter newAdapter = new AuthFrameAdapter(socket, adapterListener);
+			newAdapter.setSessionID(getNewSessionID());
+
+			this.add(newAdapter);
+			result = this.indexOf(newAdapter);
+
+			if (serverListener != null)
+				serverListener.createAdapter(this, newAdapter);
+		}
+
+		return result;
 	}
 }

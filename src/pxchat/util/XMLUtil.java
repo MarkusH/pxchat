@@ -11,6 +11,37 @@ import org.w3c.dom.NodeList;
 public class XMLUtil {
 
 	/**
+	 * Returns an attribute value of a specified node. If this attribute does
+	 * not exits an empty string will be returned.
+	 * 
+	 * @param node The node containing the attribute.
+	 * @param attribute The name of the attribute.
+	 * @return The attribute value.
+	 */
+	public static String getAttributeValue(Node node, String attribute) {
+		return getAttributeValue(node, attribute, "");
+	}
+
+	/**
+	 * Returns an attribute value of a specified node. If this attribute does
+	 * not exits a specified default value will be returned.
+	 * 
+	 * @param node The node containing the attribute.
+	 * @param attribute The name of the attribute.
+	 * @param defaultValue The value returned if the attribute does not exist.
+	 * @return The attribute value.
+	 */
+	public static String getAttributeValue(Node node, String attribute,
+											String defaultValue) {
+		try {
+			return node.getAttributes().getNamedItem(attribute)
+					.getTextContent();
+		} catch (Exception e) {
+			return defaultValue;
+		}
+	}
+
+	/**
 	 * Returns the first child of a node with a specified name.
 	 * 
 	 * @param node The parent node.
@@ -56,37 +87,6 @@ public class XMLUtil {
 				content = node.getTextContent();
 			}
 			return content != null ? content : defaultValue;
-		} catch (Exception e) {
-			return defaultValue;
-		}
-	}
-
-	/**
-	 * Returns an attribute value of a specified node. If this attribute does
-	 * not exits an empty string will be returned.
-	 * 
-	 * @param node The node containing the attribute.
-	 * @param attribute The name of the attribute.
-	 * @return The attribute value.
-	 */
-	public static String getAttributeValue(Node node, String attribute) {
-		return getAttributeValue(node, attribute, "");
-	}
-
-	/**
-	 * Returns an attribute value of a specified node. If this attribute does
-	 * not exits a specified default value will be returned.
-	 * 
-	 * @param node The node containing the attribute.
-	 * @param attribute The name of the attribute.
-	 * @param defaultValue The value returned if the attribute does not exist.
-	 * @return The attribute value.
-	 */
-	public static String getAttributeValue(Node node, String attribute,
-											String defaultValue) {
-		try {
-			return node.getAttributes().getNamedItem(attribute)
-					.getTextContent();
 		} catch (Exception e) {
 			return defaultValue;
 		}

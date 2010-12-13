@@ -22,17 +22,17 @@ public class ImageChunkFrame extends Frame {
 	}
 
 	/**
-	 * @return the imageID
-	 */
-	public int getImageID() {
-		return imageID;
-	}
-
-	/**
 	 * @return the data
 	 */
 	public byte[] getData() {
 		return data;
+	}
+
+	/**
+	 * @return the imageID
+	 */
+	public int getImageID() {
+		return imageID;
 	}
 
 }

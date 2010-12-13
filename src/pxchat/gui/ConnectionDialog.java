@@ -36,14 +36,6 @@ public class ConnectionDialog extends JDialog {
 
 	private KeyListener returnKeyListener = new KeyListener() {
 		@Override
-		public void keyTyped(KeyEvent e) {
-		}
-
-		@Override
-		public void keyReleased(KeyEvent e) {
-		}
-
-		@Override
 		public void keyPressed(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 				if (e.getSource() != abortButton) {
@@ -55,6 +47,14 @@ public class ConnectionDialog extends JDialog {
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					ConnectionDialog.this.abort();
 				} 
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+		}
+
+		@Override
+		public void keyTyped(KeyEvent e) {
 		}
 	};
 
@@ -100,13 +100,13 @@ public class ConnectionDialog extends JDialog {
 		hostAddress.addKeyListener(returnKeyListener);
 		hostAddress.addFocusListener(new FocusListener() {
 			@Override
-			public void focusLost(FocusEvent e) {
-				ConnectionDialog.this.hostAddress.select(0, 0);
+			public void focusGained(FocusEvent arg0) {
+				ConnectionDialog.this.hostAddress.selectAll();
 			}
 
 			@Override
-			public void focusGained(FocusEvent arg0) {
-				ConnectionDialog.this.hostAddress.selectAll();
+			public void focusLost(FocusEvent e) {
+				ConnectionDialog.this.hostAddress.select(0, 0);
 			}
 		});
 
@@ -119,13 +119,13 @@ public class ConnectionDialog extends JDialog {
 		portNumber.addKeyListener(returnKeyListener);
 		portNumber.addFocusListener(new FocusListener() {
 			@Override
-			public void focusLost(FocusEvent e) {
-				ConnectionDialog.this.portNumber.select(0, 0);
+			public void focusGained(FocusEvent arg0) {
+				ConnectionDialog.this.portNumber.selectAll();
 			}
 
 			@Override
-			public void focusGained(FocusEvent arg0) {
-				ConnectionDialog.this.portNumber.selectAll();
+			public void focusLost(FocusEvent e) {
+				ConnectionDialog.this.portNumber.select(0, 0);
 			}
 		});
 
@@ -138,13 +138,13 @@ public class ConnectionDialog extends JDialog {
 		userName.addKeyListener(returnKeyListener);
 		userName.addFocusListener(new FocusListener() {
 			@Override
-			public void focusLost(FocusEvent e) {
-				ConnectionDialog.this.userName.select(0, 0);
+			public void focusGained(FocusEvent arg0) {
+				ConnectionDialog.this.userName.selectAll();
 			}
 
 			@Override
-			public void focusGained(FocusEvent arg0) {
-				ConnectionDialog.this.userName.selectAll();
+			public void focusLost(FocusEvent e) {
+				ConnectionDialog.this.userName.select(0, 0);
 			}
 		});
 
@@ -157,7 +157,10 @@ public class ConnectionDialog extends JDialog {
 		passWord.addKeyListener(returnKeyListener);
 		passWord.addKeyListener(new KeyListener() {
 			@Override
-			public void keyTyped(KeyEvent e) {
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE && e.isControlDown()) {
+					passWord.setText("");
+				}
 			}
 			
 			@Override
@@ -165,21 +168,18 @@ public class ConnectionDialog extends JDialog {
 			}
 			
 			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE && e.isControlDown()) {
-					passWord.setText("");
-				}
+			public void keyTyped(KeyEvent e) {
 			}
 		});
 		passWord.addFocusListener(new FocusListener() {
 			@Override
-			public void focusLost(FocusEvent e) {
-				ConnectionDialog.this.passWord.select(0, 0);
+			public void focusGained(FocusEvent arg0) {
+				ConnectionDialog.this.passWord.selectAll();
 			}
 
 			@Override
-			public void focusGained(FocusEvent arg0) {
-				ConnectionDialog.this.passWord.selectAll();
+			public void focusLost(FocusEvent e) {
+				ConnectionDialog.this.passWord.select(0, 0);
 			}
 		});
 
@@ -203,6 +203,10 @@ public class ConnectionDialog extends JDialog {
 		this.setVisible(true);
 	}
 
+	private void abort() {
+		this.dispose();
+	}
+
 	private void connect() {
 		String host, user, pass;
 		int port;
@@ -223,10 +227,6 @@ public class ConnectionDialog extends JDialog {
 			return;
 		}
 
-		this.dispose();
-	}
-
-	private void abort() {
 		this.dispose();
 	}
 }

@@ -32,6 +32,32 @@ public class PaintBoard extends JPanel {
 		// this.preview = null;
 	}
 
+	/**
+	 * Clears the board
+	 */
+	public void clearBoard() {
+		if (this.board == null)
+			return;
+		Graphics2D g = this.board.createGraphics();
+		Composite comp = g.getComposite();
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+		g.fillRect(0, 0, getWidth(), getHeight());
+		g.setComposite(comp);
+	}
+
+	public Vector<PaintObject> getCache() {
+		return cache;
+	}
+
+	public Vector<PaintObject> getPreviewObjects() {
+		return previewObjects;
+	}
+
+	public void loadBackground(Color c) {
+		this.background = null;
+		this.setBackground(c);
+	}
+
 	public void loadBackground(File file) {
 
 		BufferedImage img = null;
@@ -81,94 +107,9 @@ public class PaintBoard extends JPanel {
 		Client.getInstance().sendImage(background);
 	}
 
-	public void loadBackground(Color c) {
-		this.background = null;
-		this.setBackground(c);
-	}
-
 	public void loadBackground(int imageID) {
 		this.background = imageID;
 		this.setBackground(Color.WHITE);
-	}
-
-	/**
-	 * Clears the board
-	 */
-	public void clearBoard() {
-		if (this.board == null)
-			return;
-		Graphics2D g = this.board.createGraphics();
-		Composite comp = g.getComposite();
-		g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
-		g.fillRect(0, 0, getWidth(), getHeight());
-		g.setComposite(comp);
-	}
-
-	/**
-	 * Saves the board to a <code>BufferedImage</code>
-	 * 
-	 * @return The current PaintBoard
-	 */
-	public BufferedImage saveImage() {
-		BufferedImage result = new BufferedImage(getWidth(), getHeight(),
-				BufferedImage.TYPE_4BYTE_ABGR);
-
-		paintComponent(result.createGraphics());
-		return result;
-	}
-
-	/**
-	 * Updates the preview layer
-	 */
-	private void updatePreview(Graphics2D g) {
-		// Graphics2D g = null;
-
-		// // create a new image if the preview is null
-		// if (this.preview == null) {
-		// this.preview = new BufferedImage(getWidth(), getHeight(),
-		// BufferedImage.TYPE_4BYTE_ABGR);
-		// g = this.preview.createGraphics();
-		// } else {
-		// g = this.preview.createGraphics();
-		//
-		// // otherwise clear the image
-		// Composite comp = g.getComposite();
-		// g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR,
-		// 0.0f));
-		// g.fillRect(0, 0, getWidth(), getHeight());
-		// g.setComposite(comp);
-		// }
-		// g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-		// RenderingHints.VALUE_ANTIALIAS_ON);
-
-		// render the preview objects
-		for (PaintObject o : previewObjects) {
-			o.draw(g);
-		}
-	}
-
-	/**
-	 * Updates the actual board
-	 */
-	private synchronized void updateBoard() {
-		if (this.board == null)
-			this.board = new BufferedImage(getWidth(), getHeight(),
-					BufferedImage.TYPE_4BYTE_ABGR);
-
-		Graphics2D g = this.board.createGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-
-		System.out.println("update locking");
-		synchronized (this) {
-			System.out.println("update locked");
-			for (PaintObject obj : cache) {
-				obj.draw(g);
-			}
-			cache.clear();
-		}
-		System.out.println("update unlocked");
-
 	}
 
 	/*
@@ -204,11 +145,70 @@ public class PaintBoard extends JPanel {
 		// g.drawImage(this.preview, 0, 0, null);
 	}
 
-	public Vector<PaintObject> getPreviewObjects() {
-		return previewObjects;
+	/**
+	 * Saves the board to a <code>BufferedImage</code>
+	 * 
+	 * @return The current PaintBoard
+	 */
+	public BufferedImage saveImage() {
+		BufferedImage result = new BufferedImage(getWidth(), getHeight(),
+				BufferedImage.TYPE_4BYTE_ABGR);
+
+		paintComponent(result.createGraphics());
+		return result;
 	}
 
-	public Vector<PaintObject> getCache() {
-		return cache;
+	/**
+	 * Updates the actual board
+	 */
+	private synchronized void updateBoard() {
+		if (this.board == null)
+			this.board = new BufferedImage(getWidth(), getHeight(),
+					BufferedImage.TYPE_4BYTE_ABGR);
+
+		Graphics2D g = this.board.createGraphics();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+
+		System.out.println("update locking");
+		synchronized (this) {
+			System.out.println("update locked");
+			for (PaintObject obj : cache) {
+				obj.draw(g);
+			}
+			cache.clear();
+		}
+		System.out.println("update unlocked");
+
+	}
+
+	/**
+	 * Updates the preview layer
+	 */
+	private void updatePreview(Graphics2D g) {
+		// Graphics2D g = null;
+
+		// // create a new image if the preview is null
+		// if (this.preview == null) {
+		// this.preview = new BufferedImage(getWidth(), getHeight(),
+		// BufferedImage.TYPE_4BYTE_ABGR);
+		// g = this.preview.createGraphics();
+		// } else {
+		// g = this.preview.createGraphics();
+		//
+		// // otherwise clear the image
+		// Composite comp = g.getComposite();
+		// g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR,
+		// 0.0f));
+		// g.fillRect(0, 0, getWidth(), getHeight());
+		// g.setComposite(comp);
+		// }
+		// g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+		// RenderingHints.VALUE_ANTIALIAS_ON);
+
+		// render the preview objects
+		for (PaintObject o : previewObjects) {
+			o.draw(g);
+		}
 	}
 }

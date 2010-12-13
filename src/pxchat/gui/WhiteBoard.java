@@ -143,8 +143,14 @@ public class WhiteBoard extends JFrame {
 
 		paintBoard.addMouseListener(new MouseAdapter() {
 
+			private void maybeShowPopup(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					popup.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+
 			@Override
-			public void mouseExited(MouseEvent e) {
+			public void mouseClicked(MouseEvent e) {
 
 			}
 
@@ -154,7 +160,7 @@ public class WhiteBoard extends JFrame {
 			}
 
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mouseExited(MouseEvent e) {
 
 			}
 
@@ -209,19 +215,9 @@ public class WhiteBoard extends JFrame {
 					}
 				}
 			}
-
-			private void maybeShowPopup(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					popup.show(e.getComponent(), e.getX(), e.getY());
-				}
-			}
 		});
 
 		paintBoard.addMouseMotionListener(new MouseMotionListener() {
-
-			@Override
-			public void mouseMoved(MouseEvent e) {
-			}
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
@@ -269,6 +265,10 @@ public class WhiteBoard extends JFrame {
 							break;
 					}
 				}
+			}
+
+			@Override
+			public void mouseMoved(MouseEvent e) {
 			}
 		});
 
@@ -486,20 +486,18 @@ public class WhiteBoard extends JFrame {
 		Client.getInstance().registerListener(new WhiteboardClientListener() {
 
 			@Override
-			public void backgroundChanged(int imageID) {
-				paintBoard.loadBackground(imageID);
-			}
-
-			@Override
 			public void backgroundChanged(Color color) {
 				paintBoard.loadBackground(color);
 			}
 
 			@Override
-			public void paintRequest() {
-//				synchronized (paintBoard) {
-					paintBoard.repaint();
-//				}
+			public void backgroundChanged(int imageID) {
+				paintBoard.loadBackground(imageID);
+			}
+
+			@Override
+			public void changeControlsLock(boolean lock) {
+				WhiteBoard.this.lockControls(lock);
 			}
 
 			@Override
@@ -513,8 +511,10 @@ public class WhiteBoard extends JFrame {
 			}
 
 			@Override
-			public void changeControlsLock(boolean lock) {
-				WhiteBoard.this.lockControls(lock);
+			public void paintRequest() {
+//				synchronized (paintBoard) {
+					paintBoard.repaint();
+//				}
 			}
 
 		});
@@ -534,24 +534,6 @@ public class WhiteBoard extends JFrame {
 		// TODO insert image
 	}
 
-	private void saveImage() {
-		JFileChooser fc = new JFileChooser();
-		fc.setFileFilter(new PicFileFilter());
-		if (fc.showSaveDialog(WhiteBoard.this) == JFileChooser.APPROVE_OPTION) {
-			String format = "png";
-			String name = fc.getSelectedFile().getName();
-			if (name.contains(".")) {
-				format = name.substring(name.lastIndexOf(".") + 1);
-			}
-			try {
-				ImageIO.write(paintBoard.saveImage(), format, fc.getSelectedFile());
-			} catch (IOException e) {
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(WhiteBoard.this, e.getMessage());
-			}
-		}
-	}
-
 	private void loadBackground() {
 		// TODO need some option to set the background to a specific color
 		// 1) Display a dialog to choose "Image" or "Color"
@@ -564,6 +546,10 @@ public class WhiteBoard extends JFrame {
 			paintBoard.loadBackground(fc.getSelectedFile());
 			paintBoard.repaint();
 		}
+	}
+
+	public void lockControls() {
+		lockControls(true);
 	}
 
 	public void lockControls(Boolean lock) {
@@ -583,8 +569,22 @@ public class WhiteBoard extends JFrame {
 		loadBackgroundColor.setEnabled(!lock);
 	}
 
-	public void lockControls() {
-		lockControls(true);
+	private void saveImage() {
+		JFileChooser fc = new JFileChooser();
+		fc.setFileFilter(new PicFileFilter());
+		if (fc.showSaveDialog(WhiteBoard.this) == JFileChooser.APPROVE_OPTION) {
+			String format = "png";
+			String name = fc.getSelectedFile().getName();
+			if (name.contains(".")) {
+				format = name.substring(name.lastIndexOf(".") + 1);
+			}
+			try {
+				ImageIO.write(paintBoard.saveImage(), format, fc.getSelectedFile());
+			} catch (IOException e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(WhiteBoard.this, e.getMessage());
+			}
+		}
 	}
 
 	public void unlockControls() {

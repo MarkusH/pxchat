@@ -60,6 +60,71 @@ public class FrameAdapter {
 	}
 
 	/**
+	 * Disconnects the socket after having processed the received data.
+	 */
+	public void disconnect() {
+		this.doDisconnect = true;
+	}
+
+	/**
+	 * Returns the incoming frame queue of this adapter.
+	 * 
+	 * @return The incoming frame queue
+	 */
+	public FrameQueue getIncoming() {
+		return this.incoming;
+	}
+
+	/**
+	 * Returns the outgoing frame queue of this adapter.
+	 * 
+	 * @return The outgoing frame queue.
+	 */
+	public FrameQueue getOutgoing() {
+		return this.outgoing;
+	}
+
+	/**
+	 * Returns the session id of this adapter.
+	 * 
+	 * @return The session id
+	 */
+	public int getSessionID() {
+		return this.sessionID;
+	}
+
+	/**
+	 * Returns the socket associated with this adapter
+	 * 
+	 * @return The socket of this adapter
+	 */
+	public CustomSocket getSocket() {
+		return this.socket;
+	}
+
+	/**
+	 * Receives data from the socket and processes it by calling the process
+	 * event of the listener. This method does not wait for incoming data, it
+	 * has to be passed in <code>object</code>.
+	 * 
+	 * @param object The incoming data
+	 */
+	public synchronized void receive(Object object) {
+		FrameQueue buffer = (FrameQueue) object;
+		incoming.addAll(buffer);
+		if (listener != null) {
+			listener.process(this);
+		}
+		if (doDisconnect) {
+			try {
+				socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
 	 * Resets the adapter by clearing the incoming and outgoing frame queues.
 	 * This method should be called before the client connects.
 	 */
@@ -67,25 +132,6 @@ public class FrameAdapter {
 		incoming.clear();
 		outgoing.clear();
 		this.doDisconnect = false;
-	}
-
-	/**
-	 * Immediately sends the specified frame queue.
-	 * 
-	 * @param queue The frame queue to send
-	 * @return <code>true</code> if successful, <code>false</code> else
-	 */
-	protected boolean send(FrameQueue queue) {
-		try {
-			System.out.println(this + "> send " + queue);
-			
-			boolean res = socket.writeObject(queue);
-			System.out.println("send done");
-			return res;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
 	}
 
 	/**
@@ -113,51 +159,22 @@ public class FrameAdapter {
 	}
 
 	/**
-	 * Receives data from the socket and processes it by calling the process
-	 * event of the listener. This method does not wait for incoming data, it
-	 * has to be passed in <code>object</code>.
+	 * Immediately sends the specified frame queue.
 	 * 
-	 * @param object The incoming data
+	 * @param queue The frame queue to send
+	 * @return <code>true</code> if successful, <code>false</code> else
 	 */
-	public synchronized void receive(Object object) {
-		FrameQueue buffer = (FrameQueue) object;
-		incoming.addAll(buffer);
-		if (listener != null) {
-			listener.process(this);
+	protected boolean send(FrameQueue queue) {
+		try {
+			System.out.println(this + "> send " + queue);
+			
+			boolean res = socket.writeObject(queue);
+			System.out.println("send done");
+			return res;
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		if (doDisconnect) {
-			try {
-				socket.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * Disconnects the socket after having processed the received data.
-	 */
-	public void disconnect() {
-		this.doDisconnect = true;
-	}
-
-	/**
-	 * Returns the session id of this adapter.
-	 * 
-	 * @return The session id
-	 */
-	public int getSessionID() {
-		return this.sessionID;
-	}
-
-	/**
-	 * Sets the session id of this adapter. This should only be called once
-	 * after having received the session id from the server.
-	 * 
-	 * @param sessionID The session id to set
-	 */
-	public void setSessionID(int sessionID) {
-		this.sessionID = sessionID;
+		return false;
 	}
 
 	/**
@@ -170,29 +187,12 @@ public class FrameAdapter {
 	}
 
 	/**
-	 * Returns the incoming frame queue of this adapter.
+	 * Sets the session id of this adapter. This should only be called once
+	 * after having received the session id from the server.
 	 * 
-	 * @return The incoming frame queue
+	 * @param sessionID The session id to set
 	 */
-	public FrameQueue getIncoming() {
-		return this.incoming;
-	}
-
-	/**
-	 * Returns the outgoing frame queue of this adapter.
-	 * 
-	 * @return The outgoing frame queue.
-	 */
-	public FrameQueue getOutgoing() {
-		return this.outgoing;
-	}
-
-	/**
-	 * Returns the socket associated with this adapter
-	 * 
-	 * @return The socket of this adapter
-	 */
-	public CustomSocket getSocket() {
-		return this.socket;
+	public void setSessionID(int sessionID) {
+		this.sessionID = sessionID;
 	}
 }

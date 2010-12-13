@@ -82,32 +82,15 @@ public class Server {
 	private int nextImageID = 0;
 
 	/**
-	 * Generates a unique image id.
-	 * 
-	 * @return The next image id
-	 */
-	private synchronized int getNextImageID() {
-		return nextImageID++;
-	}
-
-	/**
 	 * The TCP server listener used to process events of the underlying server
 	 * socket.
 	 */
 	private TCPServerListener tcpServerListener = new TCPServerListener() {
 
 		@Override
-		public void clientRead(CustomSocket client, Object data) {
-			// pass the event to the corresponding adapter
-			serverFrameAdapter.getAdapter(client).receive(data);
-		}
-
-		@Override
-		public void clientDisconnect(CustomSocket client) {
-			AuthFrameAdapter adapter = serverFrameAdapter.getAdapter(client);
-			serverFrameAdapter.delete(adapter);
-			System.out
-					.println(this + "> Client with id " + adapter.getSessionID() + " disconnected.");
+		public void clientClearToSend(CustomSocket client) {
+			// TODO Auto-generated method stub
+			
 		}
 
 		@Override
@@ -121,9 +104,17 @@ public class Server {
 		}
 
 		@Override
-		public void clientClearToSend(CustomSocket client) {
-			// TODO Auto-generated method stub
-			
+		public void clientDisconnect(CustomSocket client) {
+			AuthFrameAdapter adapter = serverFrameAdapter.getAdapter(client);
+			serverFrameAdapter.delete(adapter);
+			System.out
+					.println(this + "> Client with id " + adapter.getSessionID() + " disconnected.");
+		}
+
+		@Override
+		public void clientRead(CustomSocket client, Object data) {
+			// pass the event to the corresponding adapter
+			serverFrameAdapter.getAdapter(client).receive(data);
 		}
 	};
 
@@ -132,17 +123,6 @@ public class Server {
 	 * adapter.
 	 */
 	private ServerFrameAdapterListener serverFrameAdapterListener = new ServerFrameAdapterListener() {
-
-		@Override
-		public void destroyAdapter(ServerFrameAdapter serverAdapter, AuthFrameAdapter adapter) {
-			String name = userList.get(adapter.getSessionID());
-			if (name != null) {
-				serverAdapter.broadcast(FrameQueue.from(new NotificationFrame(
-						NotificationFrame.LEAVE, name)), false);
-			}
-			userList.remove(adapter.getSessionID());
-			sendUserList();
-		}
 
 		@Override
 		public void createAdapter(ServerFrameAdapter serverAdapter, AuthFrameAdapter adapter) {
@@ -170,6 +150,17 @@ public class Server {
 			});
 			timeOut.setDaemon(true);
 			timeOut.start();
+		}
+
+		@Override
+		public void destroyAdapter(ServerFrameAdapter serverAdapter, AuthFrameAdapter adapter) {
+			String name = userList.get(adapter.getSessionID());
+			if (name != null) {
+				serverAdapter.broadcast(FrameQueue.from(new NotificationFrame(
+						NotificationFrame.LEAVE, name)), false);
+			}
+			userList.remove(adapter.getSessionID());
+			sendUserList();
 		}
 	};
 
@@ -342,17 +333,6 @@ public class Server {
 	}
 
 	/**
-	 * Lets the server listen on the specified port. If the server is already
-	 * listening, nothing is done.
-	 * 
-	 * @param port The port to listen on
-	 * @throws IOException if an I/O error occurs when opening the socket
-	 */
-	public void listen(int port) throws IOException {
-		server.listen(port);
-	}
-
-	/**
 	 * Closes the server and disconnects all clients.
 	 */
 	public void close() {
@@ -361,6 +341,35 @@ public class Server {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Generates a unique image id.
+	 * 
+	 * @return The next image id
+	 */
+	private synchronized int getNextImageID() {
+		return nextImageID++;
+	}
+
+	/**
+	 * Returns the current user list of the server.
+	 * 
+	 * @return The user list
+	 */
+	public HashMap<Integer, String> getUserList() {
+		return this.userList;
+	}
+
+	/**
+	 * Lets the server listen on the specified port. If the server is already
+	 * listening, nothing is done.
+	 * 
+	 * @param port The port to listen on
+	 * @throws IOException if an I/O error occurs when opening the socket
+	 */
+	public void listen(int port) throws IOException {
+		server.listen(port);
 	}
 
 	/**
@@ -380,14 +389,5 @@ public class Server {
 	 */
 	public void setAuthList(HashMap<String, String> authList) {
 		this.authList = authList;
-	}
-
-	/**
-	 * Returns the current user list of the server.
-	 * 
-	 * @return The user list
-	 */
-	public HashMap<Integer, String> getUserList() {
-		return this.userList;
 	}
 }

@@ -131,6 +131,52 @@ public class Logging {
 		}
 	}
 
+	private String formatDateTime(String format) {
+		return new SimpleDateFormat(format).format(new Date());
+	}
+
+	private String getFilenameDateTime() {
+		return formatDateTime("yyyyMMddHHmmss");
+	}
+
+	private String getLogDate() {
+		return formatDateTime("dd/MM/yyyy");
+	}
+
+	private String getLogTime() {
+		return formatDateTime("HH:mm:ss");
+	}
+
+	/**
+	 * Call this function when a user joins the chat
+	 * 
+	 * @param user
+	 */
+	public void logJoin(String user) {
+		try {
+			oswMessage
+					.write("\t\t<join user=\"" + user + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
+			oswMessage.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Call this function when a user leaves the chat
+	 * 
+	 * @param user
+	 */
+	public void logLeave(String user) {
+		try {
+			oswMessage
+					.write("\t\t<leave user=\"" + user + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
+			oswMessage.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Add a simple log message to the history
 	 * 
@@ -166,52 +212,6 @@ public class Logging {
 			participants = new String[k];
 			System.arraycopy(tmp, 0, participants, 0, k);
 		}
-	}
-
-	/**
-	 * Call this function when a user joins the chat
-	 * 
-	 * @param user
-	 */
-	public void logJoin(String user) {
-		try {
-			oswMessage
-					.write("\t\t<join user=\"" + user + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
-			oswMessage.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Call this function when a user leaves the chat
-	 * 
-	 * @param user
-	 */
-	public void logLeave(String user) {
-		try {
-			oswMessage
-					.write("\t\t<leave user=\"" + user + "\" date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n");
-			oswMessage.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private String formatDateTime(String format) {
-		return new SimpleDateFormat(format).format(new Date());
-	}
-
-	private String getFilenameDateTime() {
-		return formatDateTime("yyyyMMddHHmmss");
-	}
-
-	private String getLogDate() {
-		return formatDateTime("dd/MM/yyyy");
-	}
-
-	private String getLogTime() {
-		return formatDateTime("HH:mm:ss");
 	}
 
 }

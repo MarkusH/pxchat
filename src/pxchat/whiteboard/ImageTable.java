@@ -14,18 +14,18 @@ import java.util.Hashtable;
  */
 public class ImageTable {
 
-	private Hashtable<Integer, BufferedImage> table;
-
-	private ImageTable() {
-		this.table = new Hashtable<Integer, BufferedImage>();
-	}
-
 	private static class Holder {
 		public static final ImageTable INSTANCE = new ImageTable();
 	}
 
 	public static ImageTable getInstance() {
 		return Holder.INSTANCE;
+	}
+
+	private Hashtable<Integer, BufferedImage> table;
+
+	private ImageTable() {
+		this.table = new Hashtable<Integer, BufferedImage>();
 	}
 
 	public BufferedImage get(Integer key) {

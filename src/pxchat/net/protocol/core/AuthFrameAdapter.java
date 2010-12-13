@@ -36,17 +36,17 @@ public class AuthFrameAdapter extends FrameAdapter {
 	}
 
 	/**
-	 * @param authenticated the authenticated to set
-	 */
-	public void setAuthenticated(boolean authenticated) {
-		this.authenticated = authenticated;
-	}
-
-	/**
 	 * @return the versionVerified
 	 */
 	public boolean isVersionVerified() {
 		return versionVerified;
+	}
+
+	/**
+	 * @param authenticated the authenticated to set
+	 */
+	public void setAuthenticated(boolean authenticated) {
+		this.authenticated = authenticated;
 	}
 
 	/**

@@ -21,33 +21,87 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class CustomSocket {
 
+	class ReadThread extends Thread {
+
+		Object object = null;
+
+		public ReadThread() {
+			this.setDaemon(true);
+		}
+
+		@Override
+		public void run() {
+			try {
+				if (cIn == null)
+					cIn = new CipherInputStream(socket.getInputStream(), cipherIn);
+				ObjectInputStream stream = new ObjectInputStream(cIn);
+				object = stream.readObject();
+				readCallback(object);
+			} catch (Exception e) {
+				readCallback(e);
+			}
+		}
+	}
+	class WriteThread extends Thread {
+		
+		public WriteThread() {
+			this.setDaemon(true);
+		}
+
+		@Override
+		public void run() {
+			if (cOut == null)
+				try {
+					cOut = new CipherOutputStream(socket.getOutputStream(), cipherOut);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			
+			while (!outgoing.isEmpty()) {
+				try {
+					ObjectOutputStream stream = null;
+					try {
+						stream = new ObjectOutputStream(cOut);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+					Object o = outgoing.poll();
+					stream.writeObject(o);
+					System.out.println("write " + o);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			writeThread = null;
+			
+			if (tcpClientListener != null)
+				tcpClientListener.clientClearToSend(CustomSocket.this);
+		}
+	}
+
 	protected Socket socket = null;
 	private ReadThread readThread = null;
-
 	private boolean closing = false;
+
 	protected boolean connected = false;
 	protected boolean sendDisconnectedEvent = false;
-
 	private Cipher cipherIn;
 	private Cipher cipherOut;
-	private CipherInputStream cIn;
-	private CipherOutputStream cOut;
 
-	protected TCPClientListener tcpClientListener;
+	private CipherInputStream cIn;
 	
+	private CipherOutputStream cOut;
+	protected TCPClientListener tcpClientListener;
+
 	// begin test
 	private ConcurrentLinkedQueue<Object> outgoing = new ConcurrentLinkedQueue<Object>();
+
 	private Thread writeThread = null;
 	// end test
-
-	/**
-	 * Constructs a new custom socket with a specified listener. No connection
-	 * is established.
-	 */
-	protected CustomSocket(TCPClientListener tcpClientListener) {
-		this.tcpClientListener = tcpClientListener;
-		initCipher();
-	}
 
 	/**
 	 * Gets called from a server when a client connects. Do not call this
@@ -66,19 +120,12 @@ public class CustomSocket {
 	}
 
 	/**
-	 * Initialized the encryption / decryption facility.
+	 * Constructs a new custom socket with a specified listener. No connection
+	 * is established.
 	 */
-	protected void initCipher() {
-		try {
-			cipherOut = Cipher.getInstance("RC4");
-			cipherOut.init(Cipher.DECRYPT_MODE, new SecretKeySpec("12345678".getBytes(), "RC4"));
-			cipherIn = Cipher.getInstance("RC4");
-			cipherIn.init(Cipher.ENCRYPT_MODE, new SecretKeySpec("12345678".getBytes(), "RC4"));
-			cIn = null;
-			cOut = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	protected CustomSocket(TCPClientListener tcpClientListener) {
+		this.tcpClientListener = tcpClientListener;
+		initCipher();
 	}
 
 	/**
@@ -105,6 +152,72 @@ public class CustomSocket {
 				doDisconnect();
 			}
 		}
+	}
+
+	/**
+	 * Sends the disconnected event to the listener
+	 */
+	private void doDisconnect() {
+		if (sendDisconnectedEvent)
+			return;
+		
+		if (tcpClientListener != null)
+			tcpClientListener.clientDisconnect(this);
+		
+		sendDisconnectedEvent = true;
+	}
+
+	/**
+	 * Starts a new thread that reads from the input stream.
+	 */
+	protected synchronized void doRead() {
+		if (isConnected()) {
+			readThread = new ReadThread();
+			readThread.start();
+		}
+	}
+
+	public String getRemoteAddress() {
+		return socket != null ? socket.getRemoteSocketAddress().toString() : "";
+	}
+	
+	/**
+	 * Initialized the encryption / decryption facility.
+	 */
+	protected void initCipher() {
+		try {
+			cipherOut = Cipher.getInstance("RC4");
+			cipherOut.init(Cipher.DECRYPT_MODE, new SecretKeySpec("12345678".getBytes(), "RC4"));
+			cipherIn = Cipher.getInstance("RC4");
+			cipherIn.init(Cipher.ENCRYPT_MODE, new SecretKeySpec("12345678".getBytes(), "RC4"));
+			cIn = null;
+			cOut = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean isConnected() {
+		return ((socket != null) && this.connected);
+	}
+	
+	private synchronized void readCallback(Exception e) {
+		if (this.closing || e instanceof EOFException || e instanceof SocketException) {
+			this.closing = false;
+			this.connected = false;
+		} else {
+			try {
+				close();
+			} catch (Exception e1) {
+			}
+		}
+		doDisconnect();
+	}
+
+	private void readCallback(Object object) {
+		if (tcpClientListener != null)
+			tcpClientListener.clientRead(this, object);
+		doRead();
 	}
 
 	/**
@@ -147,118 +260,5 @@ public class CustomSocket {
 //			return true;
 //		}
 //		return false;
-	}
-
-	/**
-	 * Starts a new thread that reads from the input stream.
-	 */
-	protected synchronized void doRead() {
-		if (isConnected()) {
-			readThread = new ReadThread();
-			readThread.start();
-		}
-	}
-
-	private void readCallback(Object object) {
-		if (tcpClientListener != null)
-			tcpClientListener.clientRead(this, object);
-		doRead();
-	}
-
-	private synchronized void readCallback(Exception e) {
-		if (this.closing || e instanceof EOFException || e instanceof SocketException) {
-			this.closing = false;
-			this.connected = false;
-		} else {
-			try {
-				close();
-			} catch (Exception e1) {
-			}
-		}
-		doDisconnect();
-	}
-	
-	/**
-	 * Sends the disconnected event to the listener
-	 */
-	private void doDisconnect() {
-		if (sendDisconnectedEvent)
-			return;
-		
-		if (tcpClientListener != null)
-			tcpClientListener.clientDisconnect(this);
-		
-		sendDisconnectedEvent = true;
-	}
-
-	class ReadThread extends Thread {
-
-		Object object = null;
-
-		public ReadThread() {
-			this.setDaemon(true);
-		}
-
-		@Override
-		public void run() {
-			try {
-				if (cIn == null)
-					cIn = new CipherInputStream(socket.getInputStream(), cipherIn);
-				ObjectInputStream stream = new ObjectInputStream(cIn);
-				object = stream.readObject();
-				readCallback(object);
-			} catch (Exception e) {
-				readCallback(e);
-			}
-		}
-	}
-	
-	class WriteThread extends Thread {
-		
-		public WriteThread() {
-			this.setDaemon(true);
-		}
-
-		@Override
-		public void run() {
-			if (cOut == null)
-				try {
-					cOut = new CipherOutputStream(socket.getOutputStream(), cipherOut);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-			
-			while (!outgoing.isEmpty()) {
-				try {
-					ObjectOutputStream stream = null;
-					try {
-						stream = new ObjectOutputStream(cOut);
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					
-					Object o = outgoing.poll();
-					stream.writeObject(o);
-					System.out.println("write " + o);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			writeThread = null;
-			
-			if (tcpClientListener != null)
-				tcpClientListener.clientClearToSend(CustomSocket.this);
-		}
-	}
-
-	public boolean isConnected() {
-		return ((socket != null) && this.connected);
-	}
-
-	public String getRemoteAddress() {
-		return socket != null ? socket.getRemoteSocketAddress().toString() : "";
 	}
 }
