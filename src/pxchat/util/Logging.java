@@ -25,7 +25,7 @@ public class Logging {
 	private Writer oswLog, oswMessage;
 	private String logfilename, msgfilename;
 	private static final String encoding = "UTF-8";
-	private String[] participants = null;
+	private String[] participants = new String[0];
 
 	/**
 	 * 
@@ -194,7 +194,7 @@ public class Logging {
 	}
 
 	public void logParticipants(String[] userList) {
-		if (participants == null) {
+		if (participants.length == 0) {
 			Arrays.sort(userList);
 			participants = userList;
 		} else {
