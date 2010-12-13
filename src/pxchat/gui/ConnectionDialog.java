@@ -3,6 +3,7 @@
  */
 package pxchat.gui;
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -72,6 +73,7 @@ public class ConnectionDialog extends JDialog {
 		 */
 		connectButton = new JButton(I18n.getInstance().getString("cdConnect"));
 		connectButton.addKeyListener(returnKeyListener);
+		connectButton.setPreferredSize(new Dimension(150, 30));
 		connectButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -84,6 +86,7 @@ public class ConnectionDialog extends JDialog {
 		 */
 		abortButton = new JButton(I18n.getInstance().getString("cdAbort"));
 		abortButton.addKeyListener(returnKeyListener);
+		abortButton.setPreferredSize(new Dimension(150, 30));
 		abortButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
