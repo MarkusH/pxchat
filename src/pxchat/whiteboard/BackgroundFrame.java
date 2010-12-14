@@ -16,17 +16,37 @@ import pxchat.net.protocol.frames.Frame;
  */
 public class BackgroundFrame extends Frame {
 
+	private static final long serialVersionUID = 6239470367323490267L;
+
+	/**
+	 * A constant indicating that the background is a color.
+	 */
 	public static final int COLOR = 0;
+
+	/**
+	 * A constant indicating that the background is an image.
+	 */
 	public static final int IMAGE = 1;
 
+	/**
+	 * The background color.
+	 */
 	private Color color;
+
+	/**
+	 * The background image.
+	 */
 	private int imageID;
+
+	/**
+	 * The type of the background frame.
+	 */
 	private int type;
 
 	/**
 	 * Constructs a new background frame of type COLOR.
 	 * 
-	 * @param color
+	 * @param color The color of the background
 	 */
 	public BackgroundFrame(Color color) {
 		this.id = ID_BACKGROUND;
@@ -34,18 +54,16 @@ public class BackgroundFrame extends Frame {
 		this.type = COLOR;
 	}
 
-
 	/**
 	 * Constructs a new background frame of type IMAGE.
 	 * 
-	 * @param imageID
+	 * @param imageID The image id associated with the new background image
 	 */
 	public BackgroundFrame(int imageID) {
 		this.id = ID_BACKGROUND;
 		this.imageID = imageID;
 		this.type = IMAGE;
 	}
-
 
 	/**
 	 * @return the color
@@ -54,14 +72,12 @@ public class BackgroundFrame extends Frame {
 		return color;
 	}
 
-
 	/**
 	 * @return the imageID
 	 */
 	public int getImageID() {
 		return imageID;
 	}
-
 
 	/**
 	 * @return the type
