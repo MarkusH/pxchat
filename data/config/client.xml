@@ -5,6 +5,6 @@
 		<setting key="defaultProfile" value="local" />
 	</config>
 	<profiles>
-		<profile name="local" host="localhost" port="12345" username=" password="" />
+		<profile name="local" host="localhost" port="12345" username="" password="" />
 	</profiles>
 </client>
