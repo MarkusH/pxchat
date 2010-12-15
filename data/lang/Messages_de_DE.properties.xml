@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
+	<entry key="disconnectedFromServer">Verbindung zum Server getrennt.</entry>
+	<entry key="connectedToServer">Verbindung zum Server hergestellt.</entry>
+	<entry key="authenticationFail">Die Authentifikation ist fehlgeschlagen.</entry>
+	<entry key="timeoutFail">Die Verbindung zum Server wurde wegen Zeitüberschreitung getrennt.</entry>
+	<entry key="versionFail">Die Version dieses Programms stimmt nicht mit der des Servers kompatibel.</entry>
+	<entry key="joinMessage">ist der Konferenz beigetreten.</entry>
+	<entry key="leaveMessage">hat die Konferenz verlassen.</entry>
     <entry key="connectToChat">Mit Chat verbinden...</entry>
+	<entry key="closeChat">Chat verlassen</entry>
     <entry key="quitProgram">Beenden</entry>
     <entry key="help">Hilfe</entry>
     <entry key="aboutInfo">Über pxchat</entry>
     <entry key="whiteBoardButton">Whiteboard</entry>
     <entry key="sendButton">Senden</entry>
     <entry key="you">Sie</entry>
-    <entry key="aboutText">pxchat ist unter der Creative Commons Lizenz BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/de/) veröffentlicht.\n\nDie Authoren sind:\nFlorian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tennberge, Robert Waury</entry>
+    <entry key="aboutText">pxchat ist unter der Creative Commons Lizenz BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/de/) veröffentlicht.
+
+Die Authoren sind:
+Florian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tennberge, Robert Waury</entry>
+
     <entry key="wbTitle">pxchat - Whiteboard</entry>
     <entry key="wbBackground">Hintergrund ändern</entry>
     <entry key="wbInsertImage">Bild einfügen</entry>
@@ -24,7 +36,22 @@
     <entry key="wbChangeColor">Farbe wählen</entry>
     <entry key="wbLockCanvas">Leinwand sperren</entry>
     <entry key="wbUnlockCanvas">Leinwand entsperren</entry>
+	<entry key="wbLineWidth">Stiftbreite ändern</entry>
+	<entry key="wbBackGroundColor">Hintergrundfarbe ändern</entry>
+    
     <entry key="ssEnterChat">pxchat betreten</entry>
     <entry key="ssInfoText">Bitte überprüfen Sie mit Hilfe dieses Bildes ihre Bildschirmeinstellungen.</entry>
+    
     <entry key="ccDialog">pxchat - Farbe wählen</entry>
+    
+    <entry key="cdTitle">pxchat - Einer Konferenz beitreten</entry>
+	<entry key="cdConnect">Verbinden</entry>
+	<entry key="cdAbort">Abbrechen</entry>
+	<entry key="cdUser">Ihr Name</entry>
+	<entry key="cdPassWord">Passwort</entry>
+	<entry key="cdHost">Server-Host</entry>
+	<entry key="cdPort">Server-Port</entry>
+	<entry key="cdConnectFail">Verbindung zum Server konnte nicht hergestellt werden!</entry>
+	<entry key="cdPortFail">Falscher Port! Bitte geben Sie eine Zahl ein.</entry>
+	<entry key="cdInputFail">Mindestens eine Ihrer Angaben ist falsch. Bitte überprüfen Sie sie!</entry>
 </properties>
