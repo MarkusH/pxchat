@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="connectToChat">Mit Chat verbinden...</entry>
+    <entry key="quitProgram">Beenden</entry>
+    <entry key="help">Hilfe</entry>
+    <entry key="aboutInfo">Über pxchat</entry>
+    <entry key="whiteBoardButton">Whiteboard</entry>
+    <entry key="sendButton">Senden</entry>
+    <entry key="you">Sie</entry>
+    <entry key="aboutText">pxchat ist unter der Creative Commons Lizenz BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/de/) veröffentlicht.\n\nDie Authoren sind:\nFlorian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tennberge, Robert Waury</entry>
+    <entry key="wbTitle">pxchat - Whiteboard</entry>
+    <entry key="wbBackground">Hintergrund ändern</entry>
+    <entry key="wbInsertImage">Bild einfügen</entry>
+    <entry key="wbSaveToFile">In Datei speichern</entry>
+    <entry key="wbClear">Löschen</entry>
+    <entry key="wbPencil">Stift</entry>
+    <entry key="wbRectangle">Rechteck</entry>
+    <entry key="wbCircle">Kreis</entry>
+    <entry key="wbText">Text</entry>
+    <entry key="wbLine">Linie</entry>
+    <entry key="wbEraser">Radiergummi</entry>
+    <entry key="wbEllipse">Ellipse</entry>
+    <entry key="wbChangeColor">Farbe wählen</entry>
+    <entry key="wbLockCanvas">Leinwand sperren</entry>
+    <entry key="wbUnlockCanvas">Leinwand entsperren</entry>
+    <entry key="ssEnterChat">pxchat betreten</entry>
+    <entry key="ssInfoText">Bitte überprüfen Sie mit Hilfe dieses Bildes ihre Bildschirmeinstellungen.</entry>
+    <entry key="ccDialog">pxchat - Farbe wählen</entry>
+</properties>
