@@ -6,6 +6,8 @@ import java.net.URLClassLoader;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import pxchat.util.ExtendedControl;
+
 public final class I18n {
 
 	private static class Holder {
@@ -39,7 +41,7 @@ public final class I18n {
 		try {
 			this.bundle = ResourceBundle.getBundle("Messages", this.locale,
 					new URLClassLoader(new URL[] { new File("./data/lang/")
-							.toURI().toURL() }));
+							.toURI().toURL() }), new ExtendedControl());
 		} catch (Exception e) {
 			this.bundle = null;
 			this.locale = null;

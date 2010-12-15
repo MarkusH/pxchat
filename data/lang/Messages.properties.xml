@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"> 
+<properties>
+	<entry key="disconnectedFromServer">Disconnected from server</entry>
+</properties>
+<properties>
+	<entry key="connectedToServer">Connected to server</entry>
+</properties>
+<properties>
+	<entry key="authenticationFail">The authentication check failed</entry>
+</properties>
+<properties>
+	<entry key="timeoutFail">The timeout for connection reached</entry>
+</properties>
+<properties>
+	<entry key="versionFail">The version of your client does not match the server requirements</entry>
+</properties>
+<properties>
+	<entry key="joinMessage">joined the chat</entry>
+</properties>
+<properties>
+	<entry key="leaveMessage">left the chat</entry>
+</properties>
