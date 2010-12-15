@@ -2,22 +2,56 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"> 
 <properties>
 	<entry key="disconnectedFromServer">Disconnected from server</entry>
-</properties>
-<properties>
 	<entry key="connectedToServer">Connected to server</entry>
-</properties>
-<properties>
 	<entry key="authenticationFail">The authentication check failed</entry>
-</properties>
-<properties>
 	<entry key="timeoutFail">The timeout for connection reached</entry>
-</properties>
-<properties>
 	<entry key="versionFail">The version of your client does not match the server requirements</entry>
-</properties>
-<properties>
 	<entry key="joinMessage">joined the chat</entry>
-</properties>
-<properties>
 	<entry key="leaveMessage">left the chat</entry>
+	<entry key="connectToChat">Connect to chat...</entry>
+	<entry key="closeChat">Disconnect from chat</entry>
+	<entry key="quitProgram">Quit</entry>
+	<entry key="help">Help</entry>
+	<entry key="aboutInfo">About</entry>
+	<entry key="whiteBoardButton">Whiteboard</entry>
+	<entry key="sendButton">Send</entry>
+	<entry key="you">You</entry>
+	<entry key="aboutText">pxchat is published under CC-BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+
+The authors are:
+Florian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tenberge, Robert Waury</entry>
+
+	<entry key="wbTitle">pxchat - whiteboard</entry>
+	<entry key="wbBackground">Change background...</entry>
+	<entry key="wbInsertImage">Insert image</entry>
+	<entry key="wbSaveToFile">Save to file...</entry>
+	<entry key="wbClear">Clear</entry>
+	<entry key="wbPencil">Pencil tool</entry>
+	<entry key="wbRectangle">Rectangle tool</entry>
+	<entry key="wbCircle">Circle tool</entry>
+	<entry key="wbText">Text tool</entry>
+	<entry key="wbLine">Line tool</entry>
+	<entry key="wbEraser">Eraser tool</entry>
+	<entry key="wbEllipse">Ellipse tool</entry>
+	<entry key="wbChangeColor">Change line color</entry>
+	<entry key="wbLockCanvas">Lock canvas</entry>
+	<entry key="wbUnlockCanvas">Unlock canvas</entry>
+	<entry key="wbLineWidth">Change line width</entry>
+	<entry key="wbBackGroundColor">Change background color</entry>
+	
+	<entry key="ssEnterChat">enter pxchat</entry>
+	<entry key="ssInfoText">Please check your display settings with this image.</entry>
+	
+	<entry key="ccDialog">pxchat - Choose color</entry>
+	
+	<entry key="cdTitle">pxchat - Connect to chat</entry>
+	<entry key="cdConnect">Connect</entry>
+	<entry key="cdAbort">Cancel</entry>
+	<entry key="cdUser">Your Name</entry>
+	<entry key="cdPassWord">Password</entry>
+	<entry key="cdHost">Server Host</entry>
+	<entry key="cdPort">Server Port</entry>
+	<entry key="cdConnectFail">Could not connect to server!</entry>
+	<entry key="cdPortFail">Wrong port! Please insert a number.</entry>
+	<entry key="cdInputFail">Your inputs are wrong. Please check and correct them!</entry>
 </properties>
