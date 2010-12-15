@@ -80,6 +80,12 @@ public class Server {
 	 * The next image id that will be send the the client requesting it.
 	 */
 	private int nextImageID = 0;
+	
+	/**
+	 * status of the whiteboard (locked/unlocked) for users who joined the session
+	 */
+	
+	private boolean locked = false;
 
 	/**
 	 * The TCP server listener used to process events of the underlying server
@@ -249,6 +255,8 @@ public class Server {
 							serverFrameAdapter.broadcast(FrameQueue.from(new NotificationFrame(NotificationFrame.JOIN, af.getUsername())), false);
 							userList.put(adapter.getSessionID(), af.getUsername());
 							sendUserList();
+							// send lock status of whiteboard to newly connected client
+							serverFrameAdapter.broadcastTo(FrameQueue.from(new LockFrame(locked, "System")), true, adapter.getSessionID());
 						}
 
 						break;
@@ -300,6 +308,7 @@ public class Server {
 					case Frame.ID_LOCK:
 						LockFrame lf = (LockFrame) frame;
 						serverFrameAdapter.broadcast(FrameQueue.from(lf), true, adapter.getSessionID());
+						locked = lf.getLock();
 						break;
 
 					case Frame.ID_CIRCLE:
