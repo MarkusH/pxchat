@@ -85,8 +85,8 @@ public class Server {
 	 * status of the whiteboard (locked/unlocked) for users who joined the session
 	 */
 	
-	private boolean locked = false;
-
+	private LockFrame lockCache = new LockFrame(false, "System");
+	
 	/**
 	 * The TCP server listener used to process events of the underlying server
 	 * socket.
@@ -164,6 +164,10 @@ public class Server {
 			if (name != null) {
 				serverAdapter.broadcast(FrameQueue.from(new NotificationFrame(
 						NotificationFrame.LEAVE, name)), false);
+			}
+			if(name.equals(lockCache.getOwner())) {
+				lockCache = new LockFrame(false, "System");
+				serverAdapter.broadcast(FrameQueue.from(lockCache), true, adapter.getSessionID());
 			}
 			userList.remove(adapter.getSessionID());
 			sendUserList();
@@ -254,9 +258,9 @@ public class Server {
 							}
 							serverFrameAdapter.broadcast(FrameQueue.from(new NotificationFrame(NotificationFrame.JOIN, af.getUsername())), false);
 							userList.put(adapter.getSessionID(), af.getUsername());
-							sendUserList();
 							// send lock status of whiteboard to newly connected client
-							serverFrameAdapter.broadcastTo(FrameQueue.from(new LockFrame(locked, "System")), true, adapter.getSessionID());
+							serverFrameAdapter.broadcastTo(FrameQueue.from(lockCache), false, adapter.getSessionID());
+							sendUserList();
 						}
 
 						break;
@@ -306,9 +310,8 @@ public class Server {
 						break;
 						
 					case Frame.ID_LOCK:
-						LockFrame lf = (LockFrame) frame;
-						serverFrameAdapter.broadcast(FrameQueue.from(lf), true, adapter.getSessionID());
-						locked = lf.getLock();
+						lockCache = (LockFrame) frame;
+						serverFrameAdapter.broadcast(FrameQueue.from(lockCache), true, adapter.getSessionID());
 						break;
 
 					case Frame.ID_CIRCLE:
