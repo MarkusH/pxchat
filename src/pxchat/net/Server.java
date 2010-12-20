@@ -319,6 +319,7 @@ public class Server {
 					case Frame.ID_RECT:
 					case Frame.ID_LINE:
 					case Frame.ID_POINT:
+					case Frame.ID_FREEHAND:
 						paintObjectCache.add(frame);
 						serverFrameAdapter.broadcastToAuth(FrameQueue.from(frame), true);
 						break;

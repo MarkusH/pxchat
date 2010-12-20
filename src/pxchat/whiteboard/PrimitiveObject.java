@@ -1,7 +1,9 @@
 package pxchat.whiteboard;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 
 /**
@@ -36,6 +38,12 @@ public abstract class PrimitiveObject extends PaintObject {
 	 * {@link #stroke}.
 	 */
 	private float width;
+	
+	/**
+	 * A temporary variable for saving the composite of the graphics context in
+	 * case the color has alpha.
+	 */
+	private transient Composite tmpComp;
 
 	/**
 	 * Constructs a new primitive object with the specified color and width.
@@ -61,6 +69,13 @@ public abstract class PrimitiveObject extends PaintObject {
 		if (stroke == null)
 			stroke = new BasicStroke(width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f);
 		g.setStroke(stroke);
+		
+		if (color.getAlpha() == 0) {
+			tmpComp = g.getComposite();
+			g.setColor(new Color(0x000000, true));
+			g.setComposite(AlphaComposite.Src);
+		}
+		
 		g.setColor(color);
 	}
 
@@ -70,5 +85,8 @@ public abstract class PrimitiveObject extends PaintObject {
 	 * @param g The context used to draw the object
 	 */
 	public void endDraw(Graphics2D g) {
+		if (color.getAlpha() == 0) {
+			g.setComposite(tmpComp);
+		}
 	}
 }

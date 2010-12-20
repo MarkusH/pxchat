@@ -8,6 +8,8 @@ package pxchat.net.protocol.frames;
  */
 public class SessionIDFrame extends Frame {
 
+	private static final long serialVersionUID = -4392052263040358028L;
+	
 	private int sessionID;
 
 	/**

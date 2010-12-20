@@ -11,7 +11,12 @@ import pxchat.net.tcp.CustomSocket;
  * 
  * @author Markus Döllinger
  */
-public class ServerFrameAdapter extends Vector<AuthFrameAdapter> {
+public class ServerFrameAdapter {
+
+	/**
+	 * The frame adapters connected to this server frame adapter.
+	 */
+	private Vector<AuthFrameAdapter> adapters = new Vector<AuthFrameAdapter>();
 
 	/**
 	 * The listener for this server adapter.
@@ -48,12 +53,13 @@ public class ServerFrameAdapter extends Vector<AuthFrameAdapter> {
 	 * @param queue The data to enqueue in the outgoing buffer of the frame
 	 *            adapters
 	 * @param immediate If <code>true</code>, the data is send immediately
-	 * @param exceptSessionID A list of session ids the queue should not be sent to
+	 * @param exceptSessionID A list of session ids the queue should not be sent
+	 *            to
 	 * @return The number of clients reached by the broadcast
 	 */
 	public int broadcast(FrameQueue queue, boolean immediate, int... exceptSessionID) {
 		int count = 0;
-LOOP:	for (AuthFrameAdapter adapter : this) {
+		LOOP: for (AuthFrameAdapter adapter : this.adapters) {
 			for (int i : exceptSessionID) {
 				if (adapter.getSessionID() == i)
 					continue LOOP;
@@ -79,7 +85,7 @@ LOOP:	for (AuthFrameAdapter adapter : this) {
 	 */
 	public int broadcastTo(FrameQueue queue, boolean immediate, int... toSessionID) {
 		int count = 0;
-		for (AuthFrameAdapter adapter : this) {
+		for (AuthFrameAdapter adapter : this.adapters) {
 			boolean send = false;
 			for (int i : toSessionID) {
 				if (adapter.getSessionID() == i) {
@@ -107,7 +113,7 @@ LOOP:	for (AuthFrameAdapter adapter : this) {
 	 */
 	public int broadcastToAuth(FrameQueue queue, boolean immediate) {
 		int count = 0;
-		for (AuthFrameAdapter adapter : this) {
+		for (AuthFrameAdapter adapter : this.adapters) {
 			if (!adapter.isAuthenticated())
 				continue;
 			adapter.getOutgoing().addAll(queue);
@@ -124,7 +130,7 @@ LOOP:	for (AuthFrameAdapter adapter : this) {
 	 * @param adapter The frame adapter to remove
 	 */
 	public void delete(AuthFrameAdapter adapter) {
-		this.delete(this.indexOf(adapter));
+		this.delete(this.adapters.indexOf(adapter));
 	}
 
 	/**
@@ -134,13 +140,13 @@ LOOP:	for (AuthFrameAdapter adapter : this) {
 	 * @param index The index of the frame adapter
 	 */
 	public void delete(int index) {
-		AuthFrameAdapter candidate = this.get(index);
+		AuthFrameAdapter candidate = this.adapters.get(index);
 
 		if (candidate != null) {
 			if (serverListener != null)
 				serverListener.destroyAdapter(this, candidate);
 
-			this.remove(candidate);
+			this.adapters.remove(candidate);
 			candidate = null;
 		}
 	}
@@ -153,7 +159,7 @@ LOOP:	for (AuthFrameAdapter adapter : this) {
 	 * @return The frame adapter associated with the socket
 	 */
 	public AuthFrameAdapter getAdapter(CustomSocket socket) {
-		return this.get(indexOfSocket(socket));
+		return this.adapters.get(indexOfSocket(socket));
 	}
 
 	/**
@@ -163,7 +169,16 @@ LOOP:	for (AuthFrameAdapter adapter : this) {
 	 * @return The frame adapter associated with the socket
 	 */
 	public AuthFrameAdapter getAdapter(int sessionID) {
-		return this.get(indexOfSessionID(sessionID));
+		return this.adapters.get(indexOfSessionID(sessionID));
+	}
+
+	/**
+	 * Returns the adapters connected to this server frame adapter.
+	 * 
+	 * @return The adapters
+	 */
+	public Vector<AuthFrameAdapter> getAdapters() {
+		return this.adapters;
 	}
 
 	/**
@@ -174,7 +189,7 @@ LOOP:	for (AuthFrameAdapter adapter : this) {
 	protected synchronized int getNewSessionID() {
 		return ++nextSessionID;
 	}
-	
+
 	/**
 	 * Returns the index of the frame adapter with the specified session id.
 	 * 
@@ -182,13 +197,13 @@ LOOP:	for (AuthFrameAdapter adapter : this) {
 	 * @return The index of the adapter
 	 */
 	public int indexOfSessionID(int sessionID) {
-		for (AuthFrameAdapter adapter : this) {
+		for (AuthFrameAdapter adapter : this.adapters) {
 			if (adapter.getSessionID() == sessionID)
-				return this.indexOf(adapter);
+				return this.adapters.indexOf(adapter);
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Returns the index of the frame adapter associated with the specified
 	 * socket. If there is no adapter registered for the socket, a new one is
@@ -200,16 +215,16 @@ LOOP:	for (AuthFrameAdapter adapter : this) {
 	public int indexOfSocket(CustomSocket socket) {
 
 		int result = 0;
-		while ((result < this.size()) && (this.get(result).getSocket() != socket))
+		while ((result < this.adapters.size()) && (this.adapters.get(result).getSocket() != socket))
 			result++;
 
 		// create a new frame adapter
-		if (result == this.size()) {
+		if (result == this.adapters.size()) {
 			AuthFrameAdapter newAdapter = new AuthFrameAdapter(socket, adapterListener);
 			newAdapter.setSessionID(getNewSessionID());
 
-			this.add(newAdapter);
-			result = this.indexOf(newAdapter);
+			this.adapters.add(newAdapter);
+			result = this.adapters.indexOf(newAdapter);
 
 			if (serverListener != null)
 				serverListener.createAdapter(this, newAdapter);

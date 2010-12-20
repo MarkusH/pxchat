@@ -10,8 +10,11 @@ import pxchat.net.protocol.frames.Frame;
  * 
  * @author Markus Döllinger
  */
-public class FrameQueue extends ConcurrentLinkedQueue<Frame> { // LinkedList<Frame> {
-	
+public class FrameQueue extends ConcurrentLinkedQueue<Frame> { // LinkedList<Frame>
+																// {
+
+	private static final long serialVersionUID = 7781171372961505171L;
+
 	public static FrameQueue from(Frame... frames) {
 		FrameQueue result = new FrameQueue();
 		for (Frame frame : frames) {

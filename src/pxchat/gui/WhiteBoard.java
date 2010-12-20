@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.GeneralPath;
 import java.io.File;
 import java.io.IOException;
 
@@ -42,6 +43,7 @@ import pxchat.util.Icons;
 import pxchat.util.PicFileFilter;
 import pxchat.whiteboard.CircleObject;
 import pxchat.whiteboard.EllipseObject;
+import pxchat.whiteboard.FreeHandObject;
 import pxchat.whiteboard.LineObject;
 import pxchat.whiteboard.PaintObject;
 import pxchat.whiteboard.PointObject;
@@ -73,6 +75,9 @@ public class WhiteBoard extends JFrame {
 	private Tool tool = Tool.Freehand;
 	private Color currentColor = Color.BLACK;
 	private Color currentBackgroundColor = Color.WHITE;
+	
+	private FreeHandObject freeHand;
+	private long freeHandStart;
 	
 	private boolean lock = false;
 	/**
@@ -172,8 +177,15 @@ public class WhiteBoard extends JFrame {
 				if (!lock) {
 					startPoint = currentPoint = new Point(e.getX(), e.getY());
 					switch (tool) {
+						case Eraser:
 						case Freehand:
-							Client.getInstance().sendPaintObject(new PointObject(startPoint, currentColor, currentStrokeWidth));
+							Color color = (tool == Tool.Eraser) ? new Color(0, 0, 0, 0) : currentColor;
+							float strokeWidth = (tool == Tool.Eraser) ? currentStrokeWidth * 3f : currentStrokeWidth;
+							Client.getInstance().sendPaintObject(new PointObject(startPoint, color, strokeWidth));
+							freeHandStart = System.currentTimeMillis();
+							freeHand = new FreeHandObject(new GeneralPath(), color, strokeWidth);
+							freeHand.getPath().moveTo(e.getX(), e.getY());
+							paintBoard.getPreviewObjects().add(freeHand);
 							break;
 					}
 				}
@@ -185,6 +197,13 @@ public class WhiteBoard extends JFrame {
 
 				if (!lock) {
 					switch (tool) {
+						case Eraser:
+						case Freehand:
+							Client.getInstance().sendPaintObject(freeHand);
+							freeHand = null;
+							paintBoard.getPreviewObjects().clear();
+							paintBoard.repaint();
+							break;
 						case Circle:
 							Client.getInstance().sendPaintObject(
 									new CircleObject(startPoint, currentPoint, currentColor,
@@ -224,11 +243,24 @@ public class WhiteBoard extends JFrame {
 			public void mouseDragged(MouseEvent e) {
 				if (!lock) {
 					switch (tool) {
+						case Eraser:
 						case Freehand:
 							Point newPoint = new Point(e.getX(), e.getY());
 							if (newPoint.distance(currentPoint) > 10.0) {
-								Client.getInstance().sendPaintObject(new LineObject(currentPoint, 
-										newPoint, currentColor, currentStrokeWidth));
+//								Client.getInstance().sendPaintObject(new LineObject(currentPoint, 
+//										newPoint, currentColor, currentStrokeWidth));
+								freeHand.getPath().lineTo(newPoint.x, newPoint.y);
+								if (System.currentTimeMillis() - freeHandStart > 100) {
+									paintBoard.getPreviewObjects().clear();
+									Client.getInstance().sendPaintObject(freeHand);
+									freeHandStart = System.currentTimeMillis();
+									Color color = (tool == Tool.Eraser) ? new Color(0, 0, 0, 0) : currentColor;
+									float strokeWidth = (tool == Tool.Eraser) ? currentStrokeWidth * 3f : currentStrokeWidth;
+									freeHand = new FreeHandObject(new GeneralPath(), color, strokeWidth);
+									freeHand.getPath().moveTo(newPoint.x, newPoint.y);		
+									paintBoard.getPreviewObjects().add(freeHand);
+								}
+								paintBoard.repaint();
 								currentPoint = new Point(e.getX(), e.getY());
 							}
 							break;

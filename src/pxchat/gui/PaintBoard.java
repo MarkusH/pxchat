@@ -19,9 +19,10 @@ import pxchat.whiteboard.PaintObject;
 
 public class PaintBoard extends JPanel {
 
+	private static final long serialVersionUID = 4813675397624015717L;
+	
 	private Integer background = -1;
 	private BufferedImage board;
-	// private BufferedImage preview;
 
 	private Vector<PaintObject> previewObjects = new Vector<PaintObject>();
 
@@ -29,7 +30,6 @@ public class PaintBoard extends JPanel {
 
 	public PaintBoard() {
 		this.board = null;
-		// this.preview = null;
 	}
 
 	/**
@@ -125,24 +125,16 @@ public class PaintBoard extends JPanel {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 
-		// draw background
-		// if (this.background == null)
-		// loadBackgroundImage(null);
-		// g.drawImage(this.background, 0, 0, getWidth(), getHeight(), null);
-
 		BufferedImage img = ImageTable.getInstance().get(background);
 		if (img != null)
 			g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
 
 		// draw board
-		// synchronized (this) {
 		updateBoard();
-		// }
 		g.drawImage(this.board, 0, 0, null);
 
 		// draw preview
 		updatePreview(g);
-		// g.drawImage(this.preview, 0, 0, null);
 	}
 
 	/**
@@ -186,26 +178,6 @@ public class PaintBoard extends JPanel {
 	 * Updates the preview layer
 	 */
 	private void updatePreview(Graphics2D g) {
-		// Graphics2D g = null;
-
-		// // create a new image if the preview is null
-		// if (this.preview == null) {
-		// this.preview = new BufferedImage(getWidth(), getHeight(),
-		// BufferedImage.TYPE_4BYTE_ABGR);
-		// g = this.preview.createGraphics();
-		// } else {
-		// g = this.preview.createGraphics();
-		//
-		// // otherwise clear the image
-		// Composite comp = g.getComposite();
-		// g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR,
-		// 0.0f));
-		// g.fillRect(0, 0, getWidth(), getHeight());
-		// g.setComposite(comp);
-		// }
-		// g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-		// RenderingHints.VALUE_ANTIALIAS_ON);
-
 		// render the preview objects
 		for (PaintObject o : previewObjects) {
 			o.draw(g);

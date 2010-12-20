@@ -14,6 +14,8 @@ import java.io.Serializable;
  */
 public abstract class Frame implements Serializable {
 
+	private static final long serialVersionUID = 2128944833500982220L;
+
 	public static final int ID_NOP = 0;
 	public static final int ID_VERSION = 1;
 	public static final int ID_SID = 2;
@@ -33,9 +35,10 @@ public abstract class Frame implements Serializable {
 	public static final int ID_LINE = 101;
 	public static final int ID_RECT = 102;
 	public static final int ID_CIRCLE = 103;
-	public static final int ID_IMGTEXT = 104;
+	public static final int ID_TEXT = 104;
 	public static final int ID_ELLIPSE = 105;
 	public static final int ID_BACKGROUND = 106;
+	public static final int ID_FREEHAND = 107;
 
 	/**
 	 * The id of this frame
@@ -43,7 +46,8 @@ public abstract class Frame implements Serializable {
 	protected int id = ID_NOP;
 
 	/**
-	 * Constructs a new <code>Frame</code>. The id is set to <i>ID_NOP</i>.
+	 * Constructs a new <code>Frame</code>. The id is set to <code>ID_NOP</code>
+	 * .
 	 */
 	public Frame() {
 	}
