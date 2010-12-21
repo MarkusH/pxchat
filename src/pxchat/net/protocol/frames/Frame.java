@@ -3,9 +3,9 @@ package pxchat.net.protocol.frames;
 import java.io.Serializable;
 
 /**
- * This class is the base class for all data transferred over the network. It
+ * <p>This class is the base class for all data transferred over the network. It
  * implements the {@link Serializable} interface so that it can be written to
- * the output stream of the socket.
+ * the output stream of the socket.</p>
  * 
  * Each subclass of <code>Frame</code> must have an <code>id</code> that is
  * unique among the set of all frames.
@@ -39,6 +39,7 @@ public abstract class Frame implements Serializable {
 	public static final int ID_ELLIPSE = 105;
 	public static final int ID_BACKGROUND = 106;
 	public static final int ID_FREEHAND = 107;
+	public static final int ID_CLEAR = 108;
 
 	/**
 	 * The id of this frame
@@ -49,7 +50,7 @@ public abstract class Frame implements Serializable {
 	 * Constructs a new <code>Frame</code>. The id is set to <code>ID_NOP</code>
 	 * .
 	 */
-	public Frame() {
+	protected Frame() {
 	}
 
 	/**

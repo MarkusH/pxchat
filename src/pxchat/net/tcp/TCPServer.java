@@ -46,8 +46,8 @@ public class TCPServer {
 
 		@Override
 		public void clientClearToSend(CustomSocket client) {
-			// TODO Auto-generated method stub
-			
+			if (tcpServerListener != null)
+				tcpServerListener.clientClearToSend(client);
 		}
 
 		@Override

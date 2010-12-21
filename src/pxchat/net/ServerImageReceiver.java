@@ -25,6 +25,7 @@ import pxchat.net.protocol.frames.ImageStopFrame;
 public class ServerImageReceiver extends ImageReceiver {
 
 	private int sender;
+	private List<Integer> receiverList;
 	private int[] receivers;
 
 	private ServerFrameAdapter server;
@@ -37,12 +38,12 @@ public class ServerImageReceiver extends ImageReceiver {
 		super(startFrame);
 		this.sender = sender.getSessionID();
 		this.server = server;
-		ArrayList<Integer> recv = new ArrayList<Integer>();
+		receiverList = new ArrayList<Integer>();
 		for (AuthFrameAdapter adapter : server.getAdapters()) {
 			if (adapter.isAuthenticated() && adapter.getSessionID() != this.sender)
-				recv.add(adapter.getSessionID());
+				receiverList.add(adapter.getSessionID());
 		}
-		this.receivers = toIntArray(recv);
+		this.receivers = toIntArray(receiverList);
 
 		send(startFrame);
 	}
@@ -100,6 +101,23 @@ public class ServerImageReceiver extends ImageReceiver {
 		for (Integer e : list)
 			ret[i++] = e.intValue();
 		return ret;
+	}
+
+	/**
+	 * Returns a list of adapters that are authenticated, and connected after
+	 * this image transfer was initiated.
+	 * 
+	 * @return A list of adapters this image has to be sent to
+	 */
+	public List<FrameAdapter> getLateReceivers() {
+		ArrayList<FrameAdapter> result = new ArrayList<FrameAdapter>();
+		for (AuthFrameAdapter adapter : server.getAdapters()) {
+			if (adapter.isAuthenticated() && adapter.getSessionID() != sender && !receiverList
+					.contains(adapter.getSessionID())) {
+				result.add(adapter);
+			}
+		}
+		return result;
 	}
 
 }

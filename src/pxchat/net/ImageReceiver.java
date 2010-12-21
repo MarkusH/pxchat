@@ -87,4 +87,11 @@ public class ImageReceiver {
 		}
 		return false;
 	}
+
+	/**
+	 * @return the imageID
+	 */
+	public int getImageID() {
+		return imageID;
+	}
 }

@@ -5,6 +5,7 @@ package pxchat.whiteboard;
 
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
+import java.util.Set;
 
 /**
  * This class implements a global image storage were each image has a unique
@@ -61,6 +62,15 @@ public final class ImageTable {
 	 */
 	public BufferedImage put(Integer key, BufferedImage image) {
 		return table.put(key, image);
+	}
+	
+	/**
+	 * Returns all keys in this table.
+	 * 
+	 * @return The keys
+	 */
+	public Set<Integer> keySet() {
+		return table.keySet();
 	}
 
 	/**

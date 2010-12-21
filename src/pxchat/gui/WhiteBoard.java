@@ -550,6 +550,11 @@ public class WhiteBoard extends JFrame {
 //				}
 			}
 
+			@Override
+			public void imageCleared() {
+				paintBoard.clearBoard();
+			}
+
 		});
 
 		this.getContentPane().add(panel);
@@ -559,8 +564,11 @@ public class WhiteBoard extends JFrame {
 		setLocation((d.width - getSize().width) / 2, (d.height - getSize().height) / 2);
 	}
 
+	/**
+	 * Sends the command to clear the image, but does not clear the image itself.
+	 */
 	private void clearImage() {
-		paintBoard.clearBoard();
+		Client.getInstance().sendImageClear();
 	}
 
 	private void insertImage() {

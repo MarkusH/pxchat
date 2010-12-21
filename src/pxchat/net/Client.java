@@ -24,6 +24,7 @@ import pxchat.net.tcp.CustomSocket;
 import pxchat.net.tcp.TCPClient;
 import pxchat.net.tcp.TCPClientListener;
 import pxchat.whiteboard.BackgroundFrame;
+import pxchat.whiteboard.ImageClearFrame;
 import pxchat.whiteboard.PaintObject;
 
 /**
@@ -274,6 +275,13 @@ public final class Client {
 							listener.paintObjectReceived((PaintObject) frame);
 						}
 						break;
+						
+					case Frame.ID_CLEAR:
+						doPaintRequest = true;
+						for (WhiteboardClientListener listener : whiteboardClientListeners) {
+							listener.imageCleared();
+						}
+						break;
 				}
 			}
 			if (doPaintRequest) {
@@ -388,9 +396,6 @@ public final class Client {
 		}
 	}
 	
-	/*
-	 * Client commands
-	 */
 	public void sendMessage(String message) {
 		if (isConnected()) {
 			frameAdapter.getOutgoing().add(new MessageFrame(message));
@@ -408,6 +413,13 @@ public final class Client {
 	public void sendWhiteboardControlsLock(boolean lock) {
 		if (isConnected()) {
 			frameAdapter.getOutgoing().add(new LockFrame(lock, loginName));
+			frameAdapter.send();
+		}
+	}
+	
+	public void sendImageClear() {
+		if (isConnected()) {
+			frameAdapter.getOutgoing().add(new ImageClearFrame());
 			frameAdapter.send();
 		}
 	}
