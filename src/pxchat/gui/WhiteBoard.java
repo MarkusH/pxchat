@@ -79,6 +79,7 @@ public class WhiteBoard extends JFrame {
 	private FreeHandObject freeHand;
 	private long freeHandStart;
 	
+	private boolean isLeftButton = false;
 	private boolean lock = false;
 	/**
 	 * The coordinates of the starting point of a new paint object. It is
@@ -173,6 +174,14 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				maybeShowPopup(e);
+				
+				// Only react to left clicks
+				if (e.getButton() != MouseEvent.BUTTON1) {
+					isLeftButton = false;
+					return;
+				}
+				
+				isLeftButton = true;
 
 				if (!lock) {
 					startPoint = currentPoint = new Point(e.getX(), e.getY());
@@ -194,6 +203,10 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				maybeShowPopup(e);
+				
+				// Only react to left clicks
+				if (e.getButton() != MouseEvent.BUTTON1)
+					return;
 
 				if (!lock) {
 					switch (tool) {
@@ -234,6 +247,7 @@ public class WhiteBoard extends JFrame {
 							break;
 					}
 				}
+				isLeftButton = false;
 			}
 		});
 
@@ -241,6 +255,10 @@ public class WhiteBoard extends JFrame {
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
+				
+				if (!isLeftButton)
+					return;
+				
 				if (!lock) {
 					switch (tool) {
 						case Eraser:

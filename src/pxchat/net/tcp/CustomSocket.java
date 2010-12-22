@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -50,12 +51,15 @@ public class CustomSocket {
 
 		@Override
 		public void run() {
-			if (cOut == null)
+			lock.lock();
+			
+			if (cOut == null) {
 				try {
 					cOut = new CipherOutputStream(socket.getOutputStream(), cipherOut);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+			}
 
 			
 			while (!outgoing.isEmpty()) {
@@ -71,17 +75,25 @@ public class CustomSocket {
 					Object o = outgoing.poll();
 					stream.writeObject(o);
 					System.out.println("write " + o);
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
+//			lock.lock();
 			
 			writeThread = null;
+			
+//			lock.unlock();
+			
+			lock.unlock();
 			
 			if (tcpClientListener != null)
 				tcpClientListener.clientClearToSend(CustomSocket.this);
 		}
 	}
+	
+	private ReentrantLock lock = new ReentrantLock(true);
 
 	protected Socket socket = null;
 	private ReadThread readThread = null;
@@ -202,6 +214,7 @@ public class CustomSocket {
 	}
 	
 	private synchronized void readCallback(Exception e) {
+		e.printStackTrace();
 		if (this.closing || e instanceof EOFException || e instanceof SocketException) {
 			this.closing = false;
 			this.connected = false;
@@ -231,19 +244,22 @@ public class CustomSocket {
 		
 		if (!isConnected())
 			return false;
+		
+		lock.lock();
 		outgoing.add(object);
 		
 		if (writeThread == null) {
 			writeThread = new WriteThread();
 			writeThread.start();
-		} else {	
-			synchronized (writeThread) {
-				if (!writeThread.isAlive()) {
-					writeThread = new WriteThread();
-					writeThread.start();
-				}
+		} else {
+			System.out.println("-----" +  Thread.currentThread() + "----------" + writeThread);
+			if (!writeThread.isAlive()) {
+				System.out.println("-------------------not alive-------------");
+				writeThread = new WriteThread();
+				writeThread.start();
 			}
 		}
+		lock.unlock();
 		return true;
 		
 //		if (isConnected()) {

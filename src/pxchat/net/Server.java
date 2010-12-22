@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.concurrent.locks.ReentrantLock;
 
 import pxchat.net.protocol.core.AuthFrameAdapter;
 import pxchat.net.protocol.core.FrameAdapter;
@@ -36,6 +37,8 @@ import pxchat.whiteboard.ImageTable;
  * @author Markus Döllinger
  */
 public class Server {
+	
+	private ReentrantLock lock = new ReentrantLock(true);
 
 	/**
 	 * The underlying TCP server
@@ -102,13 +105,17 @@ public class Server {
 
 		@Override
 		public void clientClearToSend(CustomSocket client) {
+			lock.lock();
 			serverFrameAdapter.getAdapter(client).send();
+			lock.unlock();
 		}
 
 		@Override
 		public void clientConnect(CustomSocket client) {
+			lock.lock();
 			FrameAdapter adapter = serverFrameAdapter.getAdapter(client);
 			System.out.println(this + "> new connection " + client + " --> " + adapter);
+			lock.unlock();
 		}
 
 		@Override
@@ -117,16 +124,20 @@ public class Server {
 
 		@Override
 		public void clientDisconnect(CustomSocket client) {
+			lock.lock();
 			AuthFrameAdapter adapter = serverFrameAdapter.getAdapter(client);
 			serverFrameAdapter.delete(adapter);
 			System.out
 					.println(this + "> Client with id " + adapter.getSessionID() + " disconnected.");
+			lock.unlock();
 		}
 
 		@Override
 		public void clientRead(CustomSocket client, Object data) {
+			lock.lock();
 			// pass the event to the corresponding adapter
 			serverFrameAdapter.getAdapter(client).receive(data);
+			lock.unlock();
 		}
 	};
 
@@ -151,6 +162,7 @@ public class Server {
 
 					try {
 						Thread.sleep(1500);
+						lock.lock();
 						if (!fa.isVersionVerified() || !fa.isAuthenticated()) {
 							fa.getOutgoing().add(new NotificationFrame(NotificationFrame.TIMEOUT));
 							fa.send();
@@ -158,6 +170,8 @@ public class Server {
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
+					} finally {
+						lock.unlock();
 					}
 				}
 			});
