@@ -49,7 +49,6 @@ public class ImageReceiver {
 	public boolean process(FrameAdapter adapter, ImageChunkFrame frame) {
 		if (frame.getImageID() == this.imageID) {
 			data.put(frame.getData());
-			System.out.println("chunk received: " + data.position() + " / " + data.capacity());
 			return true;
 		}
 
@@ -69,9 +68,7 @@ public class ImageReceiver {
 	 * @return <code>true</code> if the frame was processed
 	 */
 	public boolean process(FrameAdapter adapter, ImageStopFrame frame) {
-		System.out.println("test id");
 		if (frame.getImageID() == this.imageID) {
-			System.out.println("finished");
 			ByteArrayInputStream bai = new ByteArrayInputStream(data.array());
 			BufferedImage img = null;
 			try {
@@ -81,7 +78,6 @@ public class ImageReceiver {
 			}
 			if (img != null) {
 				ImageTable.getInstance().put(this.imageID, img);
-				System.out.println("image loaded");
 			}
 			return true;
 		}

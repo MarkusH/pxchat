@@ -162,15 +162,12 @@ public class PaintBoard extends JPanel {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 
-		System.out.println("update locking");
 		synchronized (this) {
-			System.out.println("update locked");
 			for (PaintObject obj : cache) {
 				obj.draw(g);
 			}
 			cache.clear();
 		}
-		System.out.println("update unlocked");
 
 	}
 

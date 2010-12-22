@@ -43,7 +43,6 @@ public class ImageSender {
 		try {
 			BufferedImage img = ImageTable.getInstance().get(imageID);
 			String format = img.getAlphaRaster() == null ? "jpg" : "png";
-			System.out.println(format);
 			ImageIO.write(img, format, bao);
 
 		} catch (IOException e) {
@@ -66,7 +65,6 @@ public class ImageSender {
 
 		if (data.position() != data.capacity()) {
 			int size = Math.min(CHUNK_SIZE, data.capacity() - data.position());
-			System.out.println(data.position() + " / " + data.capacity());
 			byte chunk[] = new byte[size];
 			data.get(chunk);
 			return new ImageChunkFrame(imageID, chunk);
@@ -74,7 +72,6 @@ public class ImageSender {
 
 		if (!this.finished) {
 			this.finished = true;
-			System.out.println("finished sending");
 			return new ImageStopFrame(imageID);
 		}
 

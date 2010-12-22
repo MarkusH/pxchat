@@ -553,12 +553,9 @@ public class WhiteBoard extends JFrame {
 
 			@Override
 			public void paintObjectReceived(PaintObject object) {
-				System.out.println("received locking");
 				synchronized (paintBoard) {
-					System.out.println("received locked");
 					paintBoard.getCache().add(object);				
 				}
-				System.out.println("reiceved unlocked");
 			}
 
 			@Override

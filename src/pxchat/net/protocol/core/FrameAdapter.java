@@ -109,7 +109,7 @@ public class FrameAdapter {
 	 * 
 	 * @param object The incoming data
 	 */
-	public synchronized void receive(Object object) {
+	public void receive(Object object) {
 		FrameQueue buffer = (FrameQueue) object;
 		incoming.addAll(buffer);
 		if (listener != null) {
@@ -139,7 +139,7 @@ public class FrameAdapter {
 	 * 
 	 * @return <code>true</code> if successful, <code>false</code> else
 	 */
-	public synchronized boolean send() {
+	public boolean send() {
 		// add data
 		if (listener != null) 
 			listener.sending(this);
@@ -165,12 +165,8 @@ public class FrameAdapter {
 	 * @return <code>true</code> if successful, <code>false</code> else
 	 */
 	protected boolean send(FrameQueue queue) {
-		try {
-			System.out.println(this + "> send " + queue);
-			
-			boolean res = socket.writeObject(queue);
-			System.out.println("send done");
-			return res;
+		try {		
+			return socket.writeObject(queue);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

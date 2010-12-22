@@ -74,17 +74,13 @@ public class CustomSocket {
 					
 					Object o = outgoing.poll();
 					stream.writeObject(o);
-					System.out.println("write " + o);
 					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-//			lock.lock();
-			
+
 			writeThread = null;
-			
-//			lock.unlock();
 			
 			lock.unlock();
 			
@@ -93,6 +89,9 @@ public class CustomSocket {
 		}
 	}
 	
+	/**
+	 * A lock that is used to only only start a write thread once
+	 */
 	private ReentrantLock lock = new ReentrantLock(true);
 
 	protected Socket socket = null;
@@ -109,11 +108,8 @@ public class CustomSocket {
 	private CipherOutputStream cOut;
 	protected TCPClientListener tcpClientListener;
 
-	// begin test
 	private ConcurrentLinkedQueue<Object> outgoing = new ConcurrentLinkedQueue<Object>();
-
 	private Thread writeThread = null;
-	// end test
 
 	/**
 	 * Gets called from a server when a client connects. Do not call this
@@ -182,7 +178,7 @@ public class CustomSocket {
 	/**
 	 * Starts a new thread that reads from the input stream.
 	 */
-	protected synchronized void doRead() {
+	protected void doRead() {
 		if (isConnected()) {
 			readThread = new ReadThread();
 			readThread.start();
@@ -213,7 +209,7 @@ public class CustomSocket {
 		return ((socket != null) && this.connected);
 	}
 	
-	private synchronized void readCallback(Exception e) {
+	private void readCallback(Exception e) {
 		e.printStackTrace();
 		if (this.closing || e instanceof EOFException || e instanceof SocketException) {
 			this.closing = false;
@@ -240,7 +236,7 @@ public class CustomSocket {
 	 * @return
 	 * @throws IOException
 	 */
-	public synchronized boolean writeObject(Object object) throws IOException {
+	public boolean writeObject(Object object) throws IOException {
 		
 		if (!isConnected())
 			return false;
@@ -252,8 +248,10 @@ public class CustomSocket {
 			writeThread = new WriteThread();
 			writeThread.start();
 		} else {
-			System.out.println("-----" +  Thread.currentThread() + "----------" + writeThread);
+			// Comes here when the previous lock thread was started but did not invoke
+			// its run() method due to overhead 
 			if (!writeThread.isAlive()) {
+				// Should never come here
 				System.out.println("-------------------not alive-------------");
 				writeThread = new WriteThread();
 				writeThread.start();

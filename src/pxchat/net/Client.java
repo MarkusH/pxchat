@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.concurrent.locks.ReentrantLock;
 
 import pxchat.net.protocol.core.FrameAdapter;
 import pxchat.net.protocol.core.FrameAdapterListener;
@@ -47,6 +48,12 @@ public final class Client {
 	public static Client getInstance() {
 		return Holder.INSTANCE;
 	}
+	
+	/**
+	 * This lock is used to prevent concurrent access to the frame adapter
+	 * by multiple threads.
+	 */
+	private ReentrantLock lock = new ReentrantLock(true);
 
 	/**
 	 * The underlying TCP client.
@@ -105,11 +112,14 @@ public final class Client {
 
 		@Override
 		public void clientClearToSend(CustomSocket client) {
+			lock.lock();
 			frameAdapter.send();
+			lock.unlock();
 		}
 
 		@Override
 		public void clientConnect(CustomSocket client) {
+			lock.lock();
 			System.out.println(this + "> Conntected to server: " + client.getRemoteAddress());
 
 			for (ClientListener listener : clientListeners)
@@ -118,26 +128,32 @@ public final class Client {
 			frameAdapter.getOutgoing().add(VersionFrame.getCurrent());
 			frameAdapter.getOutgoing().add(new AuthenticationFrame(loginName, loginPassword));
 			frameAdapter.send();
+			lock.unlock();
 		}
 
 		@Override
 		public void clientConnecting(CustomSocket client) {
+			lock.lock();
 			System.out.println(this + "> Connecting to server");
 			frameAdapter.reset();
+			lock.unlock();
 		}
 
 		@Override
 		public void clientDisconnect(CustomSocket client) {
+			lock.lock();
 			System.out.println(this + "> Client disconnected");
 
 			for (ClientListener listener : clientListeners)
 				listener.clientDisconnect();
+			lock.unlock();
 		}
 
 		@Override
 		public void clientRead(CustomSocket client, Object data) {
-			System.out.println(this + "> Message received from server: " + data);
+			lock.lock();
 			frameAdapter.receive(data);
+			lock.unlock();
 		}
 	};
 
@@ -145,7 +161,6 @@ public final class Client {
 
 		@Override
 		public void process(FrameAdapter adapter) {
-			System.out.println(this + " executes " + adapter.getIncoming());
 			
 			boolean doPaintRequest = false;
 
@@ -209,13 +224,11 @@ public final class Client {
 					case Frame.ID_IMG_ID:
 						ImageIDFrame idf = (ImageIDFrame) frame;
 						nextImageID = idf.getImageID();
-						System.out.println("Received image id");
 						break;
 						
 						
 					case Frame.ID_IMG_START:
 						ImageStartFrame sf = (ImageStartFrame) frame;
-						System.out.println("Received ImageStartFrame with id " + sf.getImageID());
 						ImageReceiver newRecv = new ImageReceiver(sf);
 						imgReceivers.add(newRecv);
 						break;
@@ -241,7 +254,6 @@ public final class Client {
 							}
 						}
 						
-						System.out.println(imgReceivers);
 						break;
 						
 					case Frame.ID_BACKGROUND:
@@ -294,8 +306,6 @@ public final class Client {
 
 		@Override
 		public void sending(FrameAdapter adapter) {
-			System.out.println(adapter + "> sending");
-
 			Iterator<ImageSender> iterator = imgSenders.iterator();
 			while (iterator.hasNext()) {
 				ImageSender sender = iterator.next();
@@ -384,43 +394,55 @@ public final class Client {
 
 	public void sendChangeBackground(int imageID) {
 		if (isConnected()) {
+			lock.lock();
 			frameAdapter.getOutgoing().add(new BackgroundFrame(imageID));
 			frameAdapter.send();
+			lock.unlock();
 		}
 	}
 	
 	public void sendImage(int imageID) {
 		if (isConnected()) {
+			lock.lock();
 			imgSenders.add(new ImageSender(imageID));
 			frameAdapter.send();
+			lock.unlock();
 		}
 	}
 	
 	public void sendMessage(String message) {
 		if (isConnected()) {
+			lock.lock();
 			frameAdapter.getOutgoing().add(new MessageFrame(message));
 			frameAdapter.send();
+			lock.unlock();
 		}
 	}
 	
 	public void sendPaintObject(PaintObject object) {
 		if (isConnected()) {
+			lock.lock();
 			frameAdapter.getOutgoing().add(object);
 			frameAdapter.send();
+			lock.unlock();
 		}
 	}
 
-	public void sendWhiteboardControlsLock(boolean lock) {
+	public void sendWhiteboardControlsLock(boolean doLock) {
 		if (isConnected()) {
-			frameAdapter.getOutgoing().add(new LockFrame(lock, loginName));
+			lock.lock();
+			frameAdapter.getOutgoing().add(new LockFrame(doLock, loginName));
 			frameAdapter.send();
+			lock.unlock();
 		}
 	}
 	
 	public void sendImageClear() {
 		if (isConnected()) {
+			lock.lock();
 			frameAdapter.getOutgoing().add(new ImageClearFrame());
 			frameAdapter.send();
+			lock.unlock();
 		}
 	}
 }

@@ -38,6 +38,10 @@ import pxchat.whiteboard.ImageTable;
  */
 public class Server {
 	
+	/**
+	 * This lock is used to prevent concurrent access to the frame adapters
+	 * by multiple threads.
+	 */
 	private ReentrantLock lock = new ReentrantLock(true);
 
 	/**
@@ -205,9 +209,7 @@ public class Server {
 		@Override
 		public void process(FrameAdapter fAdapter) {
 			AuthFrameAdapter adapter = (AuthFrameAdapter) fAdapter;
-			System.out.println(this + "> executes " + adapter.getIncoming() + " from " + adapter
-					.getSocket());
-
+			
 			for (Frame frame : adapter.getIncoming()) {
 
 				// disconnect if the version is not verified and the frame is
@@ -304,7 +306,6 @@ public class Server {
 
 					case Frame.ID_IMG_START:
 						ImageStartFrame sf = (ImageStartFrame) frame;
-						System.out.println("Received ImageStartFrame with id " + sf.getImageID());
 						adapter.getOutgoing().add(new ImageIDFrame(getNextImageID()));
 						adapter.send();
 						ServerImageReceiver newRecv = new ServerImageReceiver(sf, adapter, serverFrameAdapter);
@@ -339,8 +340,6 @@ public class Server {
 								break;
 							}
 						}
-
-						System.out.println(imgReceivers);
 						break;
 
 					case Frame.ID_BACKGROUND:
@@ -376,7 +375,6 @@ public class Server {
 
 		@Override
 		public void sending(FrameAdapter adapter) {
-			System.out.println(adapter + "> sending");
 			Vector<ImageSender> senders = imgSenders.get(adapter);
 			if (senders == null)
 				return;
