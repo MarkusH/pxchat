@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -20,7 +21,9 @@ import pxchat.whiteboard.PaintObject;
 public class PaintBoard extends JPanel {
 
 	private static final long serialVersionUID = 4813675397624015717L;
-	
+
+	private HashMap<String, Integer> sentBackgrounds = new HashMap<String, Integer>();
+
 	private Integer background = -1;
 	private BufferedImage board;
 
@@ -59,52 +62,60 @@ public class PaintBoard extends JPanel {
 	}
 
 	public void loadBackground(File file) {
+		if (sentBackgrounds.get(file.getAbsolutePath()) == null) {
+			BufferedImage img = null;
+			try {
+				img = ImageIO.read(file);
+			} catch (Exception e) {
+				return;
+			}
 
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(file);
-		} catch (Exception e) {
-			return;
-		}
-		
-		int owidth = img.getWidth();
-		int oheight = img.getHeight();
-		
-		float width = 0;
-		float height = 0;
-		float ratio = (float)img.getWidth()/(float)img.getHeight();
-		boolean resized = false;
-		float stdratio = (float) (4.0/3.0);
-		
-		if(ratio >= stdratio && owidth > 1024) {
-			width = 1024;
-			height = (1024/ratio);
-			resized = true;
-		}
-		if(ratio < stdratio && !resized && (oheight > 768 || owidth > 1024)) {
-			width = 768*ratio;
-			height = 768;
-			resized = true;
-		}	
+			int owidth = img.getWidth();
+			int oheight = img.getHeight();
 
-		background = Client.getInstance().getNextImageID();
-		
-		if (resized) {
-			BufferedImage downSampleImg = new BufferedImage((int)width, (int)height,
-					BufferedImage.TYPE_INT_RGB);
-			Graphics2D g = downSampleImg.createGraphics();
-			g.drawImage(img, 0, 0, (int)width, (int)height, null);
-			g.dispose();
+			float width = 0;
+			float height = 0;
+			float ratio = (float) img.getWidth() / (float) img.getHeight();
+			boolean resized = false;
+			float stdratio = (float) (4.0 / 3.0);
 
-			ImageTable.getInstance().put(background, downSampleImg);
+			if (ratio >= stdratio && owidth > 1024) {
+				width = 1024;
+				height = (1024 / ratio);
+				resized = true;
+			}
+			if (ratio < stdratio && !resized && (oheight > 768 || owidth > 1024)) {
+				width = 768 * ratio;
+				height = 768;
+				resized = true;
+			}
+
+			this.setBackground(Color.WHITE);
+
+			background = Client.getInstance().getNextImageID();
+			sentBackgrounds.put(file.getAbsolutePath(), background);
+
+			if (resized) {
+				BufferedImage downSampleImg = new BufferedImage((int) width, (int) height,
+						BufferedImage.TYPE_INT_RGB);
+				Graphics2D g = downSampleImg.createGraphics();
+				g.drawImage(img, 0, 0, (int) width, (int) height, null);
+				g.dispose();
+
+				ImageTable.getInstance().put(background, downSampleImg);
+			} else {
+				ImageTable.getInstance().put(background, img);
+			}
+
+			this.setBackground(Color.WHITE);
+
+			Client.getInstance().sendChangeBackground(background);
+			Client.getInstance().sendImage(background);
 		} else {
-			ImageTable.getInstance().put(background, img);
+			this.setBackground(Color.WHITE);
+
+			Client.getInstance().sendChangeBackground(sentBackgrounds.get(file.getAbsolutePath()));
 		}
-
-		this.setBackground(Color.WHITE);
-
-		Client.getInstance().sendChangeBackground(background);
-		Client.getInstance().sendImage(background);
 	}
 
 	public void loadBackground(int imageID) {
@@ -122,8 +133,7 @@ public class PaintBoard extends JPanel {
 		super.paintComponent(og);
 		Graphics2D g = (Graphics2D) og;
 
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		BufferedImage img = ImageTable.getInstance().get(background);
 		if (img != null)
@@ -155,12 +165,10 @@ public class PaintBoard extends JPanel {
 	 */
 	private synchronized void updateBoard() {
 		if (this.board == null)
-			this.board = new BufferedImage(getWidth(), getHeight(),
-					BufferedImage.TYPE_4BYTE_ABGR);
+			this.board = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 
 		Graphics2D g = this.board.createGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		synchronized (this) {
 			for (PaintObject obj : cache) {
