@@ -62,60 +62,59 @@ public class PaintBoard extends JPanel {
 	}
 
 	public void loadBackground(File file) {
-		boolean newBackground = true;
-
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(file);
-		} catch (Exception e) {
-			return;
-		}
-
-		int owidth = img.getWidth();
-		int oheight = img.getHeight();
-
-		float width = 0;
-		float height = 0;
-		float ratio = (float) img.getWidth() / (float) img.getHeight();
-		boolean resized = false;
-		float stdratio = (float) (4.0 / 3.0);
-
-		if (ratio >= stdratio && owidth > 1024) {
-			width = 1024;
-			height = (1024 / ratio);
-			resized = true;
-		}
-		if (ratio < stdratio && !resized && (oheight > 768 || owidth > 1024)) {
-			width = 768 * ratio;
-			height = 768;
-			resized = true;
-		}
-
 		if (sentBackgrounds.get(file.getAbsolutePath()) == null) {
+			BufferedImage img = null;
+			try {
+				img = ImageIO.read(file);
+			} catch (Exception e) {
+				return;
+			}
+
+			int owidth = img.getWidth();
+			int oheight = img.getHeight();
+
+			float width = 0;
+			float height = 0;
+			float ratio = (float) img.getWidth() / (float) img.getHeight();
+			boolean resized = false;
+			float stdratio = (float) (4.0 / 3.0);
+
+			if (ratio >= stdratio && owidth > 1024) {
+				width = 1024;
+				height = (1024 / ratio);
+				resized = true;
+			}
+			if (ratio < stdratio && !resized && (oheight > 768 || owidth > 1024)) {
+				width = 768 * ratio;
+				height = 768;
+				resized = true;
+			}
+
+			this.setBackground(Color.WHITE);
+
 			background = Client.getInstance().getNextImageID();
 			sentBackgrounds.put(file.getAbsolutePath(), background);
-		} else {
-			background = sentBackgrounds.get(file.getAbsolutePath());
-			newBackground = false;
-		}
 
-		if (resized) {
-			BufferedImage downSampleImg = new BufferedImage((int) width, (int) height,
-					BufferedImage.TYPE_INT_RGB);
-			Graphics2D g = downSampleImg.createGraphics();
-			g.drawImage(img, 0, 0, (int) width, (int) height, null);
-			g.dispose();
+			if (resized) {
+				BufferedImage downSampleImg = new BufferedImage((int) width, (int) height,
+						BufferedImage.TYPE_INT_RGB);
+				Graphics2D g = downSampleImg.createGraphics();
+				g.drawImage(img, 0, 0, (int) width, (int) height, null);
+				g.dispose();
 
-			ImageTable.getInstance().put(background, downSampleImg);
-		} else {
-			ImageTable.getInstance().put(background, img);
-		}
+				ImageTable.getInstance().put(background, downSampleImg);
+			} else {
+				ImageTable.getInstance().put(background, img);
+			}
 
-		this.setBackground(Color.WHITE);
+			this.setBackground(Color.WHITE);
 
-		Client.getInstance().sendChangeBackground(background);
-		if (newBackground) {
+			Client.getInstance().sendChangeBackground(background);
 			Client.getInstance().sendImage(background);
+		} else {
+			this.setBackground(Color.WHITE);
+
+			Client.getInstance().sendChangeBackground(sentBackgrounds.get(file.getAbsolutePath()));
 		}
 	}
 
