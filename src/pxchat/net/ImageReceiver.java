@@ -29,6 +29,8 @@ public class ImageReceiver {
 
 	/**
 	 * Constructs a new image receiver from an image start frame.
+	 * 
+	 * @param startFrame An image start frame
 	 */
 	public ImageReceiver(ImageStartFrame startFrame) {
 		this.imageID = startFrame.getImageID();

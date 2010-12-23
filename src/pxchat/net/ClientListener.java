@@ -2,12 +2,26 @@ package pxchat.net;
 
 import java.util.HashMap;
 
+import pxchat.net.protocol.frames.NotificationFrame;
+
 /**
- * This interface controls the information flow between network and the GUI
- * components.
- * 
- * Whenever a socket event is raised, the appropriate method in this interface
- * is called.
+ * <p>
+ * Together with the {@link WhiteboardClientListener}, this interface controls
+ * the information flow between the network package, i.e. the {@link Client},
+ * and the GUI components.
+ * </p>
+ * <p>
+ * This interface provides the common methods {@link #clientConnect(String)} and
+ * {@link #clientDisconnect()} for connection handling. Whenever the socket
+ * connects or disconnects, these methods are called.
+ * </p>
+ * <p>
+ * Furthermore, the {@code ClientListener} provides the methods
+ * {@link #notification(int)}, {@link #notification(int, String)},
+ * {@link #messageReceived(String, String)} and
+ * {@link #userListChanged(HashMap)} which are being called when the associated
+ * event is received from the server.
+ * </p>
  * 
  * @author Markus Döllinger
  */
@@ -16,6 +30,8 @@ public interface ClientListener {
 	/**
 	 * This method is called after the client successfully connected to the
 	 * server.
+	 * 
+	 * @param remoteAddress The address of the server
 	 */
 	public void clientConnect(String remoteAddress);
 
@@ -26,7 +42,7 @@ public interface ClientListener {
 	public void clientDisconnect();
 
 	/**
-	 * This method is called when a message is received.
+	 * This method is called when a text message is received.
 	 * 
 	 * @param author The author of the message
 	 * @param message The message itself
@@ -34,21 +50,31 @@ public interface ClientListener {
 	public void messageReceived(String author, String message);
 
 	/**
-	 * @param type
+	 * This method is called when a generic notification was received. This
+	 * notification does not contain any variable data like a user name.
+	 * 
+	 * @param type The type of the notification
+	 * @see NotificationFrame
 	 */
 	public void notification(int type);
 
 	/**
-	 * @param type
-	 * @param username
+	 * This method is called when a notification was received. This notification
+	 * does contain a user name of the client that caused this notification,
+	 * i.e. he joined or left the chat.
+	 * 
+	 * @param type The type of the notification
+	 * @param username The user name of the client that caused the event
+	 * @see NotificationFrame
 	 */
 	public void notification(int type, String username);
-	
+
 	/**
 	 * This method is called when the user list changes, i.e. a client connected
-	 * or disconnected
+	 * or disconnected.
 	 * 
-	 * @param newUserList
+	 * @param newUserList The new user list, a mapping of session id to user
+	 *            name
 	 */
 	public void userListChanged(HashMap<Integer, String> newUserList);
 

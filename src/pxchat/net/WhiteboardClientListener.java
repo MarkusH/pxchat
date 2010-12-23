@@ -8,9 +8,11 @@ import java.awt.Color;
 import pxchat.whiteboard.PaintObject;
 
 /**
- * This interface controls the communication between the client and the
- * whiteboard. The commands send over the network will cause the methods of this
- * interface to be invoked.
+ * <p>
+ * Together with the {@link ClientListener}, this interface controls the
+ * information flow between the network package, i.e. the {@link Client}, and
+ * the GUI components, especially the whiteboard.
+ * </p>
  * 
  * @author Markus Döllinger
  * @author Markus Holtermann

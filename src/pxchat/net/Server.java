@@ -32,15 +32,16 @@ import pxchat.whiteboard.ImageTable;
 
 /**
  * This class implements the server for pxchat. It uses a TCP server to listen
- * on a specified port and handles incoming data.
+ * on a specified port and handles incoming data by processing and forwarding
+ * the frames.
  * 
  * @author Markus Döllinger
  */
 public class Server {
-	
+
 	/**
-	 * This lock is used to prevent concurrent access to the frame adapters
-	 * by multiple threads.
+	 * This lock is used to prevent concurrent access to the frame adapters by
+	 * multiple threads.
 	 */
 	private ReentrantLock lock = new ReentrantLock(true);
 
@@ -70,20 +71,19 @@ public class Server {
 	 * clients.
 	 */
 	private Vector<ServerImageReceiver> imgReceivers = new Vector<ServerImageReceiver>();
-	
+
 	/**
-	 * A list of image senders for each connected adapter. It is used to transfer images
-	 * to clients that connected after the image was created.
+	 * A list of image senders for each connected adapter. It is used to
+	 * transfer images to clients that connected after the image was created.
 	 */
 	private HashMap<FrameAdapter, Vector<ImageSender>> imgSenders = new HashMap<FrameAdapter, Vector<ImageSender>>();
 
-	
 	/**
 	 * The current background of the whiteboard. Only the current frame has to
 	 * be cached because setting the background does not have any side-effects.
 	 */
 	private BackgroundFrame backgroundCache;
-	
+
 	/**
 	 * A queue of all draw commands in the correct order. Each new client will
 	 * receive this queue in order to synchronize with the others.
@@ -91,16 +91,16 @@ public class Server {
 	private FrameQueue paintObjectCache = new FrameQueue();
 
 	/**
+	 * status of the whiteboard (locked/unlocked) for users who joined the
+	 * session
+	 */
+	private LockFrame lockCache = new LockFrame(false, "System");
+
+	/**
 	 * The next image id that will be send the the client requesting it.
 	 */
 	private int nextImageID = 0;
-	
-	/**
-	 * status of the whiteboard (locked/unlocked) for users who joined the session
-	 */
-	
-	private LockFrame lockCache = new LockFrame(false, "System");
-	
+
 	/**
 	 * The TCP server listener used to process events of the underlying server
 	 * socket.
@@ -190,10 +190,11 @@ public class Server {
 			if (name != null) {
 				serverAdapter.broadcast(FrameQueue.from(new NotificationFrame(
 						NotificationFrame.LEAVE, name)), false);
-			
-				if(name.equals(lockCache.getOwner())) {
+
+				if (name.equals(lockCache.getOwner())) {
 					lockCache = new LockFrame(false, "System");
-					serverAdapter.broadcast(FrameQueue.from(lockCache), true, adapter.getSessionID());
+					serverAdapter.broadcast(FrameQueue.from(lockCache), true, adapter
+							.getSessionID());
 				}
 			}
 			userList.remove(adapter.getSessionID());
@@ -209,7 +210,7 @@ public class Server {
 		@Override
 		public void process(FrameAdapter fAdapter) {
 			AuthFrameAdapter adapter = (AuthFrameAdapter) fAdapter;
-			
+
 			for (Frame frame : adapter.getIncoming()) {
 
 				// disconnect if the version is not verified and the frame is
@@ -250,7 +251,8 @@ public class Server {
 						VersionFrame vf = (VersionFrame) frame;
 						if (!vf.isCompatible(VersionFrame.getCurrent())) {
 							System.out.println(this + "> Version control unsuccessful.");
-							adapter.getOutgoing().add(new NotificationFrame(NotificationFrame.VERSION_FAIL));
+							adapter.getOutgoing().add(
+									new NotificationFrame(NotificationFrame.VERSION_FAIL));
 							adapter.send();
 							adapter.disconnect();
 						} else {
@@ -263,64 +265,104 @@ public class Server {
 						}
 						break;
 
+					/*
+					 * The client sent an authentication frame. Usually this is
+					 * sent immediately after the version frame. If the pair of
+					 * user name and password is in the authentication list and
+					 * this pair is not connected to the server, the access is
+					 * granted and the white-board will be synchronized.
+					 * Otherwise the connection will be terminated.
+					 */
 					case Frame.ID_AUTH:
 						AuthenticationFrame af = (AuthenticationFrame) frame;
 						String pwd = authList.get(af.getUsername());
 
 						// reject access, if password is not matching (or null)
-						// or if the user name
-						// is already in use
-						if (!af.getPassword().equals(pwd) || userList.values().contains(af.getUsername())) {
-							adapter.getOutgoing().add(new NotificationFrame(NotificationFrame.AUTH_FAIL));
+						// or if the user name is already in use
+						if (!af.getPassword().equals(pwd) || userList.values().contains(
+								af.getUsername())) {
+							adapter.getOutgoing().add(
+									new NotificationFrame(NotificationFrame.AUTH_FAIL));
 							adapter.send();
 							adapter.disconnect();
 						} else {
 							adapter.setAuthenticated(true);
-							
-							// synchronize the whiteboard
+
+							// synchronize the white-board
 							adapter.getOutgoing().addAll(paintObjectCache);
 							if (backgroundCache != null)
 								adapter.getOutgoing().add(backgroundCache);
-							
-							serverFrameAdapter.broadcast(FrameQueue.from(new NotificationFrame(NotificationFrame.JOIN, af.getUsername())), false);
+
+							serverFrameAdapter.broadcast(FrameQueue.from(new NotificationFrame(
+									NotificationFrame.JOIN, af.getUsername())), false);
 							userList.put(adapter.getSessionID(), af.getUsername());
-							// send lock status of whiteboard to newly connected client
-							serverFrameAdapter.broadcastTo(FrameQueue.from(lockCache), false, adapter.getSessionID());
-							
-							// Send images to the client. Note that this does not include
+							// send lock status of white-board to newly
+							// connected
+							// client
+							serverFrameAdapter.broadcastTo(FrameQueue.from(lockCache), false,
+									adapter.getSessionID());
+
+							// Send images to the client. Note that this does
+							// not include
 							// images that are currently being received.
 							for (Integer imageID : ImageTable.getInstance().keySet()) {
 								imgSenders.get(adapter).add(new ImageSender(imageID));
 							}
-							
+
 							sendUserList();
 						}
 
 						break;
 
+					/*
+					 * A client send a text message. It will be forwarded to all
+					 * clients except the sender (author of the message).
+					 */
 					case Frame.ID_MSG:
 						MessageFrame mf = (MessageFrame) frame;
 						mf.setSessionId(adapter.getSessionID());
-						serverFrameAdapter.broadcast(FrameQueue.from(mf), true, adapter.getSessionID());
+						serverFrameAdapter.broadcast(FrameQueue.from(mf), true, adapter
+								.getSessionID());
 						break;
 
+					/*
+					 * A client sent an image start frame which initiates a new
+					 * image transfer. A new server image receiver will be
+					 * creates that forwards the image to all authenticated
+					 * clients except the sender. Additionally, the sender
+					 * receives a new image id for the next transfer.
+					 */
 					case Frame.ID_IMG_START:
 						ImageStartFrame sf = (ImageStartFrame) frame;
 						adapter.getOutgoing().add(new ImageIDFrame(getNextImageID()));
 						adapter.send();
-						ServerImageReceiver newRecv = new ServerImageReceiver(sf, adapter, serverFrameAdapter);
+						ServerImageReceiver newRecv = new ServerImageReceiver(sf, adapter,
+								serverFrameAdapter);
 						imgReceivers.add(newRecv);
 						break;
 
+					/*
+					 * A client sent a new chunk of image data. The
+					 * corresponding image receiver will cache and forward the
+					 * data to all other clients.
+					 */
 					case Frame.ID_IMG_CHUNK:
 						ImageChunkFrame cf = (ImageChunkFrame) frame;
 						for (ImageReceiver recv : imgReceivers) {
-							if (recv.process(adapter, cf)){
+							if (recv.process(adapter, cf)) {
 								break;
 							}
 						}
 						break;
 
+					/*
+					 * A client successfully ended an image transfer. The
+					 * message will be processed by the corresponding image
+					 * receiver which will forward the message. The image
+					 * receiver will then return the clients that connected
+					 * after the image transfer was initiated; the image will
+					 * then be transferred to them.
+					 */
 					case Frame.ID_IMG_STOP:
 						ImageStopFrame spf = (ImageStopFrame) frame;
 
@@ -328,30 +370,45 @@ public class Server {
 						while (iterator.hasNext()) {
 							ServerImageReceiver receiver = iterator.next();
 							if (receiver.process(adapter, spf)) {
-								
-								// Check whether there is a client that connected
+
+								// Check whether there is a client that
+								// connected
 								// after this image transfer was initiated.
 								for (FrameAdapter ad : receiver.getLateReceivers()) {
 									imgSenders.get(ad).add(new ImageSender(receiver.getImageID()));
 									ad.send();
 								}
-								
+
 								iterator.remove();
 								break;
 							}
 						}
 						break;
 
+					/*
+					 * A client changed the background of the white-board. The
+					 * message will be forwarded to all clients, the sender
+					 * included.
+					 */
 					case Frame.ID_BACKGROUND:
 						backgroundCache = (BackgroundFrame) frame;
 						serverFrameAdapter.broadcastToAuth(FrameQueue.from(frame), true);
 						break;
-						
+
+					/*
+					 * A client locked the white-board. The message will be
+					 * cached and forwarded to all clients except the sender.
+					 */
 					case Frame.ID_LOCK:
 						lockCache = (LockFrame) frame;
-						serverFrameAdapter.broadcast(FrameQueue.from(lockCache), true, adapter.getSessionID());
+						serverFrameAdapter.broadcast(FrameQueue.from(lockCache), true, adapter
+								.getSessionID());
 						break;
 
+					/*
+					 * A client sent a paint object. The object will be cached
+					 * and forwarded to all clients, the sender included.
+					 */
 					case Frame.ID_CIRCLE:
 					case Frame.ID_ELLIPSE:
 					case Frame.ID_RECT:
@@ -361,7 +418,12 @@ public class Server {
 						paintObjectCache.add(frame);
 						serverFrameAdapter.broadcastToAuth(FrameQueue.from(frame), true);
 						break;
-						
+
+					/*
+					 * A client cleared the white-board. The cache will be
+					 * cleared and the message will be forwarded to all clients,
+					 * the sender included.
+					 */
 					case Frame.ID_CLEAR:
 						paintObjectCache.clear();
 						serverFrameAdapter.broadcastToAuth(FrameQueue.from(frame), true);
@@ -375,10 +437,11 @@ public class Server {
 
 		@Override
 		public void sending(FrameAdapter adapter) {
+			// find the image senders associated with the adapter
 			Vector<ImageSender> senders = imgSenders.get(adapter);
 			if (senders == null)
 				return;
-			
+
 			Iterator<ImageSender> iterator = senders.iterator();
 			while (iterator.hasNext()) {
 				ImageSender sender = iterator.next();
@@ -391,7 +454,7 @@ public class Server {
 	};
 
 	/**
-	 * Constructs a new server.
+	 * Constructs a new pxchat Server.
 	 */
 	public Server() {
 		server = new TCPServer(tcpServerListener);

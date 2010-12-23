@@ -11,6 +11,13 @@ package pxchat.net.tcp;
  */
 public interface TCPClientListener {
 
+	/**
+	 * This method is called when a write operation to the socket has
+	 * successfully ended. This event may be used to transfer huge amounts
+	 * of data in the background, i.e. images.
+	 * 
+	 * @param client The source of the event
+	 */
 	public void clientClearToSend(CustomSocket client);
 
 	/**

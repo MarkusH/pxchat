@@ -24,20 +24,41 @@ import pxchat.net.protocol.frames.ImageStopFrame;
  */
 public class ServerImageReceiver extends ImageReceiver {
 
+	/**
+	 * The session id of the sender
+	 */
 	private int sender;
+
+	/**
+	 * A list of session ids of the receivers.
+	 */
 	private List<Integer> receiverList;
+
+	/**
+	 * An array of session ids of the receivers.
+	 */
 	private int[] receivers;
 
+	/**
+	 * The server frame adapter.
+	 */
 	private ServerFrameAdapter server;
 
 	/**
-	 * @param startFrame
+	 * Constructs a new server image receiver of the specified start frame, the
+	 * sender and the server.
+	 * 
+	 * @param startFrame The image start frame
+	 * @param sender The sender of the start frame
+	 * @param server The server frame adapter
 	 */
 	public ServerImageReceiver(ImageStartFrame startFrame, FrameAdapter sender,
 								ServerFrameAdapter server) {
 		super(startFrame);
 		this.sender = sender.getSessionID();
 		this.server = server;
+
+		// Fill the receiver list with all adapters that are authenticated
 		receiverList = new ArrayList<Integer>();
 		for (AuthFrameAdapter adapter : server.getAdapters()) {
 			if (adapter.isAuthenticated() && adapter.getSessionID() != this.sender)
@@ -45,6 +66,7 @@ public class ServerImageReceiver extends ImageReceiver {
 		}
 		this.receivers = toIntArray(receiverList);
 
+		// Forward the start frame
 		send(startFrame);
 	}
 
@@ -104,7 +126,7 @@ public class ServerImageReceiver extends ImageReceiver {
 	}
 
 	/**
-	 * Returns a list of adapters that are authenticated, and connected after
+	 * Returns a list of adapters that are authenticated and connected after
 	 * this image transfer was initiated.
 	 * 
 	 * @return A list of adapters this image has to be sent to
