@@ -194,7 +194,7 @@ public class WhiteBoard extends JFrame {
 							freeHandStart = System.currentTimeMillis();
 							freeHand = new FreeHandObject(new GeneralPath(), color, strokeWidth);
 							freeHand.getPath().moveTo(e.getX(), e.getY());
-							paintBoard.getPreviewObjects().add(freeHand);
+							paintBoard.setPreviewObject(freeHand);
 							break;
 					}
 				}
@@ -214,35 +214,35 @@ public class WhiteBoard extends JFrame {
 						case Freehand:
 							Client.getInstance().sendPaintObject(freeHand);
 							freeHand = null;
-							paintBoard.getPreviewObjects().clear();
+							paintBoard.setPreviewObject(null);
 							paintBoard.repaint();
 							break;
 						case Circle:
 							Client.getInstance().sendPaintObject(
 									new CircleObject(startPoint, currentPoint, currentColor,
 											currentStrokeWidth));
-							paintBoard.getPreviewObjects().clear();
+							paintBoard.setPreviewObject(null);
 							paintBoard.repaint();
 							break;
 						case Ellipse:
 							Client.getInstance().sendPaintObject(
 									new EllipseObject(startPoint, currentPoint, currentColor,
 											currentStrokeWidth));
-							paintBoard.getPreviewObjects().clear();
+							paintBoard.setPreviewObject(null);
 							paintBoard.repaint();
 							break;
 						case Line:
 							Client.getInstance().sendPaintObject(
 									new LineObject(startPoint, currentPoint, currentColor,
 											currentStrokeWidth));
-							paintBoard.getPreviewObjects().clear();
+							paintBoard.setPreviewObject(null);
 							paintBoard.repaint();
 							break;
 						case Rectangle:
 							Client.getInstance().sendPaintObject(
 									new RectObject(startPoint, currentPoint, currentColor,
 											currentStrokeWidth));
-							paintBoard.getPreviewObjects().clear();
+							paintBoard.setPreviewObject(null);
 							paintBoard.repaint();
 							break;
 					}
@@ -269,14 +269,15 @@ public class WhiteBoard extends JFrame {
 //										newPoint, currentColor, currentStrokeWidth));
 								freeHand.getPath().lineTo(newPoint.x, newPoint.y);
 								if (System.currentTimeMillis() - freeHandStart > 100) {
-									paintBoard.getPreviewObjects().clear();
+									paintBoard.setPreviewObject(null);
+									paintBoard.getCache().add(freeHand);
 									Client.getInstance().sendPaintObject(freeHand);
 									freeHandStart = System.currentTimeMillis();
 									Color color = (tool == Tool.Eraser) ? new Color(0, 0, 0, 0) : currentColor;
 									float strokeWidth = (tool == Tool.Eraser) ? currentStrokeWidth * 3f : currentStrokeWidth;
 									freeHand = new FreeHandObject(new GeneralPath(), color, strokeWidth);
 									freeHand.getPath().moveTo(newPoint.x, newPoint.y);		
-									paintBoard.getPreviewObjects().add(freeHand);
+									paintBoard.setPreviewObject(freeHand);
 								}
 								paintBoard.repaint();
 								currentPoint = new Point(e.getX(), e.getY());
@@ -284,32 +285,31 @@ public class WhiteBoard extends JFrame {
 							break;
 						case Circle:
 							currentPoint = new Point(e.getX(), e.getY());
-							paintBoard.getPreviewObjects().clear();
-							paintBoard.getPreviewObjects().add(
+							paintBoard.setPreviewObject(
 									new CircleObject(startPoint, currentPoint, currentColor,
 											currentStrokeWidth));
 							paintBoard.repaint();
 							break;
 						case Ellipse:
 							currentPoint = new Point(e.getX(), e.getY());
-							paintBoard.getPreviewObjects().clear();
-							paintBoard.getPreviewObjects().add(
+							paintBoard.setPreviewObject(null);
+							paintBoard.setPreviewObject(
 									new EllipseObject(startPoint, currentPoint, currentColor,
 											currentStrokeWidth));
 							paintBoard.repaint();
 							break;
 						case Line:
 							currentPoint = new Point(e.getX(), e.getY());
-							paintBoard.getPreviewObjects().clear();
-							paintBoard.getPreviewObjects().add(
+							paintBoard.setPreviewObject(null);
+							paintBoard.setPreviewObject(
 									new LineObject(startPoint, currentPoint, currentColor,
 											currentStrokeWidth));
 							paintBoard.repaint();
 							break;
 						case Rectangle:
 							currentPoint = new Point(e.getX(), e.getY());
-							paintBoard.getPreviewObjects().clear();
-							paintBoard.getPreviewObjects().add(
+							paintBoard.setPreviewObject(null);
+							paintBoard.setPreviewObject(
 									new RectObject(startPoint, currentPoint, currentColor,
 											currentStrokeWidth));
 							paintBoard.repaint();

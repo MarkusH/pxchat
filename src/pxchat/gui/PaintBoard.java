@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -29,16 +30,23 @@ public class PaintBoard extends JPanel {
 	private Integer background = -1;
 	private BufferedImage board;
 
+	/**
+	 * If true, draws all objects in the backup list.
+	 */
 	private boolean doCompleteRepaint = false;
 
-	private Vector<PaintObject> previewObjects = new Vector<PaintObject>();
+	/**
+	 * The current preview object. It will be drawn as the top layer each time
+	 * the component is painted.
+	 */
+	private PaintObject previewObject = null;
 
 	/**
 	 * A list of paint objects that were added to the paint board after the last
 	 * call to {@link #updateBoard()}. The elements of this list will be drawn
 	 * and added to the backup list.
 	 */
-	private Vector<PaintObject> cache = new Vector<PaintObject>();
+	private Vector<PaintObject> ingoing = new Vector<PaintObject>();
 
 	/**
 	 * A list of all paint objects that were added to the paint board. This list
@@ -46,6 +54,19 @@ public class PaintBoard extends JPanel {
 	 */
 	private Vector<PaintObject> backup = new Vector<PaintObject>();
 
+	/**
+	 * A cache of paint objects. They will be drawn as the top layer each time
+	 * the component is painted. If an equal new paint object is added via the
+	 * {@link #add(PaintObject)} method, the object is removed from the cache.
+	 * 
+	 * TODO: Maybe we should delete objects from the cache that are in it for
+	 * too long. This should not happen, but maybe?
+	 */
+	private ConcurrentLinkedQueue<PaintObject> cache = new ConcurrentLinkedQueue<PaintObject>();
+
+	/**
+	 * Constructs a new paint board.
+	 */
 	public PaintBoard() {
 		this.board = null;
 	}
@@ -57,7 +78,18 @@ public class PaintBoard extends JPanel {
 	 * @param obj The paint object to add.
 	 */
 	public void add(PaintObject obj) {
-		this.cache.add(obj);
+		System.out.println(this.cache.remove(obj));
+		this.ingoing.add(obj);
+		System.out.println(cache);
+	}
+
+	/**
+	 * Returns the cache of this paint board.
+	 * 
+	 * @return The cache
+	 */
+	public ConcurrentLinkedQueue<PaintObject> getCache() {
+		return this.cache;
 	}
 
 	/**
@@ -78,8 +110,23 @@ public class PaintBoard extends JPanel {
 		g.setComposite(comp);
 	}
 
-	public Vector<PaintObject> getPreviewObjects() {
-		return previewObjects;
+	/**
+	 * Returns the current preview object.
+	 * 
+	 * @return The current preview object, or <code>null</code> if there is none
+	 */
+	public PaintObject getPreviewObject() {
+		return previewObject;
+	}
+
+	/**
+	 * Sets the current preview object. Removes the preview object if obj is
+	 * <code>null</code>.
+	 * 
+	 * @param obj The new preview object or <code>null</code>
+	 */
+	public void setPreviewObject(PaintObject obj) {
+		this.previewObject = obj;
 	}
 
 	/**
@@ -188,8 +235,13 @@ public class PaintBoard extends JPanel {
 		updateBoard();
 		g.drawImage(this.board, 0, 0, null);
 
+		for (PaintObject obj : cache) {
+			obj.draw(g);
+		}
+
 		// draw preview
-		updatePreview(g);
+		if (previewObject != null)
+			previewObject.draw(g);
 	}
 
 	/**
@@ -223,23 +275,13 @@ public class PaintBoard extends JPanel {
 				}
 				doCompleteRepaint = false;
 			}
-			for (PaintObject obj : cache) {
+			for (PaintObject obj : ingoing) {
 				obj.draw(g);
 				backup.add(obj);
 			}
-			cache.clear();
+			ingoing.clear();
 		}
 
-	}
-
-	/**
-	 * Updates the preview layer
-	 */
-	private void updatePreview(Graphics2D g) {
-		// render the preview objects
-		for (PaintObject o : previewObjects) {
-			o.draw(g);
-		}
 	}
 
 	/**
