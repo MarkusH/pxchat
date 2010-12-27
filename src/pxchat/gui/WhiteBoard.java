@@ -209,39 +209,46 @@ public class WhiteBoard extends JFrame {
 					return;
 
 				if (!lock) {
+					PaintObject tmp = null;
 					switch (tool) {
 						case Eraser:
 						case Freehand:
+							if (tool == Tool.Freehand)
+								paintBoard.getCache().add(freeHand);
 							Client.getInstance().sendPaintObject(freeHand);
 							freeHand = null;
 							paintBoard.setPreviewObject(null);
 							paintBoard.repaint();
 							break;
 						case Circle:
-							Client.getInstance().sendPaintObject(
-									new CircleObject(startPoint, currentPoint, currentColor,
-											currentStrokeWidth));
+							tmp = new CircleObject(startPoint, currentPoint, currentColor,
+									currentStrokeWidth);
+							paintBoard.getCache().add(tmp);
+							Client.getInstance().sendPaintObject(tmp);
 							paintBoard.setPreviewObject(null);
 							paintBoard.repaint();
 							break;
 						case Ellipse:
-							Client.getInstance().sendPaintObject(
-									new EllipseObject(startPoint, currentPoint, currentColor,
-											currentStrokeWidth));
+							tmp = new EllipseObject(startPoint, currentPoint, currentColor,
+									currentStrokeWidth);
+							paintBoard.getCache().add(tmp);
+							Client.getInstance().sendPaintObject(tmp);
 							paintBoard.setPreviewObject(null);
 							paintBoard.repaint();
 							break;
 						case Line:
-							Client.getInstance().sendPaintObject(
-									new LineObject(startPoint, currentPoint, currentColor,
-											currentStrokeWidth));
+							tmp = new LineObject(startPoint, currentPoint, currentColor,
+									currentStrokeWidth);
+							paintBoard.getCache().add(tmp);
+							Client.getInstance().sendPaintObject(tmp);
 							paintBoard.setPreviewObject(null);
 							paintBoard.repaint();
 							break;
 						case Rectangle:
-							Client.getInstance().sendPaintObject(
-									new RectObject(startPoint, currentPoint, currentColor,
-											currentStrokeWidth));
+							tmp = new RectObject(startPoint, currentPoint, currentColor,
+									currentStrokeWidth);
+							paintBoard.getCache().add(tmp);
+							Client.getInstance().sendPaintObject(tmp);
 							paintBoard.setPreviewObject(null);
 							paintBoard.repaint();
 							break;
@@ -270,7 +277,8 @@ public class WhiteBoard extends JFrame {
 								freeHand.getPath().lineTo(newPoint.x, newPoint.y);
 								if (System.currentTimeMillis() - freeHandStart > 100) {
 									paintBoard.setPreviewObject(null);
-									paintBoard.getCache().add(freeHand);
+									if (tool == Tool.Freehand)
+										paintBoard.getCache().add(freeHand);
 									Client.getInstance().sendPaintObject(freeHand);
 									freeHandStart = System.currentTimeMillis();
 									Color color = (tool == Tool.Eraser) ? new Color(0, 0, 0, 0) : currentColor;

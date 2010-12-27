@@ -78,9 +78,8 @@ public class PaintBoard extends JPanel {
 	 * @param obj The paint object to add.
 	 */
 	public void add(PaintObject obj) {
-		System.out.println(this.cache.remove(obj));
+		this.cache.remove(obj);
 		this.ingoing.add(obj);
-		System.out.println(cache);
 	}
 
 	/**
