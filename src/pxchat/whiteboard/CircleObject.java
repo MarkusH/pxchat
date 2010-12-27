@@ -64,8 +64,8 @@ public class CircleObject extends PrimitiveObject {
 
 		this.center = center;
 		this.radius = (int) Math.round(
-				Math.sqrt((center.x - arc.x) * (center.x - arc.x) +
-						(center.y - arc.y) * (center.y - arc.y)));
+				Math.sqrt((center.x - arc.x) * (center.x - arc.x)
+						+ (center.y - arc.y) * (center.y - arc.y)));
 	}
 
 	/*
@@ -83,4 +83,17 @@ public class CircleObject extends PrimitiveObject {
 		endDraw(g);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (!(obj instanceof CircleObject) || !super.equals(obj))
+			return false;
+
+		CircleObject that = (CircleObject) obj;
+
+		return this.center.equals(that.center) && this.radius == that.radius;
+	}
 }

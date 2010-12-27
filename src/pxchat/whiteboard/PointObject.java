@@ -46,4 +46,17 @@ public class PointObject extends PrimitiveObject {
 		endDraw(g);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (!(obj instanceof PointObject) || !super.equals(obj))
+			return false;
+
+		PointObject that = (PointObject) obj;
+
+		return this.point.equals(that.point);
+	}
 }

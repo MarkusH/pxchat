@@ -32,6 +32,10 @@ public class EllipseObject extends PrimitiveObject {
 	 */
 	private int height;
 
+	/**
+	 * A transient shape representing the ellipse. This has to be kept in sync
+	 * with {@link #topLeft}, {@link #width} and {@link #radius}.
+	 */
 	private transient Shape ellipse;
 
 	/**
@@ -84,4 +88,18 @@ public class EllipseObject extends PrimitiveObject {
 		endDraw(g);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (!(obj instanceof EllipseObject) || !super.equals(obj))
+			return false;
+
+		EllipseObject that = (EllipseObject) obj;
+
+		return this.topLeft.equals(that.topLeft) && 
+				this.width == that.width && this.height == that.height;
+	}
 }

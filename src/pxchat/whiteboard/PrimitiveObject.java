@@ -38,7 +38,7 @@ public abstract class PrimitiveObject extends PaintObject {
 	 * {@link #stroke}.
 	 */
 	private float width;
-	
+
 	/**
 	 * A temporary variable for saving the composite of the graphics context in
 	 * case the color has alpha.
@@ -69,13 +69,13 @@ public abstract class PrimitiveObject extends PaintObject {
 		if (stroke == null)
 			stroke = new BasicStroke(width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f);
 		g.setStroke(stroke);
-		
+
 		if (color.getAlpha() == 0) {
 			tmpComp = g.getComposite();
 			g.setColor(new Color(0x000000, true));
 			g.setComposite(AlphaComposite.Src);
 		}
-		
+
 		g.setColor(color);
 	}
 
@@ -88,5 +88,19 @@ public abstract class PrimitiveObject extends PaintObject {
 		if (color.getAlpha() == 0) {
 			g.setComposite(tmpComp);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (!(obj instanceof PrimitiveObject))
+			return false;
+
+		PrimitiveObject that = (PrimitiveObject) obj;
+
+		return this.color.equals(that.color) && this.width == that.width;
 	}
 }

@@ -78,4 +78,18 @@ public class RectObject extends PrimitiveObject {
 		endDraw(g);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (!(obj instanceof RectObject) || !super.equals(obj))
+			return false;
+
+		RectObject that = (RectObject) obj;
+
+		return this.topLeft.equals(that.topLeft) && 
+				this.width == that.width && this.height == that.height;
+	}
 }

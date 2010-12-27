@@ -53,4 +53,17 @@ public class LineObject extends PrimitiveObject {
 		endDraw(g);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (!(obj instanceof LineObject) || !super.equals(obj))
+			return false;
+
+		LineObject that = (LineObject) obj;
+
+		return this.start.equals(that.start) && this.stop.equals(that.stop);
+	}
 }
