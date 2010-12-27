@@ -554,20 +554,20 @@ public class WhiteBoard extends JFrame {
 			@Override
 			public void paintObjectReceived(PaintObject object) {
 				synchronized (paintBoard) {
-					paintBoard.getCache().add(object);				
+					paintBoard.add(object);
 				}
 			}
 
 			@Override
-			public void paintRequest() {
+			public void paintRequest(boolean complete) {
 //				synchronized (paintBoard) {
-					paintBoard.repaint();
+					paintBoard.repaint(complete);
 //				}
 			}
 
 			@Override
 			public void imageCleared() {
-				paintBoard.clearBoard();
+				paintBoard.clearBoard(true);
 			}
 
 		});

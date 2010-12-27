@@ -54,7 +54,7 @@ public interface WhiteboardClientListener {
 	 * This method is called whenever the client requests a repaint of the
 	 * whiteboard.
 	 */
-	public void paintRequest();
+	public void paintRequest(boolean complete);
 
 	/**
 	 * This method is called whenever the whiteboard was cleared.

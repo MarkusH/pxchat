@@ -163,6 +163,7 @@ public final class Client {
 		public void process(FrameAdapter adapter) {
 			
 			boolean doPaintRequest = false;
+			boolean doCompletePaintRequest = false;
 
 			for (Frame frame : adapter.getIncoming()) {
 
@@ -248,7 +249,7 @@ public final class Client {
 						while (iterator.hasNext()) {
 							ImageReceiver receiver = iterator.next();
 							if (receiver.process(adapter, spf)) {
-								doPaintRequest = true;
+								doCompletePaintRequest = true;
 								iterator.remove();
 								break;
 							}
@@ -296,9 +297,9 @@ public final class Client {
 						break;
 				}
 			}
-			if (doPaintRequest) {
+			if (doPaintRequest || doCompletePaintRequest) {
 				for (WhiteboardClientListener listener : whiteboardClientListeners) {
-					listener.paintRequest();
+					listener.paintRequest(doCompletePaintRequest);
 				}
 			}
 			adapter.getIncoming().clear();
