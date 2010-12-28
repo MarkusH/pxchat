@@ -14,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -44,6 +45,8 @@ import pxchat.util.PicFileFilter;
 import pxchat.whiteboard.CircleObject;
 import pxchat.whiteboard.EllipseObject;
 import pxchat.whiteboard.FreeHandObject;
+import pxchat.whiteboard.ImageObject;
+import pxchat.whiteboard.ImageTable;
 import pxchat.whiteboard.LineObject;
 import pxchat.whiteboard.PaintObject;
 import pxchat.whiteboard.PointObject;
@@ -57,7 +60,7 @@ import pxchat.whiteboard.RectObject;
 public class WhiteBoard extends JFrame {
 
 	public static enum Tool {
-		Circle, Ellipse, Eraser, Freehand, Line, Rectangle, Text
+		Circle, Ellipse, Eraser, Freehand, Line, Rectangle, Text, Image
 	};
 
 	private int sizeX = 1024;
@@ -66,8 +69,8 @@ public class WhiteBoard extends JFrame {
 	private PaintBoard paintBoard;
 	private JPanel toolbar, drawColorPanel;
 	private JToggleButton drawCircle, drawEllipse, drawEraser, drawFreehand, drawLine,
-			drawRectangle, drawText, lockCanvas;
-	private JButton drawColor, loadImage, saveImage, clearImage, loadBackground,
+			drawRectangle, drawText, drawImage, lockCanvas;
+	private JButton drawColor, saveImage, clearImage, loadBackground,
 			loadBackgroundColor;
 	private JSlider lineWidthSlider;
 	private JLabel lineWidthLabel;
@@ -78,6 +81,8 @@ public class WhiteBoard extends JFrame {
 	
 	private FreeHandObject freeHand;
 	private long freeHandStart;
+	
+	private ImageObject imageObject;
 	
 	private boolean isLeftButton = false;
 	private boolean lock = false;
@@ -252,6 +257,18 @@ public class WhiteBoard extends JFrame {
 							paintBoard.setPreviewObject(null);
 							paintBoard.repaint();
 							break;
+						case Image:
+							currentPoint = new Point(e.getX(), e.getY());
+							paintBoard.setPreviewObject(null);
+							BufferedImage img = imageObject.getResizedImage();
+							int id = Client.getInstance().getNextImageID();
+							ImageTable.getInstance().put(id, img);
+							tmp = new ImageObject(startPoint, currentPoint, id);
+							paintBoard.getCache().add(tmp);
+							Client.getInstance().sendPaintObject(tmp);
+							Client.getInstance().sendImage(id);
+							paintBoard.repaint();
+							break;
 					}
 				}
 				isLeftButton = false;
@@ -322,6 +339,12 @@ public class WhiteBoard extends JFrame {
 											currentStrokeWidth));
 							paintBoard.repaint();
 							break;
+						case Image:
+							currentPoint = new Point(e.getX(), e.getY());
+							imageObject = new ImageObject(startPoint, currentPoint, imageObject.getImage());
+							paintBoard.setPreviewObject(imageObject);
+							paintBoard.repaint();
+							break;
 					}
 				}
 			}
@@ -381,6 +404,7 @@ public class WhiteBoard extends JFrame {
 
 		drawFreehand = new JToggleButton("", Icons.get("draw-freehand.png"));
 		drawFreehand.setToolTipText(I18n.getInstance().getString("wbPencil"));
+		drawFreehand.setSelected(true);
 		drawFreehand.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -414,6 +438,29 @@ public class WhiteBoard extends JFrame {
 				tool = Tool.Text;
 			}
 		});
+		
+		drawImage = new JToggleButton("", Icons.get("load-image.png"));
+		drawImage.setToolTipText(I18n.getInstance().getString("wbInsertImage"));
+		drawImage.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					JFileChooser fc = new JFileChooser();
+					fc.setFileFilter(new PicFileFilter());
+					if (fc.showOpenDialog(WhiteBoard.this) == JFileChooser.APPROVE_OPTION) {
+						imageObject = new ImageObject(new Point(), new Point(1, 1), ImageIO.read(fc.getSelectedFile()));
+						if (imageObject == null)
+							throw new Exception();
+						tool = Tool.Image;
+					} else {
+						throw new Exception();
+					}
+				} catch (Exception e) {
+					drawFreehand.setSelected(true);
+					tool = Tool.Freehand;
+				}
+			}
+		});
 
 		lockCanvas = new JToggleButton("", Icons.get("lock.png"));
 		lockCanvas.setToolTipText(I18n.getInstance().getString("wbLockCanvas"));
@@ -429,15 +476,6 @@ public class WhiteBoard extends JFrame {
 					lockCanvas.setIcon(Icons.get("lock.png"));
 					Client.getInstance().sendWhiteboardControlsLock(false);
 				}
-			}
-		});
-
-		loadImage = new JButton("", Icons.get("load-image.png"));
-		loadImage.setToolTipText(I18n.getInstance().getString("wbInsertImage"));
-		loadImage.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				insertImage();
 			}
 		});
 
@@ -517,7 +555,7 @@ public class WhiteBoard extends JFrame {
 		toolbar.add(drawEraser);
 		toolbar.add(lockCanvas);
 
-		toolbar.add(loadImage);
+		toolbar.add(drawImage);
 		toolbar.add(saveImage);
 
 		toolbar.add(clearImage);
@@ -537,6 +575,7 @@ public class WhiteBoard extends JFrame {
 		g.add(drawLine);
 		g.add(drawRectangle);
 		g.add(drawText);
+		g.add(drawImage);
 
 		panel.add(toolbar);
 		panel.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -594,10 +633,6 @@ public class WhiteBoard extends JFrame {
 		Client.getInstance().sendImageClear();
 	}
 
-	private void insertImage() {
-		// TODO insert image
-	}
-
 	private void loadBackground() {
 		// TODO need some option to set the background to a specific color
 		// 1) Display a dialog to choose "Image" or "Color"
@@ -627,7 +662,7 @@ public class WhiteBoard extends JFrame {
 		drawText.setEnabled(!lock);
 		lockCanvas.setEnabled(!lock);
 		drawColor.setEnabled(!lock);
-		loadImage.setEnabled(!lock);
+		drawImage.setEnabled(!lock);
 		clearImage.setEnabled(!lock);
 		loadBackground.setEnabled(!lock);
 		loadBackgroundColor.setEnabled(!lock);

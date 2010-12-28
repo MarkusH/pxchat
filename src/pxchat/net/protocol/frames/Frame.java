@@ -40,6 +40,7 @@ public abstract class Frame implements Serializable {
 	public static final int ID_BACKGROUND = 106;
 	public static final int ID_FREEHAND = 107;
 	public static final int ID_CLEAR = 108;
+	public static final int ID_IMG = 109;
 
 	/**
 	 * The id of this frame

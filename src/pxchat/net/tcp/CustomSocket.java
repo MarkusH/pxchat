@@ -210,7 +210,7 @@ public class CustomSocket {
 	}
 	
 	private void readCallback(Exception e) {
-		e.printStackTrace();
+//		e.printStackTrace();
 		if (this.closing || e instanceof EOFException || e instanceof SocketException) {
 			this.closing = false;
 			this.connected = false;

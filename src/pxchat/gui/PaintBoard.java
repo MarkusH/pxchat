@@ -80,6 +80,7 @@ public class PaintBoard extends JPanel {
 	public void add(PaintObject obj) {
 		this.cache.remove(obj);
 		this.ingoing.add(obj);
+		System.out.println(cache);
 	}
 
 	/**

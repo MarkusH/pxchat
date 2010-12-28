@@ -283,6 +283,7 @@ public final class Client {
 					case Frame.ID_LINE:
 					case Frame.ID_POINT:
 					case Frame.ID_FREEHAND:
+					case Frame.ID_IMG:
 						doPaintRequest = true;
 						for (WhiteboardClientListener listener : whiteboardClientListeners) {
 							listener.paintObjectReceived((PaintObject) frame);
