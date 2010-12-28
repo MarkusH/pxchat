@@ -185,6 +185,8 @@ public class PaintBoard extends JPanel {
 				BufferedImage downSampleImg = new BufferedImage((int) width, (int) height,
 						BufferedImage.TYPE_INT_RGB);
 				Graphics2D g = downSampleImg.createGraphics();
+				g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+						RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 				g.drawImage(img, 0, 0, (int) width, (int) height, null);
 				g.dispose();
 

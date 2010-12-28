@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
+	<entry key="language">Sprache</entry>
 	<entry key="disconnectedFromServer">Verbindung zum Server getrennt.</entry>
 	<entry key="connectedToServer">Verbindung zum Server hergestellt.</entry>
 	<entry key="authenticationFail">Die Authentifikation ist fehlgeschlagen.</entry>

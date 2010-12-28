@@ -14,9 +14,12 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -225,6 +228,30 @@ public class ClientMain extends JFrame {
 		mFile.add(mExit);
 
 		mBar.add(mFile);
+		
+		/**
+		 * Create language menu
+		 */
+		Set<Locale> langs = I18n.getInstance().getLanguages();
+		if (langs.size() > 0) {
+			JMenu mLang = new JMenu(I18n.getInstance().getString("language"));
+			for (Locale lang : langs) {
+				JMenuItem itm = new JMenuItem(lang.getDisplayLanguage(lang));
+				itm.putClientProperty("locale", lang);
+				itm.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						I18n.getInstance().setLocale((Locale) 
+								((JComponent) e.getSource()).getClientProperty("locale"));
+					}
+				});
+				mLang.add(itm);
+			}
+			mBar.add(mLang);
+		}
+		
+		
 		/**
 		 * building the help menu
 		 */
@@ -242,6 +269,7 @@ public class ClientMain extends JFrame {
 		});
 		mHelp.add(mAbout);
 		mBar.add(mHelp);
+		
 		this.setJMenuBar(mBar);
 
 		/**************************************************
