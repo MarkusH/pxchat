@@ -104,7 +104,8 @@ public class WhiteBoard extends JFrame {
 	private float currentStrokeWidth = 1.0f;
 
 	public WhiteBoard() {
-		super(I18n.getInstance().getString("wbTitle"));
+		super();
+		I18n.getInstance().getTitleComps().put(this, "wbTitle");
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage("./data/img/icon/whiteboard.png"));
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setResizable(false);
@@ -118,8 +119,8 @@ public class WhiteBoard extends JFrame {
 		paintBoard.setPreferredSize(new Dimension(sizeX, sizeY));
 
 		final JPopupMenu popup = new JPopupMenu();
-		JMenuItem backgroundMenuItem = new JMenuItem(I18n.getInstance().getString("wbBackground"),
-				Icons.get("load-background-16.png"));
+		JMenuItem backgroundMenuItem = new JMenuItem(Icons.get("load-background-16.png"));
+		I18n.getInstance().getTextComps().put(backgroundMenuItem, "wbBackground");
 		backgroundMenuItem.addActionListener(new ActionListener() {
 
 			@Override
@@ -127,8 +128,8 @@ public class WhiteBoard extends JFrame {
 				loadBackground();
 			}
 		});
-		JMenuItem saveMenuItem = new JMenuItem(I18n.getInstance().getString("wbSaveToFile"), Icons
-				.get("save-16.png"));
+		JMenuItem saveMenuItem = new JMenuItem(Icons.get("save-16.png"));
+		I18n.getInstance().getTextComps().put(saveMenuItem, "wbSaveToFile");
 		saveMenuItem.addActionListener(new ActionListener() {
 
 			@Override
@@ -138,8 +139,8 @@ public class WhiteBoard extends JFrame {
 			}
 		});
 
-		JMenuItem clearMenuItem = new JMenuItem(I18n.getInstance().getString("wbClear"), Icons
-				.get("clear-16.png"));
+		JMenuItem clearMenuItem = new JMenuItem(Icons.get("clear-16.png"));
+		I18n.getInstance().getTextComps().put(clearMenuItem, "wbClear");
 		clearMenuItem.addActionListener(new ActionListener() {
 
 			@Override
@@ -363,7 +364,7 @@ public class WhiteBoard extends JFrame {
 		toolbar.setAlignmentY(TOP_ALIGNMENT);
 
 		drawCircle = new JToggleButton("", Icons.get("draw-circle.png"));
-		drawCircle.setToolTipText(I18n.getInstance().getString("wbCircle"));
+		I18n.getInstance().getToolComps().put(drawCircle, "wbCircle");
 		drawCircle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -372,7 +373,7 @@ public class WhiteBoard extends JFrame {
 		});
 
 		drawColor = new JButton("", Icons.get("draw-color.png"));
-		drawColor.setToolTipText(I18n.getInstance().getString("wbChangeColor"));
+		I18n.getInstance().getToolComps().put(drawColor, "wbChangeColor");
 		drawColor.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -385,7 +386,7 @@ public class WhiteBoard extends JFrame {
 		});
 
 		drawEllipse = new JToggleButton("", Icons.get("draw-ellipse.png"));
-		drawEllipse.setToolTipText(I18n.getInstance().getString("wbEllipse"));
+		I18n.getInstance().getToolComps().put(drawEllipse, "wbEllipse");
 		drawEllipse.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -394,7 +395,7 @@ public class WhiteBoard extends JFrame {
 		});
 
 		drawEraser = new JToggleButton("", Icons.get("draw-eraser.png"));
-		drawEraser.setToolTipText(I18n.getInstance().getString("wbEraser"));
+		I18n.getInstance().getToolComps().put(drawEraser, "wbEraser");
 		drawEraser.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -403,7 +404,7 @@ public class WhiteBoard extends JFrame {
 		});
 
 		drawFreehand = new JToggleButton("", Icons.get("draw-freehand.png"));
-		drawFreehand.setToolTipText(I18n.getInstance().getString("wbPencil"));
+		I18n.getInstance().getToolComps().put(drawFreehand, "wbPencil");
 		drawFreehand.setSelected(true);
 		drawFreehand.addActionListener(new ActionListener() {
 			@Override
@@ -413,7 +414,7 @@ public class WhiteBoard extends JFrame {
 		});
 
 		drawLine = new JToggleButton("", Icons.get("draw-line.png"));
-		drawLine.setToolTipText(I18n.getInstance().getString("wbLine"));
+		I18n.getInstance().getToolComps().put(drawLine, "wbLine");
 		drawLine.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -422,7 +423,7 @@ public class WhiteBoard extends JFrame {
 		});
 
 		drawRectangle = new JToggleButton("", Icons.get("draw-rectangle.png"));
-		drawRectangle.setToolTipText(I18n.getInstance().getString("wbRectangle"));
+		I18n.getInstance().getToolComps().put(drawRectangle, "wbRectangle");
 		drawRectangle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -431,7 +432,7 @@ public class WhiteBoard extends JFrame {
 		});
 
 		drawText = new JToggleButton("", Icons.get("draw-text.png"));
-		drawText.setToolTipText(I18n.getInstance().getString("wbText"));
+		I18n.getInstance().getToolComps().put(drawText, "wbText");
 		drawText.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -440,7 +441,7 @@ public class WhiteBoard extends JFrame {
 		});
 		
 		drawImage = new JToggleButton("", Icons.get("load-image.png"));
-		drawImage.setToolTipText(I18n.getInstance().getString("wbInsertImage"));
+		I18n.getInstance().getToolComps().put(drawImage, "wbInsertImage");
 		drawImage.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -463,16 +464,18 @@ public class WhiteBoard extends JFrame {
 		});
 
 		lockCanvas = new JToggleButton("", Icons.get("lock.png"));
-		lockCanvas.setToolTipText(I18n.getInstance().getString("wbLockCanvas"));
+		I18n.getInstance().getToolComps().put(lockCanvas, "wbLockCanvas");
 		lockCanvas.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (lockCanvas.isSelected()) {
 					lockCanvas.setToolTipText(I18n.getInstance().getString("wbUnlockCanvas"));
+					I18n.getInstance().getToolComps().put(lockCanvas, "wbUnlockCanvas");
 					lockCanvas.setIcon(Icons.get("unlock.png"));
 					Client.getInstance().sendWhiteboardControlsLock(true);
 				} else {
 					lockCanvas.setToolTipText(I18n.getInstance().getString("wbLockCanvas"));
+					I18n.getInstance().getToolComps().put(lockCanvas, "wbLockCanvas");
 					lockCanvas.setIcon(Icons.get("lock.png"));
 					Client.getInstance().sendWhiteboardControlsLock(false);
 				}
@@ -480,7 +483,7 @@ public class WhiteBoard extends JFrame {
 		});
 
 		saveImage = new JButton("", Icons.get("save.png"));
-		saveImage.setToolTipText(I18n.getInstance().getString("wbSaveToFile"));
+		I18n.getInstance().getToolComps().put(saveImage, "wbSaveToFile");
 		saveImage.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -489,7 +492,7 @@ public class WhiteBoard extends JFrame {
 		});
 
 		clearImage = new JButton("", Icons.get("clear.png"));
-		clearImage.setToolTipText(I18n.getInstance().getString("wbClear"));
+		I18n.getInstance().getToolComps().put(clearImage, "wbClear");
 		clearImage.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -499,7 +502,7 @@ public class WhiteBoard extends JFrame {
 		});
 
 		loadBackground = new JButton("", Icons.get("load-background.png"));
-		loadBackground.setToolTipText(I18n.getInstance().getString("wbBackground"));
+		I18n.getInstance().getToolComps().put(loadBackground, "wbBackground");
 		loadBackground.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -508,7 +511,7 @@ public class WhiteBoard extends JFrame {
 		});
 
 		loadBackgroundColor = new JButton("", Icons.get("background-color.png"));
-		loadBackgroundColor.setToolTipText(I18n.getInstance().getString("wbBackgroundColor"));
+		I18n.getInstance().getToolComps().put(loadBackgroundColor, "wbBackgroundColor");
 		loadBackgroundColor.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -527,7 +530,7 @@ public class WhiteBoard extends JFrame {
 		drawColorPanel.setBackground(currentColor);
 
 		lineWidthSlider = new JSlider(1, 10, 1);
-		lineWidthSlider.setToolTipText(I18n.getInstance().getString("wbLineWidth"));
+		I18n.getInstance().getToolComps().put(lineWidthSlider, "wbLineWidth");
 		lineWidthSlider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent arg0) {

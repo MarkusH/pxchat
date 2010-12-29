@@ -195,7 +195,8 @@ public class ClientMain extends JFrame {
 		 */
 		mFile = new JMenu("pxchat");
 		mFile.setMnemonic('x');
-		mNewChat = new JMenuItem(I18n.getInstance().getString("connectToChat"));
+		mNewChat = new JMenuItem();
+		I18n.getInstance().getTextComps().put(mNewChat, "connectToChat");
 		mNewChat.setMnemonic('n');
 		mNewChat.addActionListener(new ActionListener() {
 			@Override
@@ -205,7 +206,8 @@ public class ClientMain extends JFrame {
 		});
 		mFile.add(mNewChat);
 
-		mCloseChat = new JMenuItem(I18n.getInstance().getString("closeChat"));
+		mCloseChat = new JMenuItem();
+		I18n.getInstance().getTextComps().put(mCloseChat, "closeChat");
 		mCloseChat.setMnemonic('d');
 		mCloseChat.addActionListener(new ActionListener() {
 			@Override
@@ -216,7 +218,8 @@ public class ClientMain extends JFrame {
 		mCloseChat.setEnabled(false);
 		mFile.add(mCloseChat);
 
-		mExit = new JMenuItem(I18n.getInstance().getString("quitProgram"), Icons.get("quit.png"));
+		mExit = new JMenuItem(Icons.get("quit.png"));
+		I18n.getInstance().getTextComps().put(mExit, "quitProgram");
 		mExit.setMnemonic('q');
 		mExit.addActionListener(new ActionListener() {
 			@Override
@@ -234,7 +237,8 @@ public class ClientMain extends JFrame {
 		 */
 		Set<Locale> langs = I18n.getInstance().getLanguages();
 		if (langs.size() > 0) {
-			JMenu mLang = new JMenu(I18n.getInstance().getString("language"));
+			JMenu mLang = new JMenu();
+			I18n.getInstance().getTextComps().put(mLang, "language");
 			for (Locale lang : langs) {
 				JMenuItem itm = new JMenuItem(lang.getDisplayLanguage(lang));
 				itm.putClientProperty("locale", lang);
@@ -255,9 +259,11 @@ public class ClientMain extends JFrame {
 		/**
 		 * building the help menu
 		 */
-		mHelp = new JMenu(I18n.getInstance().getString("help"));
+		mHelp = new JMenu();
+		I18n.getInstance().getTextComps().put(mHelp, "help");
 		mHelp.setMnemonic('h');
-		mAbout = new JMenuItem(I18n.getInstance().getString("aboutInfo"), Icons.get("about.png"));
+		mAbout = new JMenuItem(Icons.get("about.png"));
+		I18n.getInstance().getTextComps().put(mAbout, "aboutInfo");
 		mAbout.setMnemonic('b');
 		mAbout.addActionListener(new ActionListener() {
 			@Override
@@ -341,8 +347,8 @@ public class ClientMain extends JFrame {
 		/**
 		 * the button to access the whiteboard
 		 */
-		whiteBoardButton = new JButton(I18n.getInstance().getString("whiteBoardButton"), Icons
-				.get("whiteboard.png"));
+		whiteBoardButton = new JButton(Icons.get("whiteboard.png"));
+		I18n.getInstance().getTextComps().put(whiteBoardButton, "whiteBoardButton");
 		whiteBoardButton.setMnemonic('w');
 		whiteBoardButton.setPreferredSize(new Dimension(150, 30));
 		whiteBoardButton.setEnabled(false);
@@ -356,7 +362,8 @@ public class ClientMain extends JFrame {
 		/**
 		 * the button to send a message
 		 */
-		sendButton = new JButton(I18n.getInstance().getString("sendButton"), Icons.get("send.png"));
+		sendButton = new JButton(Icons.get("send.png"));
+		I18n.getInstance().getTextComps().put(sendButton, "sendButton");
 		sendButton.setMnemonic('s');
 		sendButton.setPreferredSize(new Dimension(150, 30));
 		sendButton.setEnabled(false);
@@ -385,7 +392,7 @@ public class ClientMain extends JFrame {
 		panel.add(panelr, BorderLayout.EAST);
 
 		this.getContentPane().add(panel);
-
+		I18n.getInstance().updateComponents();
 		this.pack();
 		this.setResizable(false);
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
