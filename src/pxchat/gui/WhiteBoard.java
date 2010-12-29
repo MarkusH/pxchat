@@ -13,6 +13,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -119,7 +121,7 @@ public class WhiteBoard extends JFrame {
 		paintBoard.setPreferredSize(new Dimension(sizeX, sizeY));
 
 		final JPopupMenu popup = new JPopupMenu();
-		JMenuItem backgroundMenuItem = new JMenuItem(Icons.get("load-background-16.png"));
+		final JMenuItem backgroundMenuItem = new JMenuItem(Icons.get("load-background-16.png"));
 		I18n.getInstance().getTextComps().put(backgroundMenuItem, "wbBackground");
 		backgroundMenuItem.addActionListener(new ActionListener() {
 
@@ -128,7 +130,7 @@ public class WhiteBoard extends JFrame {
 				loadBackground();
 			}
 		});
-		JMenuItem saveMenuItem = new JMenuItem(Icons.get("save-16.png"));
+		final JMenuItem saveMenuItem = new JMenuItem(Icons.get("save-16.png"));
 		I18n.getInstance().getTextComps().put(saveMenuItem, "wbSaveToFile");
 		saveMenuItem.addActionListener(new ActionListener() {
 
@@ -139,7 +141,7 @@ public class WhiteBoard extends JFrame {
 			}
 		});
 
-		JMenuItem clearMenuItem = new JMenuItem(Icons.get("clear-16.png"));
+		final JMenuItem clearMenuItem = new JMenuItem(Icons.get("clear-16.png"));
 		I18n.getInstance().getTextComps().put(clearMenuItem, "wbClear");
 		clearMenuItem.addActionListener(new ActionListener() {
 
@@ -352,6 +354,33 @@ public class WhiteBoard extends JFrame {
 
 			@Override
 			public void mouseMoved(MouseEvent e) {
+			}
+		});
+
+		this.addWindowListener(new WindowAdapter() {
+			
+			public void windowClosed(WindowEvent e) {
+				I18n.getInstance().getTitleComps().remove(this);
+				I18n.getInstance().getToolComps().remove(drawCircle);
+				I18n.getInstance().getToolComps().remove(drawEllipse);
+				I18n.getInstance().getToolComps().remove(drawEraser);
+				I18n.getInstance().getToolComps().remove(drawFreehand);
+				I18n.getInstance().getToolComps().remove(drawLine);
+				I18n.getInstance().getToolComps().remove(drawRectangle);
+				I18n.getInstance().getToolComps().remove(drawText);
+				I18n.getInstance().getToolComps().remove(drawImage);
+				I18n.getInstance().getToolComps().remove(lockCanvas);
+				
+				I18n.getInstance().getToolComps().remove(drawColor);
+				I18n.getInstance().getToolComps().remove(saveImage);
+				I18n.getInstance().getToolComps().remove(clearImage);
+				I18n.getInstance().getToolComps().remove(loadBackground);
+				I18n.getInstance().getToolComps().remove(loadBackgroundColor);
+				I18n.getInstance().getToolComps().remove(lineWidthSlider);
+				
+				I18n.getInstance().getTextComps().remove(backgroundMenuItem);
+				I18n.getInstance().getTextComps().remove(saveMenuItem);
+				I18n.getInstance().getTextComps().remove(clearMenuItem);
 			}
 		});
 

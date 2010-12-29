@@ -31,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -418,16 +419,23 @@ public class ClientMain extends JFrame {
 
 			@Override
 			public void clientDisconnect() {
-				mNewChat.setEnabled(true);
-				mCloseChat.setEnabled(false);
-				whiteBoardButton.setEnabled(false);
-				sendButton.setEnabled(false);
-				inputArea.setEnabled(false);
-				writeNotification(I18n.getInstance().getString("disconnectedFromServer"));
-				userList.setListData(new Object[0]);
-				log.endLog();
-				wb.dispose();
-				wb = new WhiteBoard();
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						mNewChat.setEnabled(true);
+						mCloseChat.setEnabled(false);
+						whiteBoardButton.setEnabled(false);
+						sendButton.setEnabled(false);
+						inputArea.setEnabled(false);
+						writeNotification(I18n.getInstance().getString("disconnectedFromServer"));
+						userList.setListData(new Object[0]);
+						log.endLog();
+						wb.dispose();
+						wb = new WhiteBoard();
+						I18n.getInstance().updateComponents();
+					}
+				});
 				ImageTable.getInstance().clear();
 			}
 
