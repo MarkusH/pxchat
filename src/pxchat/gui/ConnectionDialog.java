@@ -32,6 +32,8 @@ import pxchat.net.Client;
  */
 public class ConnectionDialog extends JDialog {
 
+	private static final long serialVersionUID = -3599228840090316782L;
+	
 	private JButton connectButton, abortButton;
 	private JTextField hostAddress, portNumber, userName;
 	private JPasswordField passWord;

@@ -59,6 +59,9 @@ import pxchat.whiteboard.ImageTable;
  * 
  */
 public class ClientMain extends JFrame {
+
+	private static final long serialVersionUID = -2128208335533623440L;
+
 	/**
 	 * @param args
 	 */

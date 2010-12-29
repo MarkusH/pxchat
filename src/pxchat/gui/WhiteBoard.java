@@ -61,6 +61,8 @@ import pxchat.whiteboard.RectObject;
  */
 public class WhiteBoard extends JFrame {
 
+	private static final long serialVersionUID = -1461725784646478083L;
+
 	public static enum Tool {
 		Circle, Ellipse, Eraser, Freehand, Line, Rectangle, Text, Image
 	};

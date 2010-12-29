@@ -21,6 +21,8 @@ import javax.swing.SwingConstants;
  * 
  */
 public class SplashScreen extends JDialog {
+	private static final long serialVersionUID = 8187513629570194009L;
+	
 	private JButton startButton;
 	private JLabel imageLabel;
 	private JFrame parent;
