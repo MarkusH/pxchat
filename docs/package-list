@@ -1,0 +1,8 @@
+pxchat.gui
+pxchat.net
+pxchat.net.protocol.core
+pxchat.net.protocol.frames
+pxchat.net.tcp
+pxchat.server
+pxchat.util
+pxchat.whiteboard
