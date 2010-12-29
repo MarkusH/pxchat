@@ -233,7 +233,7 @@ public class CustomSocket {
 	 * Encrypts and write the object to the output stream of the socket.
 	 * 
 	 * @param object
-	 * @return
+	 * @return boolean returns false if the client is not connected, otherwise true
 	 * @throws IOException
 	 */
 	public boolean writeObject(Object object) throws IOException {

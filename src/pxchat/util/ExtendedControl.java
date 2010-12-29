@@ -27,9 +27,11 @@ import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 
 /**
- * JDK 6's {@link ResourceBundle.Control} subclass that allows loading of
- * bundles in XML format. The bundles are searched first as Java classes, then
- * as properties files (these two methods are the standard search mechanism of
+ * JDK 6's <a href=
+ * "http://download.oracle.com/javase/6/docs/api/java/util/ResourceBundle.Control.html"
+ * > ResourceBundle.Control</a> subclass that allows loading of bundles in XML
+ * format. The bundles are searched first as Java classes, then as properties
+ * files (these two methods are the standard search mechanism of
  * ResourceBundle), then as XML properties files. The filename extension of the
  * XML properties files is assumed to be *.properties.xml
  */

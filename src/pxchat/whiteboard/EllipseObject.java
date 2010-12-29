@@ -34,7 +34,7 @@ public class EllipseObject extends PrimitiveObject {
 
 	/**
 	 * A transient shape representing the ellipse. This has to be kept in sync
-	 * with {@link #topLeft}, {@link #width} and {@link #radius}.
+	 * with {@link #topLeft}, {@link #width} and {@link #height}.
 	 */
 	private transient Shape ellipse;
 
