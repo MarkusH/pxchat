@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,22 +34,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
 import pxchat.net.Client;
 import pxchat.net.ClientListener;
 import pxchat.net.protocol.frames.NotificationFrame;
+import pxchat.util.Config;
 import pxchat.util.Icons;
 import pxchat.util.Logging;
-import pxchat.util.XMLUtil;
 import pxchat.whiteboard.ImageTable;
 
 /**
@@ -66,7 +55,7 @@ public class ClientMain extends JFrame {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// I18n.getInstance().setLocale(new Locale("de", "DE"));
+		Config.init("./data/config/client.xml");
 		Icons.setFolder("./data/img/icon/");
 		new ClientMain();
 	}
@@ -83,9 +72,6 @@ public class ClientMain extends JFrame {
 	private JList userList;
 
 	private JButton whiteBoardButton, sendButton;
-	
-	private HashMap<String, String> config;
-	private HashMap<String, HashMap<String, String>> profiles;
 
 	private WhiteBoard wb = new WhiteBoard();
 
@@ -119,76 +105,6 @@ public class ClientMain extends JFrame {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		SplashScreen splashScreen = new SplashScreen(this);
 		splashScreen.setVisible(true);
-
-		/**************************************************
-		 * Load the configuration file
-		 **************************************************/
-		config = new HashMap<String, String>();
-		profiles = new HashMap<String, HashMap<String,String>>();
-		/* TODO put default values here
-		 * the  
-		 */
-		config.put("defaultProfile", "");
-		
-		File file = new File("data/config/client.xml");
-		Document doc = null;
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setValidating(true);
-			DocumentBuilder builder = factory.newDocumentBuilder();
-
-			builder.setErrorHandler(new ErrorHandler() {
-
-				@Override
-				public void error(SAXParseException e) throws SAXException {
-					throw e;
-				}
-
-				@Override
-				public void fatalError(SAXParseException e) throws SAXException {
-					System.out.println("Fatal error validating the config file:");
-					e.printStackTrace();
-					System.exit(0);
-				}
-
-				@Override
-				public void warning(SAXParseException e) throws SAXException {
-					System.out.println("Warning validating the config file:");
-					e.printStackTrace();
-				}
-			});
-			doc = builder.parse(file);
-			Node node = doc.getDocumentElement();
-			
-			Node configNode = XMLUtil.getChildByName(node, "config");
-			NodeList listConfig = configNode.getChildNodes();
-			if (listConfig != null) {
-				for (int i = 0; i < listConfig.getLength(); i++) {
-					config.put(XMLUtil.getAttributeValue(listConfig.item(i), "key"),
-							   XMLUtil.getAttributeValue(listConfig.item(i), "value"));
-				}
-			}
-			Node profilesNode = XMLUtil.getChildByName(node, "profiles");
-			NodeList listProfiles = profilesNode.getChildNodes();
-			HashMap<String, String> profile;
-			if (listProfiles != null) {
-				for (int i = 0; i < listProfiles.getLength(); i++) {
-					if (listProfiles.item(i).getNodeName().equals("profile")) {
-						profile = new HashMap<String, String>();
-						profile.put("host", XMLUtil.getAttributeValue(listProfiles.item(i), "host"));
-						profile.put("port", XMLUtil.getAttributeValue(listProfiles.item(i), "port"));
-						profile.put("username", XMLUtil.getAttributeValue(listProfiles.item(i), "username"));
-						profile.put("password", XMLUtil.getAttributeValue(listProfiles.item(i), "password"));
-						profiles.put(XMLUtil.getAttributeValue(listProfiles.item(i), "name"), profile);
-					}
-				}
-			}
-		} catch (Exception e) {
-			System.out.println("An error ocurred loading the config file");
-			e.printStackTrace();
-			return;
-		}
-		
 		
 		/**************************************************
 		 * Create Menu Bar
@@ -491,29 +407,6 @@ public class ClientMain extends JFrame {
 		 * and send a notifcation to the splashscreen that we are ready ;-)
 		 */
 		splashScreen.setReady();
-	}
-	
-	public String getConfig(String key) {
-		return config.get(key);
-	}
-	
-	public HashMap<String, String> getProfile(String name) {
-		if (profiles.get(name) != null) {
-			return profiles.get(name);
-		}
-		HashMap<String, String> hm = new HashMap<String, String>();
-		hm.put("host", "localhost");
-		hm.put("port", "12345");
-		hm.put("username", "");
-		hm.put("password", "");
-		return hm;
-	}
-	
-	public Object[] getProfileNames() {
-		if (profiles.keySet() != null) {
-			return profiles.keySet().toArray();
-		}
-		return new String[0];
 	}
 
 	private void scrollChatLog() {
