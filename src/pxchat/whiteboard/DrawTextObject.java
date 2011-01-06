@@ -48,7 +48,7 @@ public class DrawTextObject extends PrimitiveObject {
 	public DrawTextObject(Point topLeft, int width, int height, Color color, float strokeWidth,
 							String text) {
 		super(color, strokeWidth);
-		this.id = Frame.ID_RECT;
+		this.id = Frame.ID_TEXT;
 		this.topLeft = topLeft;
 		this.width = width;
 		this.height = height;
@@ -67,7 +67,7 @@ public class DrawTextObject extends PrimitiveObject {
 	 */
 	public DrawTextObject(Point point1, Point point2, Color color, float width, String text) {
 		super(color, width);
-		this.id = Frame.ID_RECT;
+		this.id = Frame.ID_TEXT;
 		this.topLeft = new Point(Math.min(point1.x, point2.x), Math.min(point1.y, point2.y));
 		this.width = Math.abs(point1.x - point2.x);
 		this.height = Math.abs(point1.y - point2.y);
@@ -92,7 +92,7 @@ public class DrawTextObject extends PrimitiveObject {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
-		if (!(obj instanceof RectObject) || !super.equals(obj))
+		if (!(obj instanceof DrawTextObject) || !super.equals(obj))
 			return false;
 
 		DrawTextObject that = (DrawTextObject) obj;
