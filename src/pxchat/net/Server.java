@@ -415,6 +415,7 @@ public class Server {
 					case Frame.ID_LINE:
 					case Frame.ID_POINT:
 					case Frame.ID_FREEHAND:
+					case Frame.ID_TEXT:
 					case Frame.ID_IMG:
 						paintObjectCache.add(frame);
 						serverFrameAdapter.broadcastToAuth(FrameQueue.from(frame), true);

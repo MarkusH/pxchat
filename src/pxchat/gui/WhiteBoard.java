@@ -45,6 +45,7 @@ import pxchat.net.WhiteboardClientListener;
 import pxchat.util.Icons;
 import pxchat.util.PicFileFilter;
 import pxchat.whiteboard.CircleObject;
+import pxchat.whiteboard.DrawTextObject;
 import pxchat.whiteboard.EllipseObject;
 import pxchat.whiteboard.FreeHandObject;
 import pxchat.whiteboard.ImageObject;
@@ -273,6 +274,9 @@ public class WhiteBoard extends JFrame {
 							Client.getInstance().sendPaintObject(tmp);
 							Client.getInstance().sendImage(id);
 							paintBoard.repaint();
+							break;
+						case Text:
+							new TextInputDialog(WhiteBoard.this, startPoint, currentPoint, currentColor, currentStrokeWidth);
 							break;
 					}
 				}
