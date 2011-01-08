@@ -45,7 +45,6 @@ import pxchat.net.WhiteboardClientListener;
 import pxchat.util.Icons;
 import pxchat.util.PicFileFilter;
 import pxchat.whiteboard.CircleObject;
-import pxchat.whiteboard.DrawTextObject;
 import pxchat.whiteboard.EllipseObject;
 import pxchat.whiteboard.FreeHandObject;
 import pxchat.whiteboard.ImageObject;

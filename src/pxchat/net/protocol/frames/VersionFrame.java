@@ -16,7 +16,7 @@ public class VersionFrame extends Frame {
 	 * @return The current version
 	 */
 	public static VersionFrame getCurrent() {
-		return new VersionFrame(0, 7);
+		return new VersionFrame(1, 0);
 	}
 
 	/**

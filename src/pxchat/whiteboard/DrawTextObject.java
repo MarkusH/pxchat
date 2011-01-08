@@ -11,10 +11,13 @@ import java.awt.Point;
 import pxchat.net.protocol.frames.Frame;
 
 /**
- * @author Florian Bausch
+ * This class represents a single line of text on the paint board.
  * 
+ * @author Florian Bausch
  */
 public class DrawTextObject extends PrimitiveObject {
+
+	private static final long serialVersionUID = 5723446375188054368L;
 
 	/**
 	 * The top left edge of the rectangle.
@@ -107,7 +110,7 @@ public class DrawTextObject extends PrimitiveObject {
 
 		DrawTextObject that = (DrawTextObject) obj;
 
-		return this.topLeft.equals(that.topLeft) && this.width == that.width && this.height == that.height && this.text
-				.equals(that.text) && this.font.equals(that.font);
+		return this.topLeft.equals(that.topLeft) && this.width == that.width && this.height == that.height && 
+			this.text.equals(that.text) && this.font.equals(that.font);
 	}
 }

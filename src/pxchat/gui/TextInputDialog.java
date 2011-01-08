@@ -26,11 +26,12 @@ import pxchat.net.Client;
 import pxchat.whiteboard.DrawTextObject;
 
 /**
- * @author florian
- * 
+ * @author Florian Bausch
  */
 public class TextInputDialog extends JDialog {
 
+	private static final long serialVersionUID = -432298055900854843L;
+	
 	private JTextArea text;
 	private JLabel label;
 	private JScrollPane scrollPane;
@@ -119,7 +120,12 @@ public class TextInputDialog extends JDialog {
 		Font f = new Font((String) selectFont.getSelectedItem(), Font.PLAIN,
 				(Integer) selectFontSize.getSelectedItem());
 
-		FontMetrics fm = new FontMetrics(f) {};
+		FontMetrics fm = new FontMetrics(f) {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 5412937013584910480L;};
 		fontsize = fm.getHeight();
 
 		for (i = 0; i < newText.length; i++) {
