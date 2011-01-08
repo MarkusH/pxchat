@@ -165,7 +165,7 @@ public class CustomSocket {
 	/**
 	 * Sends the disconnected event to the listener
 	 */
-	private void doDisconnect() {
+	private synchronized void doDisconnect() {
 		if (sendDisconnectedEvent)
 			return;
 		

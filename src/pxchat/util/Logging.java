@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
 
+import javax.swing.JFileChooser;
+
 /**
  * @author Markus H.
  * 
@@ -62,62 +64,68 @@ public class Logging {
 	 */
 	public void endLog() {
 		end = "\t<end date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n";
+		logfilename = "log/log_" + formatDateTime("dd-MM-yyyy_HH-mm") + ".xml";
 		try {
-			File fLog = new File(logfilename);
-			if (!fLog.exists())
-				fLog.createNewFile();
-			oswLog = new OutputStreamWriter(new FileOutputStream(fLog),
-					encoding);
-			/**
-			 * build the basic header of a log file
-			 */
-			oswLog.write("<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>\n");
-			oswLog.write("<!DOCTYPE pxchatlog SYSTEM \"pxchatlog.dtd\">\n");
-			oswLog.write("<?xml-stylesheet href=\"pxchatlog.xsl\" type=\"text/xsl\" ?>\n");
-			oswLog.write("<pxchatlog>\n");
-			oswLog.flush();
-
-			/**
-			 * put all participants in the log This needs a closing of oswUser
-			 * first!
-			 */
-			oswLog.write("\t<participants>\n");
-			
-			for (int i = 0; i < participants.length; i++) {
-				oswLog.write("\t\t<name>" + participants[i] + "</name>\n");
+			JFileChooser fc = new JFileChooser("log/");
+			fc.setSelectedFile(new File(logfilename));
+			if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+				logfilename = fc.getSelectedFile().getAbsolutePath();
+				File fLog = new File(logfilename);
+				if (!fLog.exists())
+					fLog.createNewFile();
+				oswLog = new OutputStreamWriter(new FileOutputStream(fLog),
+						encoding);
+				/**
+				 * build the basic header of a log file
+				 */
+				oswLog.write("<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>\n");
+				oswLog.write("<!DOCTYPE pxchatlog SYSTEM \"pxchatlog.dtd\">\n");
+				oswLog.write("<?xml-stylesheet href=\"pxchatlog.xsl\" type=\"text/xsl\" ?>\n");
+				oswLog.write("<pxchatlog>\n");
+				oswLog.flush();
+	
+				/**
+				 * put all participants in the log This needs a closing of oswUser
+				 * first!
+				 */
+				oswLog.write("\t<participants>\n");
+				
+				for (int i = 0; i < participants.length; i++) {
+					oswLog.write("\t\t<name>" + participants[i] + "</name>\n");
+				}
+				
+				oswLog.write("\t</participants>\n");
+				oswLog.flush();
+	
+				/**
+				 * let us write the duration of this chat
+				 */
+				oswLog.write(start);
+				oswLog.write(end);
+				oswLog.flush();
+	
+				/**
+				 * we can now append the temporary message log. again, we have to
+				 * close that OutputStreamWriter first.
+				 */
+				oswMessage.close();
+				Scanner scanner;
+				oswLog.write("\t<chat>\n");
+				scanner = new Scanner(new FileInputStream(fMessages), encoding);
+				while (scanner.hasNextLine()) {
+					oswLog.write(scanner.nextLine() + "\n");
+				}
+				scanner.close();
+				oswLog.write("\t</chat>\n");
+	
+				oswLog.flush();
+				fMessages.delete();
+	
+				/**
+				 * finish the complete log
+				 */
+				oswLog.write("</pxchatlog>\n");
 			}
-			
-			oswLog.write("\t</participants>\n");
-			oswLog.flush();
-
-			/**
-			 * let us write the duration of this chat
-			 */
-			oswLog.write(start);
-			oswLog.write(end);
-			oswLog.flush();
-
-			/**
-			 * we can now append the temporary message log. again, we have to
-			 * close that OutputStreamWriter first.
-			 */
-			oswMessage.close();
-			Scanner scanner;
-			oswLog.write("\t<chat>\n");
-			scanner = new Scanner(new FileInputStream(fMessages), encoding);
-			while (scanner.hasNextLine()) {
-				oswLog.write(scanner.nextLine() + "\n");
-			}
-			scanner.close();
-			oswLog.write("\t</chat>\n");
-
-			oswLog.flush();
-			fMessages.delete();
-
-			/**
-			 * finish the complete log
-			 */
-			oswLog.write("</pxchatlog>\n");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -125,6 +133,7 @@ public class Logging {
 			try {
 				if (oswLog != null)
 					oswLog.close();
+				new File(msgfilename).delete();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
