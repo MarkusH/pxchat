@@ -203,8 +203,6 @@ public class PaintBoard extends JPanel {
 				resized = true;
 			}
 
-			this.setBackground(Color.WHITE);
-
 			backgroundImgID = Client.getInstance().getNextImageID();
 			sentBackgrounds.put(file.getAbsolutePath(), backgroundImgID);
 
