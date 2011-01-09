@@ -60,13 +60,13 @@ public class TextInputDialog extends JDialog {
 
 		label = new JLabel(I18n.getInstance().getString("tiLabel"));
 		label.setBounds(10, 10, 300, 10);
-		label.setPreferredSize(new Dimension(300, 20));
+		label.setPreferredSize(new Dimension(250, 20));
 
 		text = new JTextArea();
 
 		scrollPane = new JScrollPane(text, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setPreferredSize(new Dimension(300, 50));
+		scrollPane.setPreferredSize(new Dimension(250, 20));
 
 		panel = new JPanel();
 		panel.setLayout(new GridLayout(3, 2, 10, 10));

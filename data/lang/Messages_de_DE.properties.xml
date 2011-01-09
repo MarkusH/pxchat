@@ -9,15 +9,15 @@
 	<entry key="versionFail">Die Version dieses Programms stimmt nicht mit der des Servers kompatibel.</entry>
 	<entry key="joinMessage">ist der Konferenz beigetreten.</entry>
 	<entry key="leaveMessage">hat die Konferenz verlassen.</entry>
-    	<entry key="connectToChat">Mit Chat verbinden...</entry>
+	<entry key="connectToChat">Mit Chat verbinden...</entry>
 	<entry key="closeChat">Chat verlassen</entry>
-    	<entry key="quitProgram">Beenden</entry>
-    	<entry key="help">Hilfe</entry>
-    	<entry key="aboutInfo">Über pxchat</entry>
-    	<entry key="whiteBoardButton">Whiteboard</entry>
-    	<entry key="sendButton">Senden</entry>
-    	<entry key="you">Sie</entry>
-    	<entry key="aboutText">pxchat ist unter der Creative Commons Lizenz BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/de/) veröffentlicht.
+	<entry key="quitProgram">Beenden</entry>
+	<entry key="help">Hilfe</entry>
+	<entry key="aboutInfo">Über pxchat</entry>
+	<entry key="whiteBoardButton">Whiteboard</entry>
+	<entry key="sendButton">Senden</entry>
+	<entry key="you">Sie</entry>
+	<entry key="aboutText">pxchat ist unter der Creative Commons Lizenz BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/de/) veröffentlicht.
 
 Die Autoren sind:
 Florian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tennberge, Robert Waury</entry>
@@ -38,7 +38,7 @@ Florian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tennberge, Rober
 	<entry key="wbLockCanvas">Leinwand sperren</entry>
 	<entry key="wbUnlockCanvas">Leinwand entsperren</entry>
 	<entry key="wbLineWidth">Stiftbreite ändern</entry>
-	<entry key="wbBackGroundColor">Hintergrundfarbe ändern</entry>
+	<entry key="wbBackgroundColor">Hintergrundfarbe ändern</entry>
     
 	<entry key="ssEnterChat">pxchat betreten</entry>
 	<entry key="ssInfoText">Bitte überprüfen Sie mit Hilfe dieses Bildes ihre Bildschirmeinstellungen.</entry>
@@ -55,4 +55,10 @@ Florian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tennberge, Rober
 	<entry key="cdConnectFail">Verbindung zum Server konnte nicht hergestellt werden!</entry>
 	<entry key="cdPortFail">Falscher Port! Bitte geben Sie eine Zahl ein.</entry>
 	<entry key="cdInputFail">Mindestens eine Ihrer Angaben ist falsch. Bitte überprüfen Sie sie!</entry>
+	<entry key="cdProfile">Profil</entry>
+	
+	<entry key="tiTitle">pxchat - Text-Werkzeug</entry>
+	<entry key="tiLabel">Text hier eingeben:</entry>
+	<entry key="tiOk">Text zeichnen</entry>
+	<entry key="tiCancel">Abbrechen</entry>
 </properties>
