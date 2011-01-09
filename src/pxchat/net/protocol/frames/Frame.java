@@ -10,7 +10,7 @@ import java.io.Serializable;
  * Each subclass of <code>Frame</code> must have an <code>id</code> that is
  * unique among the set of all frames.
  * 
- * @author Markus Döllinger
+ * @author Robert Waury
  */
 public abstract class Frame implements Serializable {
 

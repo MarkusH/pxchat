@@ -17,8 +17,10 @@ import java.util.Scanner;
 import javax.swing.JFileChooser;
 
 /**
- * @author Markus H.
+ * This class implements a logger that saves the chat session to an XML file. It
+ * logs the users connected to the chat and the messages.
  * 
+ * @author Markus Holtermann
  */
 public class Logging {
 
@@ -30,7 +32,7 @@ public class Logging {
 	private String[] participants = new String[0];
 
 	/**
-	 * 
+	 * Constructs a new logger.
 	 */
 	public Logging() {
 		String time = getFilenameDateTime();
@@ -38,7 +40,7 @@ public class Logging {
 		msgfilename = "log/.msg" + time;
 
 		start = "\t<start date=\"" + getLogDate() + "\" time=\"" + getLogTime() + "\" />\n";
-		
+
 		try {
 			File file = new File("log/");
 			if (!file.exists())
@@ -50,8 +52,7 @@ public class Logging {
 			fMessages = new File(msgfilename);
 			if (!fMessages.exists())
 				fMessages.createNewFile();
-			oswMessage = new OutputStreamWriter(
-					new FileOutputStream(fMessages), encoding);
+			oswMessage = new OutputStreamWriter(new FileOutputStream(fMessages), encoding);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -73,8 +74,7 @@ public class Logging {
 				File fLog = new File(logfilename);
 				if (!fLog.exists())
 					fLog.createNewFile();
-				oswLog = new OutputStreamWriter(new FileOutputStream(fLog),
-						encoding);
+				oswLog = new OutputStreamWriter(new FileOutputStream(fLog), encoding);
 				/**
 				 * build the basic header of a log file
 				 */
@@ -83,30 +83,30 @@ public class Logging {
 				oswLog.write("<?xml-stylesheet href=\"pxchatlog.xsl\" type=\"text/xsl\" ?>\n");
 				oswLog.write("<pxchatlog>\n");
 				oswLog.flush();
-	
+
 				/**
-				 * put all participants in the log This needs a closing of oswUser
-				 * first!
+				 * put all participants in the log This needs a closing of
+				 * oswUser first!
 				 */
 				oswLog.write("\t<participants>\n");
-				
+
 				for (int i = 0; i < participants.length; i++) {
 					oswLog.write("\t\t<name>" + participants[i] + "</name>\n");
 				}
-				
+
 				oswLog.write("\t</participants>\n");
 				oswLog.flush();
-	
+
 				/**
 				 * let us write the duration of this chat
 				 */
 				oswLog.write(start);
 				oswLog.write(end);
 				oswLog.flush();
-	
+
 				/**
-				 * we can now append the temporary message log. again, we have to
-				 * close that OutputStreamWriter first.
+				 * we can now append the temporary message log. again, we have
+				 * to close that OutputStreamWriter first.
 				 */
 				oswMessage.close();
 				Scanner scanner;
@@ -117,10 +117,10 @@ public class Logging {
 				}
 				scanner.close();
 				oswLog.write("\t</chat>\n");
-	
+
 				oswLog.flush();
 				fMessages.delete();
-	
+
 				/**
 				 * finish the complete log
 				 */
@@ -140,18 +140,33 @@ public class Logging {
 		}
 	}
 
+	/**
+	 * Formats the current time with the specified format string.
+	 * 
+	 * @param format The pattern of the format
+	 * @return the formatted time
+	 */
 	private String formatDateTime(String format) {
 		return new SimpleDateFormat(format).format(new Date());
 	}
 
+	/**
+	 * @return the current time encoded in a file name
+	 */
 	private String getFilenameDateTime() {
 		return formatDateTime("yyyyMMddHHmmss");
 	}
 
+	/**
+	 * @return the current date encoded in a log message
+	 */
 	private String getLogDate() {
 		return formatDateTime("dd/MM/yyyy");
 	}
 
+	/**
+	 * @return the current time encoded in a log message
+	 */
 	private String getLogTime() {
 		return formatDateTime("HH:mm:ss");
 	}
@@ -159,7 +174,7 @@ public class Logging {
 	/**
 	 * Call this function when a user joins the chat
 	 * 
-	 * @param user
+	 * @param user the new user
 	 */
 	public void logJoin(String user) {
 		try {
@@ -174,7 +189,7 @@ public class Logging {
 	/**
 	 * Call this function when a user leaves the chat
 	 * 
-	 * @param user
+	 * @param user the user that left
 	 */
 	public void logLeave(String user) {
 		try {
@@ -202,6 +217,11 @@ public class Logging {
 		}
 	}
 
+	/**
+	 * Logs the participants using the current user list
+	 * 
+	 * @param userList The user list
+	 */
 	public void logParticipants(String[] userList) {
 		if (participants.length == 0) {
 			Arrays.sort(userList);
@@ -213,7 +233,7 @@ public class Logging {
 			Arrays.sort(tmp);
 			int k = 0;
 			for (int i = 0; i < tmp.length; i++) {
-				if (i > 0 && tmp[i].equals(tmp[i -1])) {
+				if (i > 0 && tmp[i].equals(tmp[i - 1])) {
 					continue;
 				}
 				tmp[k++] = tmp[i];

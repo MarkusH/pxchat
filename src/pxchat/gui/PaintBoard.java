@@ -21,13 +21,36 @@ import pxchat.whiteboard.BackgroundFrame;
 import pxchat.whiteboard.ImageTable;
 import pxchat.whiteboard.PaintObject;
 
+/**
+ * This class implements a multi-layered drawing surface. It has either a
+ * background color or a background image as the lowest layer. The second layer
+ * is reserved for a queue of {@link PaintObject}s. The highest layer is used
+ * for a preview object and a cache of objects that have been drawn locally, but
+ * did not yet return from the server.
+ * 
+ * @author Florian Bausch
+ * @author Robert Waury
+ */
 public class PaintBoard extends JPanel {
 
 	private static final long serialVersionUID = 4813675397624015717L;
 
+	/**
+	 * A mapping of file names to image id of the background images already
+	 * opened locally.
+	 */
 	private HashMap<String, Integer> sentBackgrounds = new HashMap<String, Integer>();
 
-	private Integer background = -1;
+	/**
+	 * The image id of the background image.
+	 */
+	private Integer backgroundImgID = -1;
+
+	/**
+	 * The second level of the paint board. The paint objects will be drawn into
+	 * this image in order to avoid redrawing them every time the component has
+	 * to be drawn.
+	 */
 	private BufferedImage board;
 
 	/**
@@ -73,7 +96,8 @@ public class PaintBoard extends JPanel {
 
 	/**
 	 * Adds a new paint object to the paint board. This method should be called
-	 * whenever the server sends a new paint object.
+	 * whenever the server sends a new paint object. The incoming object will be
+	 * removed from the cache.
 	 * 
 	 * @param obj The paint object to add.
 	 */
@@ -84,7 +108,9 @@ public class PaintBoard extends JPanel {
 	}
 
 	/**
-	 * Returns the cache of this paint board.
+	 * Returns the cache of this paint board. The cache is used to draw paint
+	 * objects that were added locally but did not yet return from the server.
+	 * This avoids flickering and hides the latency.
 	 * 
 	 * @return The cache
 	 */
@@ -135,7 +161,7 @@ public class PaintBoard extends JPanel {
 	 * @param c The new background color
 	 */
 	public void loadBackground(Color c) {
-		this.background = null;
+		this.backgroundImgID = null;
 		this.setBackground(c);
 	}
 
@@ -179,8 +205,8 @@ public class PaintBoard extends JPanel {
 
 			this.setBackground(Color.WHITE);
 
-			background = Client.getInstance().getNextImageID();
-			sentBackgrounds.put(file.getAbsolutePath(), background);
+			backgroundImgID = Client.getInstance().getNextImageID();
+			sentBackgrounds.put(file.getAbsolutePath(), backgroundImgID);
 
 			if (resized) {
 				BufferedImage downSampleImg = new BufferedImage((int) width, (int) height,
@@ -191,15 +217,15 @@ public class PaintBoard extends JPanel {
 				g.drawImage(img, 0, 0, (int) width, (int) height, null);
 				g.dispose();
 
-				ImageTable.getInstance().put(background, downSampleImg);
+				ImageTable.getInstance().put(backgroundImgID, downSampleImg);
 			} else {
-				ImageTable.getInstance().put(background, img);
+				ImageTable.getInstance().put(backgroundImgID, img);
 			}
 
 			this.setBackground(Color.WHITE);
 
-			Client.getInstance().sendChangeBackground(background);
-			Client.getInstance().sendImage(background);
+			Client.getInstance().sendChangeBackground(backgroundImgID);
+			Client.getInstance().sendImage(backgroundImgID);
 		} else {
 			this.setBackground(Color.WHITE);
 
@@ -213,7 +239,7 @@ public class PaintBoard extends JPanel {
 	 * @param imageID The image id of the new background image
 	 */
 	public void loadBackground(int imageID) {
-		this.background = imageID;
+		this.backgroundImgID = imageID;
 		this.setBackground(Color.WHITE);
 	}
 
@@ -229,7 +255,7 @@ public class PaintBoard extends JPanel {
 
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		BufferedImage img = ImageTable.getInstance().get(background);
+		BufferedImage img = ImageTable.getInstance().get(backgroundImgID);
 		if (img != null)
 			g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
 

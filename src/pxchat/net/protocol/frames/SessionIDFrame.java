@@ -4,7 +4,7 @@ package pxchat.net.protocol.frames;
  * This frame is used to transfer the session id of a newly connected client to
  * it.
  * 
- * @author Markus Döllinger
+ * @author Robert Waury
  */
 public class SessionIDFrame extends Frame {
 

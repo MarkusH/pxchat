@@ -78,7 +78,7 @@ public final class Icons {
 	/**
 	 * Searches for an icon. If it is already cached, it is returned. If there
 	 * is no icon in the internal memory, this method tries to load it by
-	 * searchin in the current path and in the folder set by
+	 * searching in the current path and in the folder set by
 	 * {@link #setFolder(String)}.
 	 * 
 	 * @param icon The name of the icon
@@ -100,6 +100,9 @@ public final class Icons {
 		Icons.folder = folder + (folder.endsWith("/") ? "" : "/");
 	}
 
+	/**
+	 * Private constructor
+	 */
 	private Icons() {
 	}
 }

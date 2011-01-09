@@ -4,6 +4,7 @@
 package pxchat.server;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -20,19 +21,40 @@ import pxchat.net.Server;
 import pxchat.util.XMLUtil;
 
 /**
- * @author Markus Döllinger
+ * The main class of the server.
  * 
+ * @author Markus Döllinger
  */
 public class ServerMain {
 
+	private static int port;
 	private static HashMap<String, String> authList = new HashMap<String, String>();
 
 	/**
-	 * @param args
+	 * The main entry point of the server.
+	 * 
+	 * @param args The command line arguments
+	 * @throws IOException If the I/O of the server fails
+	 * @throws InterruptedException  Should never occur
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		System.out.println("Started pxchat server...");
+		
+		if (!loadConfig())
+			return;
+		System.out.println(authList);
 
+		Server server = new Server();
+		server.setAuthList(authList);
+		server.listen(port);
+
+		while (true) {
+			Thread.sleep(3000);
+			System.out.println(server.getUserList());
+		}
+	}
+	
+	private static boolean loadConfig() {
 		File file = new File("data/config/server.xml");
 		Document doc = null;
 		try {
@@ -65,7 +87,7 @@ public class ServerMain {
 
 			Node config = XMLUtil.getChildByName(node, "config");
 
-			int port = Integer.valueOf(XMLUtil.getAttributeValue(XMLUtil.getChildByName(config,
+			port = Integer.valueOf(XMLUtil.getAttributeValue(XMLUtil.getChildByName(config,
 					"port"), "number"));
 
 			System.out.println(port);
@@ -82,36 +104,14 @@ public class ServerMain {
 				}
 			}
 
-			System.out.println(authList);
 
-			Server server = new Server();
-			server.setAuthList(authList);
-			server.listen(port);
-
-			Thread.sleep(1000);
-
-			// Client client = Client.getInstance();
-			// client.connect("localhost", port);
-			// Thread.sleep(1000);
-			// client.disconnect();
-			// Thread.sleep(1000);
-			// server.close();
-			// Thread.sleep(1000);
-
-			
-			while (true) {
-				Thread.sleep(3000);
-				System.out.println(server.getUserList());
-			}
-
-//			System.out.println("Stopping server...");
-//			server.close();
 
 		} catch (Exception e) {
 			System.out.println("An error ocurred loading the config file");
 			e.printStackTrace();
-			return;
+			return false;
 		}
+		return true;
 	}
 
 }

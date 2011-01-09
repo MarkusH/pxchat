@@ -12,6 +12,12 @@ import java.util.Vector;
  */
 public class TCPServer {
 
+	/**
+	 * The accept thread waits until a new client connects and
+	 * calls the callback method afterwards.
+	 * 
+	 * @author Markus Döllinger
+	 */
 	class AcceptThread extends Thread {
 
 		CustomSocket socket;
@@ -24,7 +30,6 @@ public class TCPServer {
 		public void run() {
 			try {
 				socket = new CustomSocket(serverSocket.accept(), clientListener);
-
 			} catch (IOException e) {
 				acceptCallback(e);
 				return;
@@ -32,16 +37,40 @@ public class TCPServer {
 			acceptCallback(socket);
 		}
 	}
+	
+	/**
+	 * The underlying server socket.
+	 */
 	private ServerSocket serverSocket = null;
+	
+	/**
+	 * A list of connected clients.
+	 */
 	private Vector<CustomSocket> clients = new Vector<CustomSocket>();
 
+	/**
+	 * The current accept thread.
+	 */
 	private AcceptThread acceptThread = null;
+	
+	/**
+	 * <code>true</code> if the server is closing, <code>false</code> else
+	 */
 	private boolean closing = false;
 
+	/**
+	 * <code>true</code> if the server is listening, <code>false</code> else
+	 */
 	private boolean listening = false;
 
+	/**
+	 * The server listener registered with this server.
+	 */
 	private TCPServerListener tcpServerListener;
 
+	/**
+	 * The client listener of the connected TCP clients.
+	 */
 	private TCPClientListener clientListener = new TCPClientListener() {
 
 		@Override
@@ -84,6 +113,11 @@ public class TCPServer {
 		this.tcpServerListener = tcpServerListener;
 	}
 
+	/**
+	 * The accept callback in case of a new client.
+	 * 
+	 * @param socket The new client
+	 */
 	private synchronized void acceptCallback(CustomSocket socket) {
 		clients.add(socket);
 		if (tcpServerListener != null)
@@ -93,6 +127,11 @@ public class TCPServer {
 		doAccept();
 	}
 
+	/**
+	 * The accept callback in case of an error.
+	 * 
+	 * @param e The error
+	 */
 	private synchronized void acceptCallback(IOException e) {
 		if (closing) {
 			closing = false;
@@ -102,9 +141,9 @@ public class TCPServer {
 	}
 
 	/**
-	 * Closes this server and disonnects all clients.
+	 * Closes this server and disconnects all clients.
 	 * 
-	 * @throws IOException
+	 * @throws IOException If the server could not be closed successfully
 	 */
 	public synchronized void close() throws IOException {
 		if (serverSocket != null) {
@@ -145,7 +184,7 @@ public class TCPServer {
 	}
 
 	/**
-	 * Starts an AcceptThread
+	 * Starts a new AcceptThread
 	 */
 	private void doAccept() {
 		acceptThread = new AcceptThread();

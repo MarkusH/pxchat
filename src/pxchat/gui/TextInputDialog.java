@@ -26,12 +26,16 @@ import pxchat.net.Client;
 import pxchat.whiteboard.DrawTextObject;
 
 /**
+ * This dialog provides a selection for the font size, the font type and a text
+ * area for the text input. The text will be converted to multiple
+ * {@link DrawTextObject}s and send over the network.
+ * 
  * @author Florian Bausch
  */
 public class TextInputDialog extends JDialog {
 
 	private static final long serialVersionUID = -432298055900854843L;
-	
+
 	private JTextArea text;
 	private JLabel label;
 	private JScrollPane scrollPane;
@@ -45,7 +49,13 @@ public class TextInputDialog extends JDialog {
 	private float strokeWidth;
 
 	/**
-	 * @param parent
+	 * Constructs a new text input dialog.
+	 * 
+	 * @param parent The whiteboard
+	 * @param startPoint The start point
+	 * @param currentPoint The current point
+	 * @param currentColor The current color
+	 * @param currentStrokeWidth The current stroke width
 	 */
 	public TextInputDialog(WhiteBoard parent, Point startPoint, Point currentPoint,
 							Color currentColor, float currentStrokeWidth) {
@@ -108,6 +118,10 @@ public class TextInputDialog extends JDialog {
 		this.setVisible(true);
 	}
 
+	/**
+	 * Converts the text input into multiple {@link DrawTextObject}, a single
+	 * one for each line, and sends the resulting objects over the network.
+	 */
 	private void sendText() {
 		if (text.getText().trim().equals("")) {
 			this.dispose();
@@ -125,14 +139,15 @@ public class TextInputDialog extends JDialog {
 			/**
 			 * 
 			 */
-			private static final long serialVersionUID = 5412937013584910480L;};
+			private static final long serialVersionUID = 5412937013584910480L;
+		};
 		fontsize = fm.getHeight();
 
 		for (i = 0; i < newText.length; i++) {
 			y += fontsize;
 			Client.getInstance().sendPaintObject(
-				new DrawTextObject(new Point(this.startPoint.x, y), new Point(this.currentPoint.x,
-						y), currentColor, strokeWidth, newText[i], f));
+					new DrawTextObject(new Point(this.currentPoint.x, y), currentColor,
+							strokeWidth, newText[i], f));
 		}
 		this.dispose();
 	}

@@ -20,19 +20,9 @@ public class DrawTextObject extends PrimitiveObject {
 	private static final long serialVersionUID = 5723446375188054368L;
 
 	/**
-	 * The top left edge of the rectangle.
+	 * The top left edge of the text.
 	 */
 	private Point topLeft;
-
-	/**
-	 * The width of the rectangle.
-	 */
-	private int width;
-
-	/**
-	 * The height of the rectangle.
-	 */
-	private int height;
 
 	/**
 	 * The text.
@@ -45,43 +35,19 @@ public class DrawTextObject extends PrimitiveObject {
 	private Font font;
 
 	/**
-	 * Constructs a new rectangle object with the specified position,
-	 * dimensions, color and stroke width.
+	 * Constructs a new text object with the specified position, dimensions,
+	 * color and stroke width.
 	 * 
-	 * @param topLeft The position of the rectangle
-	 * @param width The width of the rectangle
-	 * @param height The height of the rectangle
-	 * @param color The color of the rectangle
+	 * @param topLeft The position of the text
+	 * @param color The color of the text
 	 * @param strokeWidth The stroke width
+	 * @param text The text of this object
+	 * @param font The associated font
 	 */
-	public DrawTextObject(Point topLeft, int width, int height, Color color, float strokeWidth,
-							String text, Font font) {
+	public DrawTextObject(Point topLeft, Color color, float strokeWidth, String text, Font font) {
 		super(color, strokeWidth);
 		this.id = Frame.ID_TEXT;
 		this.topLeft = topLeft;
-		this.width = width;
-		this.height = height;
-		this.text = text;
-		this.font = font;
-	}
-
-	/**
-	 * Constructs a new rectangle object with the specified position,
-	 * dimensions, color and stroke width. Point1 and Point2 are interpreted
-	 * diagonal points.
-	 * 
-	 * @param point1 The first point of the rectangle
-	 * @param point2 The second point of the rectangle
-	 * @param color The color of the rectangle
-	 * @param width The width of the rectangle
-	 */
-	public DrawTextObject(Point point1, Point point2, Color color, float width, String text,
-							Font font) {
-		super(color, width);
-		this.id = Frame.ID_TEXT;
-		this.topLeft = new Point(Math.min(point1.x, point2.x), Math.min(point1.y, point2.y));
-		this.width = Math.abs(point1.x - point2.x);
-		this.height = Math.abs(point1.y - point2.y);
 		this.text = text;
 		this.font = font;
 	}
@@ -110,7 +76,7 @@ public class DrawTextObject extends PrimitiveObject {
 
 		DrawTextObject that = (DrawTextObject) obj;
 
-		return this.topLeft.equals(that.topLeft) && this.width == that.width && this.height == that.height && 
-			this.text.equals(that.text) && this.font.equals(that.font);
+		return this.topLeft.equals(that.topLeft) && this.text.equals(that.text) && this.font
+				.equals(that.font);
 	}
 }

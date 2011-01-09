@@ -22,6 +22,13 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class CustomSocket {
 
+	/**
+	 * A thread that waits for incoming encrypted data. The data will be
+	 * decrypted and passed as an object to the callback method of the custom
+	 * socket.
+	 * 
+	 * @author Markus Döllinger
+	 */
 	class ReadThread extends Thread {
 
 		Object object = null;
@@ -43,8 +50,14 @@ public class CustomSocket {
 			}
 		}
 	}
+
+	/**
+	 * A thread that writes outgoing data. The data will be encrypted in advance.
+	 * 
+	 * @author Markus Döllinger
+	 */
 	class WriteThread extends Thread {
-		
+
 		public WriteThread() {
 			this.setDaemon(true);
 		}
@@ -52,7 +65,7 @@ public class CustomSocket {
 		@Override
 		public void run() {
 			lock.lock();
-			
+
 			if (cOut == null) {
 				try {
 					cOut = new CipherOutputStream(socket.getOutputStream(), cipherOut);
@@ -61,34 +74,28 @@ public class CustomSocket {
 				}
 			}
 
-			
 			while (!outgoing.isEmpty()) {
 				try {
 					ObjectOutputStream stream = null;
-					try {
-						stream = new ObjectOutputStream(cOut);
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					
+					stream = new ObjectOutputStream(cOut);
+
 					Object o = outgoing.poll();
 					stream.writeObject(o);
-					
+
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 
 			writeThread = null;
-			
+
 			lock.unlock();
-			
+
 			if (tcpClientListener != null)
 				tcpClientListener.clientClearToSend(CustomSocket.this);
 		}
 	}
-	
+
 	/**
 	 * A lock that is used to only only start a write thread once
 	 */
@@ -104,7 +111,7 @@ public class CustomSocket {
 	private Cipher cipherOut;
 
 	private CipherInputStream cIn;
-	
+
 	private CipherOutputStream cOut;
 	protected TCPClientListener tcpClientListener;
 
@@ -156,7 +163,7 @@ public class CustomSocket {
 
 				this.socket = null;
 				this.connected = false;
-				
+
 				doDisconnect();
 			}
 		}
@@ -168,10 +175,10 @@ public class CustomSocket {
 	private synchronized void doDisconnect() {
 		if (sendDisconnectedEvent)
 			return;
-		
+
 		if (tcpClientListener != null)
 			tcpClientListener.clientDisconnect(this);
-		
+
 		sendDisconnectedEvent = true;
 	}
 
@@ -185,19 +192,22 @@ public class CustomSocket {
 		}
 	}
 
+	/**
+	 * @return The remote address this socket is connected to.
+	 */
 	public String getRemoteAddress() {
 		return socket != null ? socket.getRemoteSocketAddress().toString() : "";
 	}
-	
+
 	/**
 	 * Initialized the encryption / decryption facility.
 	 */
 	protected void initCipher() {
 		try {
 			cipherOut = Cipher.getInstance("RC4");
-			cipherOut.init(Cipher.DECRYPT_MODE, new SecretKeySpec("12345678".getBytes(), "RC4"));
+			cipherOut.init(Cipher.DECRYPT_MODE, new SecretKeySpec("8C63612E8D4DB".getBytes(), "RC4"));
 			cipherIn = Cipher.getInstance("RC4");
-			cipherIn.init(Cipher.ENCRYPT_MODE, new SecretKeySpec("12345678".getBytes(), "RC4"));
+			cipherIn.init(Cipher.ENCRYPT_MODE, new SecretKeySpec("8C63612E8D4DB".getBytes(), "RC4"));
 			cIn = null;
 			cOut = null;
 		} catch (Exception e) {
@@ -205,12 +215,19 @@ public class CustomSocket {
 		}
 	}
 
+	/**
+	 * @return <code>true</code> if the socket is connected, <code>false</code> otherwise
+	 */
 	public boolean isConnected() {
 		return ((socket != null) && this.connected);
 	}
-	
+
+	/**
+	 * The read callback in case of an error. The error may simply be a disconnect.
+	 * 
+	 * @param e The exception
+	 */
 	private void readCallback(Exception e) {
-//		e.printStackTrace();
 		if (this.closing || e instanceof EOFException || e instanceof SocketException) {
 			this.closing = false;
 			this.connected = false;
@@ -223,6 +240,11 @@ public class CustomSocket {
 		doDisconnect();
 	}
 
+	/**
+	 * The read callback in the case that data arrived.
+	 * 
+	 * @param object The incoming data
+	 */
 	private void readCallback(Object object) {
 		if (tcpClientListener != null)
 			tcpClientListener.clientRead(this, object);
@@ -232,24 +254,26 @@ public class CustomSocket {
 	/**
 	 * Encrypts and write the object to the output stream of the socket.
 	 * 
-	 * @param object
-	 * @return boolean returns false if the client is not connected, otherwise true
+	 * @param object The data to send
+	 * @return boolean returns false if the client is not connected, otherwise
+	 *         true
 	 * @throws IOException
 	 */
 	public boolean writeObject(Object object) throws IOException {
-		
+
 		if (!isConnected())
 			return false;
-		
+
 		lock.lock();
 		outgoing.add(object);
-		
+
 		if (writeThread == null) {
 			writeThread = new WriteThread();
 			writeThread.start();
 		} else {
-			// Comes here when the previous lock thread was started but did not invoke
-			// its run() method due to overhead 
+			// Comes here when the previous lock thread was started but did not
+			// invoke
+			// its run() method due to overhead
 			if (!writeThread.isAlive()) {
 				// Should never come here
 				System.out.println("-------------------not alive-------------");
@@ -259,21 +283,6 @@ public class CustomSocket {
 		}
 		lock.unlock();
 		return true;
-		
-//		if (isConnected()) {
-//			System.out.println("write... connected");
-//			if (cOut == null)
-//				cOut = new CipherOutputStream(socket.getOutputStream(), cipherOut);
-//			System.out.println("cipher ready");
-//			ObjectOutputStream stream = new ObjectOutputStream(cOut);
-//			System.out.println("out genereted");
-//			stream.writeObject(object);
-//			System.out.println("written");
-//			// stream.flush();
-//
-//			return true;
-//		}
-//		return false;
 	}
 
 }
