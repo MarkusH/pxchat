@@ -286,6 +286,7 @@ public final class Client {
 							else
 								listener.backgroundChanged(bf.getImageID());
 						}
+						break;
 
 						/*
 						 * The board was either locked or unlocked.
