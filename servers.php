@@ -5,7 +5,7 @@
 	// MySQL daten
 	define('MYSQL_HOST',     'localhost');
 	define('MYSQL_USER',     'root');
-	define('MYSQL_PASS',     '!!!_PASSWORD_!!!');
+	define('MYSQL_PASS',     '!!!_PASSWORD_!!!'); //define pw here
 	define('MYSQL_DATABASE', 'pxchat');
 	
 	$action = "undef";
