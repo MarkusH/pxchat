@@ -144,6 +144,7 @@ public class ClientMain extends JFrame {
 		mExit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				Client.getInstance().disconnect();
 				ClientMain.this.wb.dispose();
 				ClientMain.this.dispose();
 			}

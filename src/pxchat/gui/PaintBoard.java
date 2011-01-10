@@ -220,13 +220,9 @@ public class PaintBoard extends JPanel {
 				ImageTable.getInstance().put(backgroundImgID, img);
 			}
 
-			this.setBackground(Color.WHITE);
-
 			Client.getInstance().sendChangeBackground(backgroundImgID);
 			Client.getInstance().sendImage(backgroundImgID);
 		} else {
-			this.setBackground(Color.WHITE);
-
 			Client.getInstance().sendChangeBackground(sentBackgrounds.get(file.getAbsolutePath()));
 		}
 	}
