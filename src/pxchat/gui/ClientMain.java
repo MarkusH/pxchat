@@ -12,6 +12,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,6 +61,18 @@ public class ClientMain extends JFrame {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		
+		try {
+			BufferedReader br = new BufferedReader(
+					new InputStreamReader(new URL("http://localhost/servers.php?&action=list").openStream()));
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				System.out.println(line);
+			}
+		} catch (Exception e) {
+			System.out.println("Could not contact master server");
+		}
+		
 		Config.init("./data/config/client.xml");
 		Icons.setFolder("./data/img/icon/");
 		new ClientMain();
