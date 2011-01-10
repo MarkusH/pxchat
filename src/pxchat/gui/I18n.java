@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 
+import pxchat.util.Config;
 import pxchat.util.ExtendedControl;
 
 /**
@@ -62,6 +63,15 @@ public final class I18n {
 	 * Constructs a new I18n object.
 	 */
 	private I18n() {
+		if (Config.get("defaultLanguage") != null) {
+			if (Config.get("defaultLanguage").length() == 2) {
+				setLocale(new Locale(Config.get("defaultLanguage")));
+				return;
+			} else if (Config.get("defaultLanguage").length() == 5) {
+				setLocale(new Locale(Config.get("defaultLanguage").substring(0, 2), Config.get("defaultLanguage").substring(3, 5)));
+				return;
+			}
+		}
 		setLocale(Locale.getDefault());
 	}
 

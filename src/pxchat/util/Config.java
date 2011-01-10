@@ -3,6 +3,7 @@ package pxchat.util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -279,6 +280,10 @@ public final class Config {
 	public static void init(String fileName) {
 		config.clear();
 		profiles.clear();
+		config.put("defaultLanguage", Locale.getDefault().getLanguage() +
+				(Locale.getDefault().getCountry() != ""
+					? "_" + Locale.getDefault().getCountry()
+					: ""));
 		config.put("defaultProfile", "");
 
 		file = new File(fileName);
