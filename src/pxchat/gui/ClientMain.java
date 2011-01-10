@@ -78,7 +78,7 @@ public class ClientMain extends JFrame {
 	 */
 	private JMenuBar mBar;
 	private JMenu mFile, mHelp;
-	private JMenuItem mNewChat, mCloseChat, mExit, mAbout;
+	private JMenuItem mNewChat, mCloseChat, mExit, mAbout, mConfig;
 
 	private JTextArea inputArea;
 	private JTextPane chatLog;
@@ -166,6 +166,17 @@ public class ClientMain extends JFrame {
 		});
 		mCloseChat.setEnabled(false);
 		mFile.add(mCloseChat);
+		
+		mConfig = new JMenuItem();
+		I18n.getInstance().getTextComps().put(mConfig, "configDialog");
+		mConfig.setMnemonic('c');
+		mConfig.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				new ConfigurationDialog(ClientMain.this);
+			}
+		});
+		mFile.add(mConfig);
 
 		mExit = new JMenuItem(Icons.get("quit.png"));
 		I18n.getInstance().getTextComps().put(mExit, "quitProgram");
