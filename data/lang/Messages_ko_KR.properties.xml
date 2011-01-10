@@ -2,59 +2,59 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"> 
 <properties>
 	<entry key="language">언어</entry>
-	<entry key="disconnectedFromServer">Disconnected from server</entry>
-	<entry key="connectedToServer">Connected to server</entry>
-	<entry key="authenticationFail">The authentication check failed</entry>
-	<entry key="timeoutFail">The timeout for connection reached</entry>
-	<entry key="versionFail">The version of your client does not match the server requirements</entry>
-	<entry key="joinMessage">joined the chat</entry>
-	<entry key="leaveMessage">left the chat</entry>
-	<entry key="connectToChat">Connect to chat...</entry>
-	<entry key="closeChat">Disconnect from chat</entry>
-	<entry key="quitProgram">Quit</entry>
-	<entry key="help">덕택</entry>
-	<entry key="aboutInfo">정보</entry>
-	<entry key="whiteBoardButton">와이트보트</entry>
-	<entry key="sendButton">송부하기</entry>
-	<entry key="you">당신</entry>
-	<entry key="aboutText">pxchat is published under CC-BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+	<entry key="disconnectedFromServer">서버로부터 연결 끊어짐</entry>
+	<entry key="connectedToServer">서버에 연결됨:</entry>
+	<entry key="authenticationFail">인증 확인 실패</entry>
+	<entry key="timeoutFail">연결시도 시간 초과</entry>
+	<entry key="versionFail">클라이언트 버전이 서버 조건에 맞지 않음</entry>
+	<entry key="joinMessage">채팅 참가</entry>
+	<entry key="leaveMessage">채팅 종료</entry>
+	<entry key="connectToChat">채팅 연결...</entry>
+	<entry key="closeChat">채팅 차단</entry>
+	<entry key="quitProgram">중지</entry>
+	<entry key="help">도움</entry>
+	<entry key="aboutInfo">pxchat에 관해</entry>
+	<entry key="whiteBoardButton">화이트보트</entry>
+	<entry key="sendButton">전송</entry>
+	<entry key="you">상대방</entry>
+	<entry key="aboutText">pxchat가  CC-BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/) 하에서 발급됨.
 
 The authors are:
 Florian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tenberge, Robert Waury</entry>
 
-	<entry key="wbTitle">pxchat - 와이트보트</entry>
-	<entry key="wbBackground">Change background...</entry>
-	<entry key="wbInsertImage">Insert image</entry>
-	<entry key="wbSaveToFile">Save to file...</entry>
-	<entry key="wbClear">청소</entry>
-	<entry key="wbPencil">펜</entry>
-	<entry key="wbRectangle">직사각형</entry>
-	<entry key="wbCircle">원</entry>
-	<entry key="wbText">Text tool</entry>
-	<entry key="wbLine">Line tool</entry>
-	<entry key="wbEraser">지우개</entry>
-	<entry key="wbEllipse">타원</entry>
-	<entry key="wbChangeColor">색</entry>
-	<entry key="wbLockCanvas">Lock canvas</entry>
-	<entry key="wbUnlockCanvas">Unlock canvas</entry>
-	<entry key="wbLineWidth">Change line width</entry>
-	<entry key="wbBackgroundColor">Change background color</entry>
+	<entry key="wbTitle">pxchat - 화이트보드</entry>
+	<entry key="wbBackground">배경 변경...</entry>
+	<entry key="wbInsertImage">이미지 삽입</entry>
+	<entry key="wbSaveToFile">파일로 저장...</entry>
+	<entry key="wbClear">삭제</entry>
+	<entry key="wbPencil">그리기 도구</entry>
+	<entry key="wbRectangle">직사각형 도구</entry>
+	<entry key="wbCircle">원형 도구</entry>
+	<entry key="wbText">텍스트 도구</entry>
+	<entry key="wbLine">선 도구</entry>
+	<entry key="wbEraser">지우개 도구</entry>
+	<entry key="wbEllipse">타원 도구</entry>
+	<entry key="wbChangeColor">선 색상 변경</entry>
+	<entry key="wbLockCanvas">캔버스 잠금</entry>
+	<entry key="wbUnlockCanvas">캔버스 잠금 해제</entry>
+	<entry key="wbLineWidth">선 너비 변경</entry>
+	<entry key="wbBackgroundColor">배경 색상 변경</entry>
 	
-	<entry key="ssEnterChat">pxchat은 들어갑니다</entry>
-	<entry key="ssInfoText">Please check your display settings with this image.</entry>
+	<entry key="ssEnterChat">pxchat 입력</entry>
+	<entry key="ssInfoText">이미지로 된 화면 설정을 확인하시오</entry>
 	
-	<entry key="ccDialog">pxchat - Choose color</entry>
+	<entry key="ccDialog">pxchat - 색상 선택</entry>
 	
-	<entry key="cdTitle">pxchat - Connect to chat</entry>
-	<entry key="cdConnect">Connect</entry>
-	<entry key="cdAbort">Cancel</entry>
+	<entry key="cdTitle">pxchat - 채팅 연결</entry>
+	<entry key="cdConnect">연결</entry>
+	<entry key="cdAbort">취소</entry>
 	<entry key="cdUser">이름</entry>
-	<entry key="cdPassWord">패스워드</entry>
-	<entry key="cdHost">Server Host</entry>
-	<entry key="cdPort">Server Port</entry>
-	<entry key="cdConnectFail">Could not connect to server!</entry>
-	<entry key="cdPortFail">Wrong port! Please insert a number.</entry>
-	<entry key="cdInputFail">Your inputs are wrong. Please check and correct them!</entry>
+	<entry key="cdPassWord">비밀번호</entry>
+	<entry key="cdHost">서버 호스트</entry>
+	<entry key="cdPort">서버 포트</entry>
+	<entry key="cdConnectFail">서버에 연결할 수 없음!</entry>
+	<entry key="cdPortFail">잘못된 포트! 번호를 넣어 주십시오!</entry>
+	<entry key="cdInputFail">입력이 잘못되었습니다. 확인하고 수정해 주십시오!</entry>
 	<entry key="cdProfile">Saved Profile</entry>
 	
 	<entry key="tiTitle">pxchat - text drawing tool</entry>
