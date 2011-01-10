@@ -57,8 +57,8 @@ Florian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tenberge, Robert
 	<entry key="cdInputFail">입력이 잘못되었습니다. 확인하고 수정해 주십시오!</entry>
 	<entry key="cdProfile">Saved Profile</entry>
 	
-	<entry key="tiTitle">pxchat - text drawing tool</entry>
+	<entry key="tiTitle">pxchat - 텍스트 도구</entry>
 	<entry key="tiLabel">Please write a text:</entry>
 	<entry key="tiOk">Draw Text</entry>
-	<entry key="tiCancel">Cancel</entry>
+	<entry key="tiCancel">취소</entry>
 </properties>
