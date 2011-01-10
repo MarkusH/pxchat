@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,6 +36,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+
 import pxchat.net.Client;
 import pxchat.net.ClientListener;
 import pxchat.net.protocol.frames.NotificationFrame;
@@ -60,8 +63,19 @@ public class ClientMain extends JFrame {
 		new ClientMain();
 	}
 
+	/**
+	 * Indicates whether the client only disconnects, or disconnects and quits.
+	 */
+	private boolean closing = false;
+
+	/**
+	 * Enables logging of sent messages etc.
+	 */
 	private Logging log;
 
+	/**
+	 * GUI elements for main window.
+	 */
 	private JMenuBar mBar;
 	private JMenu mFile, mHelp;
 	private JMenuItem mNewChat, mCloseChat, mExit, mAbout;
@@ -73,8 +87,14 @@ public class ClientMain extends JFrame {
 
 	private JButton whiteBoardButton, sendButton;
 
+	/**
+	 * Creates WhiteBoard
+	 */
 	private WhiteBoard wb = new WhiteBoard();
 
+	/**
+	 * AttributeSets for different styles in chatLog area.
+	 */
 	private static final SimpleAttributeSet OWN = new SimpleAttributeSet(),
 			FOREIGN = new SimpleAttributeSet(), OWNNAME = new SimpleAttributeSet(),
 			FOREIGNNAME = new SimpleAttributeSet(), NOTIFY = new SimpleAttributeSet();
@@ -102,10 +122,19 @@ public class ClientMain extends JFrame {
 	public ClientMain() {
 		super("pxchat");
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage("./data/img/icon/whiteboard.png"));
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		SplashScreen splashScreen = new SplashScreen(this);
 		splashScreen.setVisible(true);
-		
+
+		/**************************************************
+		 * WindowListener - ends program correctly
+		 **************************************************/
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				ClientMain.this.doQuit();
+			}
+		});
+
 		/**************************************************
 		 * Create Menu Bar
 		 **************************************************/
@@ -144,15 +173,13 @@ public class ClientMain extends JFrame {
 		mExit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Client.getInstance().disconnect();
-				ClientMain.this.wb.dispose();
-				ClientMain.this.dispose();
+				ClientMain.this.doQuit();
 			}
 		});
 		mFile.add(mExit);
 
 		mBar.add(mFile);
-		
+
 		/**
 		 * Create language menu
 		 */
@@ -164,19 +191,18 @@ public class ClientMain extends JFrame {
 				JMenuItem itm = new JMenuItem(lang.getDisplayLanguage(lang));
 				itm.putClientProperty("locale", lang);
 				itm.addActionListener(new ActionListener() {
-					
+
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						I18n.getInstance().setLocale((Locale) 
-								((JComponent) e.getSource()).getClientProperty("locale"));
+						I18n.getInstance().setLocale(
+							(Locale) ((JComponent) e.getSource()).getClientProperty("locale"));
 					}
 				});
 				mLang.add(itm);
 			}
 			mBar.add(mLang);
 		}
-		
-		
+
 		/**
 		 * building the help menu
 		 */
@@ -196,7 +222,7 @@ public class ClientMain extends JFrame {
 		});
 		mHelp.add(mAbout);
 		mBar.add(mHelp);
-		
+
 		this.setJMenuBar(mBar);
 
 		/**************************************************
@@ -325,6 +351,12 @@ public class ClientMain extends JFrame {
 		 */
 		Client.getInstance().registerListener(new ClientListener() {
 
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see pxchat.net.ClientListener#clientConnect(java.lang.String)
+			 * Sets all buttons and input areas to be usable.
+			 */
 			@Override
 			public void clientConnect(String remoteAddress) {
 				chatLog.setText("");
@@ -337,26 +369,37 @@ public class ClientMain extends JFrame {
 				log = new Logging();
 			}
 
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see pxchat.net.ClientListener#clientDisconnect()
+			 * clientDisconnect() is only executed, if the program will not be
+			 * exited in the next step.
+			 */
 			@Override
 			public void clientDisconnect() {
-				SwingUtilities.invokeLater(new Runnable() {
-					
-					@Override
-					public void run() {
-						mNewChat.setEnabled(true);
-						mCloseChat.setEnabled(false);
-						whiteBoardButton.setEnabled(false);
-						sendButton.setEnabled(false);
-						inputArea.setEnabled(false);
-						writeNotification(I18n.getInstance().getString("disconnectedFromServer"));
-						userList.setListData(new Object[0]);
-						log.endLog();
-						wb.dispose();
-						wb = new WhiteBoard();
-						I18n.getInstance().updateComponents();
-					}
-				});
-				ImageTable.getInstance().clear();
+				if (!closing) {
+					SwingUtilities.invokeLater(new Runnable() {
+
+						@Override
+						public void run() {
+							mNewChat.setEnabled(true);
+							mCloseChat.setEnabled(false);
+							whiteBoardButton.setEnabled(false);
+							sendButton.setEnabled(false);
+							inputArea.setEnabled(false);
+							writeNotification(I18n.getInstance()
+									.getString("disconnectedFromServer"));
+							userList.setListData(new Object[0]);
+							log.endLog();
+							log = null;
+							wb.dispose();
+							wb = new WhiteBoard();
+							I18n.getInstance().updateComponents();
+						}
+					});
+					ImageTable.getInstance().clear();
+				}
 			}
 
 			@Override
@@ -410,6 +453,9 @@ public class ClientMain extends JFrame {
 		splashScreen.setReady();
 	}
 
+	/**
+	 * Scrolls to the end of the chatLog area.
+	 */
 	private void scrollChatLog() {
 		chatLog.scrollRectToVisible(new Rectangle(chatLog.getWidth() - chatLogPane.getWidth(),
 				chatLog.getHeight() - chatLogPane.getHeight(), chatLogPane.getWidth(), chatLogPane
@@ -468,5 +514,21 @@ public class ClientMain extends JFrame {
 		} catch (BadLocationException e) {
 			System.err.println("Could not write to JTextPane \"chatLog\".");
 		}
+	}
+
+	/**
+	 * doQuit disconnects from the server, writes the log and quits the program.
+	 * Executing this method hinders clientDisconnect() of the ClientListener to
+	 * be executed.
+	 */
+	private void doQuit() {
+		ClientMain.this.closing = true;
+		Client.getInstance().disconnect();
+		ClientMain.this.wb.dispose();
+		ClientMain.this.dispose();
+		if (log != null) {
+			log.endLog();
+		}
+		System.exit(0);
 	}
 }
