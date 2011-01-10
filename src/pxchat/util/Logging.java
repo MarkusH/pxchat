@@ -68,6 +68,7 @@ public class Logging {
 		logfilename = "log/log_" + formatDateTime("dd-MM-yyyy_HH-mm") + ".xml";
 		try {
 			JFileChooser fc = new JFileChooser("log/");
+			fc.setFileFilter(new XMLFileFilter());
 			fc.setSelectedFile(new File(logfilename));
 			if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 				logfilename = fc.getSelectedFile().getAbsolutePath();
