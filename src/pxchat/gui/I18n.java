@@ -83,6 +83,13 @@ public final class I18n {
 	}
 	
 	/**
+	 * @return The current locale
+	 */
+	public Locale getLocale() {
+		return this.locale;
+	}
+	
+	/**
 	 * Sets a new locale for the application and loads the appropriate resource
 	 * bundle.
 	 * 

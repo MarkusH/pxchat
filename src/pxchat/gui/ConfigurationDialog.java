@@ -65,16 +65,13 @@ public class ConfigurationDialog extends JDialog {
 		Vector<String> languages = new Vector<String>();
 		if (langs.size() > 0) {
 			for (Locale lang : langs) {
-				languages.add(lang.getLanguage() +
-						(lang.getCountry() != ""
-							? "_" + lang.getCountry()
-							: ""));
+				languages.add(lang.toString());
 			}
 		}
 		cbLanguages = new JComboBox(languages); 
-		cbLanguages.setSelectedItem(languages.contains(Config.get("defaultLanguage"))
-				? Config.get("defaultLanguage")
-				: "English");
+		cbLanguages.setSelectedItem(languages.contains(Config.get("language"))
+				? Config.get("language")
+				: Locale.ENGLISH.getDisplayLanguage(I18n.getInstance().getLocale()));
 		panelSettings.add(cbLanguages);
 		
 		/*
@@ -298,5 +295,6 @@ public class ConfigurationDialog extends JDialog {
 		Config.put("defaultLanguage", cbLanguages.getSelectedItem().toString());
 		Config.put("defaultProfile", cbDefaultProfile.getSelectedItem().toString());
 		Config.save();
+		I18n.getInstance().updateComponents();
 	}
 }
