@@ -386,6 +386,7 @@ public class ClientMain extends JFrame {
 			public void clientConnect(String remoteAddress) {
 				chatLog.setText("");
 				mCloseChat.setEnabled(true);
+				mFindServer.setEnabled(false);
 				mNewChat.setEnabled(false);
 				whiteBoardButton.setEnabled(true);
 				sendButton.setEnabled(true);
@@ -409,6 +410,7 @@ public class ClientMain extends JFrame {
 						@Override
 						public void run() {
 							mNewChat.setEnabled(true);
+							mFindServer.setEnabled(true);
 							mCloseChat.setEnabled(false);
 							whiteBoardButton.setEnabled(false);
 							sendButton.setEnabled(false);

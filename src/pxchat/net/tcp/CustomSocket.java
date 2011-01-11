@@ -84,6 +84,7 @@ public class CustomSocket {
 
 				} catch (IOException e) {
 					e.printStackTrace();
+					outgoing.clear();
 				}
 			}
 
