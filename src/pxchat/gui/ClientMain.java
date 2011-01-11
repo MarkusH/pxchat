@@ -61,18 +61,6 @@ public class ClientMain extends JFrame {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
-		try {
-			BufferedReader br = new BufferedReader(
-					new InputStreamReader(new URL("http://localhost/servers.php?&action=list").openStream()));
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				System.out.println(line);
-			}
-		} catch (Exception e) {
-			System.out.println("Could not contact master server");
-		}
-		
 		Config.init("./data/config/client.xml");
 		Icons.setFolder("./data/img/icon/");
 		new ClientMain();
@@ -93,7 +81,7 @@ public class ClientMain extends JFrame {
 	 */
 	private JMenuBar mBar;
 	private JMenu mFile, mHelp;
-	private JMenuItem mNewChat, mCloseChat, mExit, mAbout, mConfig;
+	private JMenuItem mNewChat, mCloseChat, mFindServer, mExit, mAbout, mConfig;
 
 	private JTextArea inputArea;
 	private JTextPane chatLog;
@@ -169,6 +157,17 @@ public class ClientMain extends JFrame {
 			}
 		});
 		mFile.add(mNewChat);
+		
+		mFindServer = new JMenuItem();
+		I18n.getInstance().getTextComps().put(mFindServer, "findServer");
+		mFindServer.setMnemonic('f');
+		mFindServer.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ServerFinder(ClientMain.this);
+			}
+		});
+		mFile.add(mFindServer);
 
 		mCloseChat = new JMenuItem();
 		I18n.getInstance().getTextComps().put(mCloseChat, "closeChat");
