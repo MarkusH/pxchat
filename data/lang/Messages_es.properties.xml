@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"> 
 <properties>
-	<entry key="language">Language</entry>
-	<entry key="disconnectedFromServer">Disconnected from server</entry>
-	<entry key="connectedToServer">Connected to server</entry>
+	<entry key="language">Idioma</entry>
+	<entry key="disconnectedFromServer">Deshabitado el chat</entry>
+	<entry key="connectedToServer">Conectado con el server</entry>
 	<entry key="authenticationFail">The authentication check failed</entry>
 	<entry key="timeoutFail">The timeout for connection reached</entry>
 	<entry key="versionFail">The version of your client does not match the server requirements</entry>
-	<entry key="joinMessage">joined the chat</entry>
-	<entry key="leaveMessage">left the chat</entry>
-	<entry key="connectToChat">Connect to chat...</entry>
-	<entry key="closeChat">Disconnect from chat</entry>
+	<entry key="joinMessage">se afilia al chat</entry>
+	<entry key="leaveMessage">deshabita el chat</entry>
+	<entry key="connectToChat">Conectar con un chat...</entry>
+	<entry key="closeChat">Deshabitar el chat</entry>
 	<entry key="quitProgram">Quit</entry>
-	<entry key="help">Help</entry>
-	<entry key="aboutInfo">About</entry>
+	<entry key="help">Ayuda</entry>
+	<entry key="aboutInfo">De pxchat</entry>
 	<entry key="whiteBoardButton">Whiteboard</entry>
-	<entry key="sendButton">Send</entry>
-	<entry key="you">You</entry>
+	<entry key="sendButton">Enviar</entry>
+	<entry key="you">Tú</entry>
 	<entry key="aboutText">pxchat is published under CC-BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
 
 The authors are:
@@ -45,10 +45,10 @@ Florian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tenberge, Robert
 	
 	<entry key="ccDialog">pxchat - Choose color</entry>
 	
-	<entry key="cdTitle">pxchat - Connect to chat</entry>
-	<entry key="cdConnect">Connect</entry>
-	<entry key="cdAbort">Cancel</entry>
-	<entry key="cdUser">Your Name</entry>
+	<entry key="cdTitle">pxchat - Conectar con un chat</entry>
+	<entry key="cdConnect">Conectar</entry>
+	<entry key="cdAbort">Cancelar</entry>
+	<entry key="cdUser">Tú nombre</entry>
 	<entry key="cdPassWord">Password</entry>
 	<entry key="cdHost">Server Host</entry>
 	<entry key="cdPort">Server Port</entry>
@@ -58,9 +58,9 @@ Florian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tenberge, Robert
 	<entry key="cdProfile">Saved Profile</entry>
 	
 	<entry key="tiTitle">pxchat - text drawing tool</entry>
-	<entry key="tiLabel">Please write a text:</entry>
-	<entry key="tiOk">Draw Text</entry>
-	<entry key="tiCancel">Cancel</entry>
+	<entry key="tiLabel">Escribe tú texto, por favor:</entry>
+	<entry key="tiOk">Pintar el texto</entry>
+	<entry key="tiCancel">Cancelar</entry>
 	
 	<entry key="ffPic">Images</entry>
 	<entry key="ffXML">XML files</entry>

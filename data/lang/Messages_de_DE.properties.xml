@@ -61,4 +61,7 @@ Florian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tennberge, Rober
 	<entry key="tiLabel">Text hier eingeben:</entry>
 	<entry key="tiOk">Text zeichnen</entry>
 	<entry key="tiCancel">Abbrechen</entry>
+	
+	<entry key="ffPic">Bilder</entry>
+	<entry key="ffXML">XML-Dateien</entry>
 </properties>

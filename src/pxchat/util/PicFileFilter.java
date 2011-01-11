@@ -2,6 +2,8 @@ package pxchat.util;
 
 import java.io.File;
 
+import pxchat.gui.I18n;
+
 /**
  * A simple file filter for pictures which only allows files with a specific
  * extension
@@ -13,7 +15,7 @@ public class PicFileFilter extends javax.swing.filechooser.FileFilter implements
 	/**
 	 * The description text of the file chooser.
 	 */
-	private String description = "Images (.png, .jpg, .bmp)";
+	private String description = I18n.getInstance().getString("ffPic") + " (.png, .jpg, .bmp)";
 
 	/* (non-Javadoc)
 	 * @see javax.swing.filechooser.FileFilter#accept(java.io.File)

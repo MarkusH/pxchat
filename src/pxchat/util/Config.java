@@ -284,7 +284,7 @@ public final class Config {
 				(Locale.getDefault().getCountry() != ""
 					? "_" + Locale.getDefault().getCountry()
 					: ""));
-		config.put("defaultProfile", "");
+		config.put("defaultProfile", "default");
 
 		file = new File(fileName);
 		try {

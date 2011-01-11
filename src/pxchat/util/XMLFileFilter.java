@@ -4,6 +4,8 @@ import java.io.File;
 
 import javax.swing.filechooser.FileFilter;
 
+import pxchat.gui.I18n;
+
 /**
  * A simple file filter for xml files which only allows files with .xml as
  * extension
@@ -15,7 +17,7 @@ public class XMLFileFilter extends FileFilter implements java.io.FileFilter {
 	/**
 	 * The description text of the file chooser.
 	 */
-	private String description = "XML files (.xml)";
+	private String description = I18n.getInstance().getString("ffXML") + " (.xml)";
 
 	/*
 	 * (non-Javadoc)

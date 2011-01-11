@@ -61,4 +61,7 @@ Florian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tenberge, Robert
 	<entry key="tiLabel">Please write a text:</entry>
 	<entry key="tiOk">Draw Text</entry>
 	<entry key="tiCancel">Cancel</entry>
+	
+	<entry key="ffPic">Images</entry>
+	<entry key="ffXML">XML files</entry>
 </properties>
