@@ -3,7 +3,6 @@ package pxchat.util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
