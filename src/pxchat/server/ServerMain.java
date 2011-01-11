@@ -51,7 +51,7 @@ public class ServerMain {
 			public void run() {
 				try {
 					System.out.println("Delete entry from server list");
-					new URL(serverList + "&action=del").openStream();
+					new URL(serverList + "action=del").openStream();
 				} catch (Exception e) {
 					System.out.println("Could not contact master server");
 				}
@@ -60,7 +60,8 @@ public class ServerMain {
 		
 		try {
 			System.out.println("Add entry to server list");
-			String name = args.length == 0 ? "pxchat" : args[0];
+			String name = (args.length == 0) ? "pxchat" : args[0];
+			System.out.println(serverList + "action=add&name=" + name);
 			new URL(serverList + "&action=add&name=" + name).openStream();
 		} catch (Exception e) {
 			System.out.println("Could not contact master server");
