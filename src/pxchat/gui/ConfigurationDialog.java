@@ -295,6 +295,7 @@ public class ConfigurationDialog extends JDialog {
 		Config.put("language", cbLanguages.getSelectedItem().toString());
 		Config.put("defaultProfile", cbDefaultProfile.getSelectedItem().toString());
 		Config.save();
+		I18n.getInstance().setLocale(I18n.getLocaleFromString(Config.get("language")));
 		I18n.getInstance().updateComponents();
 	}
 }

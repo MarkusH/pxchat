@@ -210,7 +210,7 @@ public final class I18n {
 	 * @param localeString The String
 	 * @return the Locale
 	 */
-	private static Locale getLocaleFromString(String localeString) {
+	public static Locale getLocaleFromString(String localeString) {
 		if (localeString == null) {
 			return null;
 		}
