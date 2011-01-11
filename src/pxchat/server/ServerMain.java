@@ -64,7 +64,7 @@ public class ServerMain {
 		try {
 			System.out.println("Add entry to server list");
 			String name = (args.length == 0) ? "pxchat" : args[0];
-			String url = serverList + "action=add&name=" + URLEncoder.encode(name, "UTF-8");
+			String url = serverList + "action=add&name=" + URLEncoder.encode(name, "UTF-8") + "&port=" + port;
 			new URL(url).openStream();
 		} catch (Exception e) {
 			System.out.println("Could not contact master server");
