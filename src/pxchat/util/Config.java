@@ -280,10 +280,6 @@ public final class Config {
 	public static void init(String fileName) {
 		config.clear();
 		profiles.clear();
-		config.put("defaultLanguage", Locale.getDefault().getLanguage() +
-				(Locale.getDefault().getCountry() != ""
-					? "_" + Locale.getDefault().getCountry()
-					: ""));
 		config.put("defaultProfile", "default");
 
 		file = new File(fileName);

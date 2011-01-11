@@ -63,16 +63,7 @@ public final class I18n {
 	 * Constructs a new I18n object.
 	 */
 	private I18n() {
-		if (Config.get("defaultLanguage") != null) {
-			if (Config.get("defaultLanguage").length() == 2) {
-				setLocale(new Locale(Config.get("defaultLanguage")));
-				return;
-			} else if (Config.get("defaultLanguage").length() == 5) {
-				setLocale(new Locale(Config.get("defaultLanguage").substring(0, 2), Config.get("defaultLanguage").substring(3, 5)));
-				return;
-			}
-		}
-		setLocale(Locale.getDefault());
+		setLocale(getLocaleFromString(Config.get("language")), false);
 	}
 
 	/**
@@ -90,7 +81,7 @@ public final class I18n {
 		}
 
 	}
-
+	
 	/**
 	 * Sets a new locale for the application and loads the appropriate resource
 	 * bundle.
@@ -98,6 +89,17 @@ public final class I18n {
 	 * @param locale The new locale
 	 */
 	public void setLocale(Locale locale) {
+		setLocale(locale, true);
+	}
+
+	/**
+	 * Sets a new locale for the application and loads the appropriate resource
+	 * bundle. Updates the config, if updateConfig is <code>true</code>.
+	 * 
+	 * @param locale The new locale
+	 * @param updateConfig <code>true</code> if the config should be updated.
+	 */
+	public void setLocale(Locale locale, boolean updateConfig) {
 		if (locale == null)
 			locale = Locale.getDefault();
 		this.locale = locale;
@@ -109,6 +111,10 @@ public final class I18n {
 			this.locale = null;
 		}
 		updateComponents();
+		if (updateConfig) {
+			Config.put("language", locale.toString());
+			Config.save();
+		}
 	}
 
 	/**
