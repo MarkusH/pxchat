@@ -4,6 +4,10 @@
 package pxchat.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,12 +17,25 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+
+import pxchat.net.Client;
 
 /**
  * @author Markus
@@ -26,12 +43,19 @@ import javax.swing.table.TableModel;
  */
 public class ServerFinder extends JDialog {
 	
-	
+	private static final long serialVersionUID = 1166794484525146317L;
+
 	public static void main(String args[]) {
 		new ServerFinder(null);
 	}
 
 	private JTable table;
+	
+	private JButton connectBtn;
+	private JButton refreshBtn;
+	
+	private JTextField userName;
+	private JPasswordField password;
 	
 	/**
 	 * @throws IOException 
@@ -46,17 +70,109 @@ public class ServerFinder extends JDialog {
 		table.setColumnSelectionAllowed(false);
 		table.setRowSelectionAllowed(true);
 		table.setModel(new ServerTableModel(new Vector<ServerEntry>()));
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (e.getFirstIndex() > -1)
+					connectBtn.setEnabled(true);
+				else
+					connectBtn.setEnabled(false);
+			}
+		});
 		updateEntries();
 
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		JScrollPane scrollPane = new JScrollPane(table);
-		getContentPane().add(scrollPane, BorderLayout.CENTER);
+        scrollPane.setPreferredSize(new Dimension(320, 240));
 
-		getContentPane().setSize(150, 200);
+		getContentPane().add(scrollPane, BorderLayout.NORTH);
+		
+		JPanel loginPane = new JPanel();
+		loginPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5));
+		loginPane.setLayout(new GridLayout(2, 2));
+		loginPane.add(new JLabel("Username"));
+		userName = new JTextField();
+		loginPane.add(userName);
+		loginPane.add(new JLabel("Password"));
+		password = new JPasswordField();
+		loginPane.add(password);
+		getContentPane().add(loginPane, BorderLayout.CENTER);
+		
+		JPanel buttonPane = new JPanel();
+		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
+		buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5));
+		refreshBtn = new JButton(I18n.getInstance().getString("refresh"));
+		refreshBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				connectBtn.setEnabled(false);
+				refreshBtn.setEnabled(false);
+				table.clearSelection();
+				updateEntries();
+				refreshBtn.setEnabled(true);
+			}
+		});
+		buttonPane.add(refreshBtn);
+		buttonPane.add(Box.createHorizontalGlue());
+		connectBtn = new JButton(I18n.getInstance().getString("connect"));
+		connectBtn.setEnabled(false);
+		connectBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int index = table.getSelectedRow();
+				if (index > -1) {
+					ServerEntry entry = ((ServerTableModel) table.getModel()).getEntry(index);
+					System.out.println(entry);
+					
+					String host = entry.getRemoteAddress();
+					String sport = entry.getPort();
+					String user = userName.getText();
+					String pass = String.valueOf(password.getPassword());
+					int port = 0;
+					try {
+						port = Integer.valueOf(sport);
+					} catch (NumberFormatException ne) {
+						port = 12345;
+					}
+					
+					if (user.equals("") || pass.equals("")) {
+						JOptionPane.showMessageDialog(ServerFinder.this, I18n.getInstance().getString("cdInputFail"));
+						return;
+					}
+
+					try {
+						Client.getInstance().connect(host, port, user, pass);
+					} catch (Exception ee) {
+						JOptionPane.showMessageDialog(ServerFinder.this, I18n.getInstance().getString("cdConnectFail"));
+						return;
+					}
+					dispose();
+				}
+			}
+		});
+		buttonPane.add(connectBtn);
+		buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
+		JButton cancelBtn = new JButton(I18n.getInstance().getString("cancel"));
+		cancelBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ServerFinder.this.dispose();
+			}
+		});
+		buttonPane.add(cancelBtn);
+
+
+		getContentPane().add(buttonPane, BorderLayout.SOUTH);
+//		getContentPane().setSize(150, 200);
 		this.pack();
 
+		this.setResizable(false);
 		this.setAlwaysOnTop(true);
 		this.setLocationRelativeTo(this.getParent());
 		this.setVisible(true);
@@ -76,28 +192,15 @@ public class ServerFinder extends JDialog {
 			String line = null;
 			while ((line = r.readLine()) != null) {
 				
-				Pattern p = Pattern.compile("([^ ]*) ([^ ]*) (.*)");
+				Pattern p = Pattern.compile("^([^ ]*) ([^ ]*) (.*)$");
 				Matcher m = p.matcher(line);
-				
-				System.out.println(m.group(0) + m.group(1) + m.group(2));
-				
-				int adrIndex = line.indexOf(" ");
-				String remote = "";
-				if (adrIndex > -1) {
-					remote = line.substring(0, adrIndex);
+				if (m.matches()) {
+//					System.out.println(m.group(1) + " " + m.group(2) + " " + m.group(3));
+					String name = m.group(3);
+					String remoteAddress = m.group(1);
+					String port = m.group(2);
+					entries.add(new ServerEntry(name, remoteAddress, port));
 				}
-				int pIndex = line.indexOf(" ", adrIndex + 1);
-				String port = "";
-				if (pIndex > -1) {
-					port = line.substring(adrIndex + 1, pIndex);
-				}
-				int nmIndex = line.indexOf(" ", pIndex + 1);
-				String name = "";
-				if (nmIndex > -1) {
-					name = line.substring(pIndex + 1, nmIndex);
-				}
-				ServerEntry e = new ServerEntry(name, remote, port);
-				entries.add(e);
 			}
 			
 			table.setModel(new ServerTableModel(entries));
@@ -168,6 +271,10 @@ class ServerTableModel implements TableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {	
+	}
+	
+	public ServerEntry getEntry(int row) {
+		return data.get(row);
 	}
 }
 
