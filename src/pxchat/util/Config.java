@@ -28,6 +28,7 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
  * this class was initialized with.
  * 
  * @author Markus Döllinger
+ * @author Markus Holtermann
  */
 public final class Config {
 
@@ -208,9 +209,9 @@ public final class Config {
 
 			if (obj instanceof Profile) {
 				Profile that = (Profile) obj;
-				return this.name.equals(that.name) && this.host.equals(that.host) && this.port
-						.equals(that.port) && this.userName.equals(that.userName) && this.password
-						.equals(that.password);
+				return this.name.equals(that.name) && this.host.equals(that.host) &&
+					this.port.equals(that.port) && this.userName.equals(that.userName) &&
+					this.password.equals(that.password);
 			}
 			return false;
 		}
@@ -328,10 +329,8 @@ public final class Config {
 					if (listProfiles.item(i).getNodeName().equals("profile")) {
 						String host = XMLUtil.getAttributeValue(listProfiles.item(i), "host");
 						String port = XMLUtil.getAttributeValue(listProfiles.item(i), "port");
-						String userName = XMLUtil.getAttributeValue(listProfiles.item(i),
-								"username");
-						String password = XMLUtil.getAttributeValue(listProfiles.item(i),
-								"password");
+						String userName = XMLUtil.getAttributeValue(listProfiles.item(i), "username");
+						String password = XMLUtil.getAttributeValue(listProfiles.item(i), "password");
 						String name = XMLUtil.getAttributeValue(listProfiles.item(i), "name");
 						profiles.add(new Profile(name, host, port, userName, password));
 					}
@@ -345,8 +344,7 @@ public final class Config {
 				}
 			}
 			if (!hasDefault) {
-				profiles
-						.add(new Profile(config.get("defaultProfile"), "localhost", "12345", "", ""));
+				profiles.add(new Profile(config.get("defaultProfile"), "localhost", "12345", "", ""));
 			}
 		} catch (Exception e) {
 			System.out.println("An error ocurred loading the config file");
