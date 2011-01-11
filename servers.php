@@ -11,6 +11,7 @@
 	$action = "undef";
 	$name = "undef";
 	$address = "192.168.2.1";
+	$port = "12345";
 
 	// read GET
 	if (isset($_GET['action'])) {
@@ -19,6 +20,10 @@
 	
 	if (isset($_GET['name'])) {
 		$name = $_GET['name'];
+	}
+
+	if (isset($_GET['port'])) {
+		$port = $_GET['port'];
 	}
 	
 	// save address
@@ -47,12 +52,12 @@
 		}
 	}
 	
-	function add($addr, $name)
+	function add($addr, $port, $name)
 	{
 		$time = time();
-		$sql= "INSERT INTO servers (address, time, name) VALUES ('".$addr."','".$time."','".$name."')";
+		$sql= "INSERT INTO servers (address, port, time, name) VALUES ('".$addr."','".$port."','".$time."','".$name."')";
 		$result = mysql_query($sql) OR die(mysql_error());
-		echo "Added ".$addr." ".$time." ".$name." -";
+		echo "Added ".$addr." ".$port." ".$name." -";
 	}
 	
 	function del($addr)
@@ -65,12 +70,12 @@
 	
 	function printList()
 	{
-		$sql="SELECT address, name FROM servers;";
+		$sql="SELECT address, port, name FROM servers;";
 		$result = mysql_query($sql) OR
 			die(mysql_error());
 		
 		while ($row = mysql_fetch_assoc($result)) {
-			echo $row['address']." ".$row['name']."\n";
+			echo $row['address']." ".$row['port']." ".$row['name']."\n";
 		}
 	}
 	
@@ -84,7 +89,7 @@
 	 	break;
 	 case "add":
 	 	cron(5);
-	 	add($address, $name);
+	 	add($address, $port, $name);
 		break;
 	 case "del":
 	 	cron(5);

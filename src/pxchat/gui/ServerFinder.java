@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -73,17 +75,28 @@ public class ServerFinder extends JDialog {
 	
 			String line = null;
 			while ((line = r.readLine()) != null) {
+				
+				Pattern p = Pattern.compile("([^ ]*) ([^ ]*) (.*)");
+				Matcher m = p.matcher(line);
+				
+				System.out.println(m.group(0) + m.group(1) + m.group(2));
+				
 				int adrIndex = line.indexOf(" ");
 				String remote = "";
 				if (adrIndex > -1) {
 					remote = line.substring(0, adrIndex);
 				}
-				int nmIndex = line.indexOf(" ", adrIndex + 1);
+				int pIndex = line.indexOf(" ", adrIndex + 1);
+				String port = "";
+				if (pIndex > -1) {
+					port = line.substring(adrIndex + 1, pIndex);
+				}
+				int nmIndex = line.indexOf(" ", pIndex + 1);
 				String name = "";
 				if (nmIndex > -1) {
-					name = line.substring(adrIndex + 1, nmIndex);
+					name = line.substring(pIndex + 1, nmIndex);
 				}
-				ServerEntry e = new ServerEntry(name, remote);
+				ServerEntry e = new ServerEntry(name, remote, port);
 				entries.add(e);
 			}
 			
@@ -98,14 +111,9 @@ public class ServerFinder extends JDialog {
 
 class ServerTableModel implements TableModel {
 	
-//	ServerEntry[] data = new ServerEntry[] {
-//			new ServerEntry("First", "25.156.13.44"),
-//			new ServerEntry("Second", "57.6.53.68")
-//	};
-	
 	Vector<ServerEntry> data = new Vector<ServerEntry>();
 	
-	String[] columns = new String[] { "Name", "Address" };
+	String[] columns = new String[] { "Name", "Address", "Port" };
 	
 	public ServerTableModel(Vector<ServerEntry> entries) {
 		this.data = entries;
@@ -138,7 +146,15 @@ class ServerTableModel implements TableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		return columnIndex == 0 ? data.get(rowIndex).getName() : data.get(rowIndex).getRemoteAddress();
+		switch (columnIndex) {
+			case 0:
+				return data.get(rowIndex).getName();
+			case 1:
+				return data.get(rowIndex).getRemoteAddress();
+			case 2:
+				return data.get(rowIndex).getPort();
+		}
+		return "";
 	}
 
 	@Override
@@ -158,14 +174,16 @@ class ServerTableModel implements TableModel {
 class ServerEntry {
 	private String name;
 	private String remoteAddress;
+	private String port;
 
-	public ServerEntry(String name, String remoteAddress) {
+	public ServerEntry(String name, String remoteAddress, String port) {
 		this.name = name;
 		this.remoteAddress = remoteAddress;
+		this.port = port;
 	}
 
 	public String toString() {
-		return "[" + name + "@" + remoteAddress + "]";
+		return "[" + name + "@" + remoteAddress + ":" + port + "]";
 	}
 
 	/**
@@ -173,6 +191,13 @@ class ServerEntry {
 	 */
 	public String getName() {
 		return name;
+	}
+	
+	/**
+	 * @return the port
+	 */
+	public String getPort() {
+		return port;
 	}
 
 	/**
@@ -187,6 +212,8 @@ class ServerEntry {
 			return false;
 		
 		ServerEntry that = (ServerEntry) other;
-		return that.name.equals(this.name) && that.remoteAddress.equals(this.remoteAddress);
+		return that.name.equals(this.name) && 
+			that.port.equals(this.port) &&
+			that.remoteAddress.equals(this.remoteAddress);
 	}
 }
