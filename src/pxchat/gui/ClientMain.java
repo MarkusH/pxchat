@@ -12,9 +12,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -157,7 +154,7 @@ public class ClientMain extends JFrame {
 			}
 		});
 		mFile.add(mNewChat);
-		
+
 		mFindServer = new JMenuItem();
 		I18n.getInstance().getTextComps().put(mFindServer, "findServer");
 		mFindServer.setMnemonic('f');
@@ -180,7 +177,7 @@ public class ClientMain extends JFrame {
 		});
 		mCloseChat.setEnabled(false);
 		mFile.add(mCloseChat);
-		
+
 		mConfig = new JMenuItem();
 		I18n.getInstance().getTextComps().put(mConfig, "configDialog");
 		mConfig.setMnemonic('c');
