@@ -34,7 +34,7 @@
         echo "Added " . $addr . " " . $port . " " . $name . " -";
     }
     
-    function del($addr) {
+    function del($addr, $port) {
         global $connection;
         $sql = "DELETE FROM servers WHERE address = '" . $addr . "' AND port = '" . $port . "'";
         mysql_query($sql);
@@ -56,7 +56,7 @@
             break;
         case "del":
             cron(5);
-            del($address);
+            del($address, $port);
             break;
         default:
             cron(5);
