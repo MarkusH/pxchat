@@ -281,7 +281,7 @@ public final class Config {
 		config.clear();
 		profiles.clear();
 		config.put("defaultProfile", "default");
-		config.put("masterServer","http://localhost/servers.php?&amp;action=list");
+		config.put("masterServer","http://localhost/servers.php?&action=list");
 
 		file = new File(fileName);
 		try {
