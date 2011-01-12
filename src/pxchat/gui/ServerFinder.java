@@ -37,6 +37,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 import pxchat.net.Client;
+import pxchat.util.Config;
 
 /**
  * @author Markus Döllinger
@@ -45,10 +46,6 @@ import pxchat.net.Client;
 public class ServerFinder extends JDialog {
 
 	private static final long serialVersionUID = 1166794484525146317L;
-
-	public static void main(String args[]) {
-		new ServerFinder(null);
-	}
 
 	private JTable table;
 
@@ -170,7 +167,6 @@ public class ServerFinder extends JDialog {
 		buttonPane.add(cancelBtn);
 
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
-		// getContentPane().setSize(150, 200);
 		this.pack();
 
 		this.setResizable(false);
@@ -197,7 +193,7 @@ public class ServerFinder extends JDialog {
 		Vector<ServerEntry> entries = new Vector<ServerEntry>();
 
 		try {
-			URL u = new URL("http://localhost/servers.php?&action=list");
+			URL u = new URL(Config.get("masterServer"));
 			BufferedReader r;
 			URLConnection c = u.openConnection();
 			c.setConnectTimeout(1000);
@@ -209,8 +205,6 @@ public class ServerFinder extends JDialog {
 				Pattern p = Pattern.compile("^([^ ]*) ([^ ]*) (.*)$");
 				Matcher m = p.matcher(line);
 				if (m.matches()) {
-					// System.out.println(m.group(1) + " " + m.group(2) + " " +
-					// m.group(3));
 					String name = m.group(3);
 					String remoteAddress = m.group(1);
 					String port = m.group(2);
