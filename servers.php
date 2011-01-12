@@ -28,14 +28,15 @@
         global $connection;
         $time = time();
         $sql = "INSERT INTO servers (address, port, time, name) VALUES
-                    ('" . $addr . "', '" . $port . "', '" . $time . "', '" . $name . "')";
+                    ('" . $addr . "', '" . $port . "', '" . $time . "', '" . $name . "')
+                    ON DUPLICATE KEY UPDATE time = '" . $time . "', name = '" . $name . "'";
         mysql_query($sql, $connection);
         echo "Added " . $addr . " " . $port . " " . $name . " -";
     }
     
     function del($addr) {
         global $connection;
-        $sql = "DELETE FROM servers WHERE address = '" . $addr . "'";
+        $sql = "DELETE FROM servers WHERE address = '" . $addr . "' AND port = '" . $port . "'";
         mysql_query($sql);
     }
     

@@ -10,7 +10,8 @@ CREATE TABLE `servers` (
   `address` varchar(255) NOT NULL,
   `port` varchar(10) NOT NULL,
   `name` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UNIQUE` (`address`,`port`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;
 
 CREATE USER 'pxchat'@'localhost' IDENTIFIED BY 'pxchat';
