@@ -30,6 +30,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelListener;
@@ -38,11 +39,11 @@ import javax.swing.table.TableModel;
 import pxchat.net.Client;
 
 /**
- * @author Markus
- *
+ * @author Markus Döllinger
+ * 
  */
 public class ServerFinder extends JDialog {
-	
+
 	private static final long serialVersionUID = 1166794484525146317L;
 
 	public static void main(String args[]) {
@@ -50,15 +51,15 @@ public class ServerFinder extends JDialog {
 	}
 
 	private JTable table;
-	
+
 	private JButton connectBtn;
 	private JButton refreshBtn;
-	
+
 	private JTextField userName;
 	private JPasswordField password;
-	
+
 	/**
-	 * @throws IOException 
+	 * @throws IOException
 	 * 
 	 */
 	public ServerFinder(JFrame parent) {
@@ -71,7 +72,7 @@ public class ServerFinder extends JDialog {
 		table.setRowSelectionAllowed(true);
 		table.setModel(new ServerTableModel(new Vector<ServerEntry>()));
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			
+
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (e.getFirstIndex() > -1)
@@ -80,16 +81,15 @@ public class ServerFinder extends JDialog {
 					connectBtn.setEnabled(false);
 			}
 		});
-		updateEntries();
 
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(320, 240));
+		scrollPane.setPreferredSize(new Dimension(320, 240));
 
 		getContentPane().add(scrollPane, BorderLayout.NORTH);
-		
+
 		JPanel loginPane = new JPanel();
 		loginPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5));
 		loginPane.setLayout(new GridLayout(2, 2));
@@ -100,13 +100,13 @@ public class ServerFinder extends JDialog {
 		password = new JPasswordField();
 		loginPane.add(password);
 		getContentPane().add(loginPane, BorderLayout.CENTER);
-		
+
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
 		buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5));
 		refreshBtn = new JButton(I18n.getInstance().getString("refresh"));
 		refreshBtn.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				connectBtn.setEnabled(false);
@@ -121,14 +121,14 @@ public class ServerFinder extends JDialog {
 		connectBtn = new JButton(I18n.getInstance().getString("connect"));
 		connectBtn.setEnabled(false);
 		connectBtn.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int index = table.getSelectedRow();
 				if (index > -1) {
 					ServerEntry entry = ((ServerTableModel) table.getModel()).getEntry(index);
 					System.out.println(entry);
-					
+
 					String host = entry.getRemoteAddress();
 					String sport = entry.getPort();
 					String user = userName.getText();
@@ -139,16 +139,18 @@ public class ServerFinder extends JDialog {
 					} catch (NumberFormatException ne) {
 						port = 12345;
 					}
-					
+
 					if (user.equals("") || pass.equals("")) {
-						JOptionPane.showMessageDialog(ServerFinder.this, I18n.getInstance().getString("cdInputFail"));
+						JOptionPane.showMessageDialog(ServerFinder.this, I18n.getInstance()
+								.getString("cdInputFail"));
 						return;
 					}
 
 					try {
 						Client.getInstance().connect(host, port, user, pass);
 					} catch (Exception ee) {
-						JOptionPane.showMessageDialog(ServerFinder.this, I18n.getInstance().getString("cdConnectFail"));
+						JOptionPane.showMessageDialog(ServerFinder.this, I18n.getInstance()
+								.getString("cdConnectFail"));
 						return;
 					}
 					dispose();
@@ -159,7 +161,7 @@ public class ServerFinder extends JDialog {
 		buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
 		JButton cancelBtn = new JButton(I18n.getInstance().getString("cancel"));
 		cancelBtn.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				ServerFinder.this.dispose();
@@ -167,61 +169,74 @@ public class ServerFinder extends JDialog {
 		});
 		buttonPane.add(cancelBtn);
 
-
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
-//		getContentPane().setSize(150, 200);
+		// getContentPane().setSize(150, 200);
 		this.pack();
 
 		this.setResizable(false);
 		this.setAlwaysOnTop(true);
 		this.setLocationRelativeTo(this.getParent());
+
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				updateEntries();
+			}
+		});
+
 		this.setVisible(true);
 	}
 
+	/**
+	 * This method connects to a master server where the addresses of available
+	 * pxchat servers are stored. If it can connect it shows the servers in a
+	 * table, else it shows an error message and disposes the ServerFinder.
+	 */
 	private void updateEntries() {
-		
+
 		Vector<ServerEntry> entries = new Vector<ServerEntry>();
-		
+
 		try {
 			URL u = new URL("http://localhost/servers.php?&action=list");
 			BufferedReader r;
 			URLConnection c = u.openConnection();
 			c.setConnectTimeout(1000);
 			r = new BufferedReader(new InputStreamReader(c.getInputStream()));
-	
+
 			String line = null;
 			while ((line = r.readLine()) != null) {
-				
+
 				Pattern p = Pattern.compile("^([^ ]*) ([^ ]*) (.*)$");
 				Matcher m = p.matcher(line);
 				if (m.matches()) {
-//					System.out.println(m.group(1) + " " + m.group(2) + " " + m.group(3));
+					// System.out.println(m.group(1) + " " + m.group(2) + " " +
+					// m.group(3));
 					String name = m.group(3);
 					String remoteAddress = m.group(1);
 					String port = m.group(2);
 					entries.add(new ServerEntry(name, remoteAddress, port));
 				}
 			}
-			
+
 			table.setModel(new ServerTableModel(entries));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane
+					.showMessageDialog(this, I18n.getInstance().getString("sfServerUnavailable"));
+			this.dispose();
 		}
-		
+
 	}
 }
 
 class ServerTableModel implements TableModel {
-	
+
 	Vector<ServerEntry> data = new Vector<ServerEntry>();
-	
+
 	String[] columns = new String[] { "Name", "Address", "Port" };
-	
+
 	public ServerTableModel(Vector<ServerEntry> entries) {
 		this.data = entries;
 	}
-	
 
 	@Override
 	public void addTableModelListener(TableModelListener l) {
@@ -266,13 +281,13 @@ class ServerTableModel implements TableModel {
 	}
 
 	@Override
-	public void removeTableModelListener(TableModelListener l) {	
+	public void removeTableModelListener(TableModelListener l) {
 	}
 
 	@Override
-	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {	
+	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 	}
-	
+
 	public ServerEntry getEntry(int row) {
 		return data.get(row);
 	}
@@ -299,7 +314,7 @@ class ServerEntry {
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * @return the port
 	 */
@@ -317,10 +332,9 @@ class ServerEntry {
 	public boolean equals(Object other) {
 		if (!(other instanceof ServerEntry))
 			return false;
-		
+
 		ServerEntry that = (ServerEntry) other;
-		return that.name.equals(this.name) && 
-			that.port.equals(this.port) &&
-			that.remoteAddress.equals(this.remoteAddress);
+		return that.name.equals(this.name) && that.port.equals(this.port) && that.remoteAddress
+				.equals(this.remoteAddress);
 	}
 }
