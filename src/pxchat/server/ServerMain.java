@@ -21,6 +21,8 @@ import org.xml.sax.SAXParseException;
 
 import pxchat.net.Server;
 import pxchat.util.XMLUtil;
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
 
 /**
  * The main class of the server.
@@ -28,14 +30,20 @@ import pxchat.util.XMLUtil;
  * @author Markus Döllinger
  * @author Markus Holtermann
  */
-public class ServerMain {
+public class ServerMain implements SignalHandler {
+	
+	private static final String defaultServerList = "http://localhost/servers.php";
+	private static final int defaultPort = 12345;
+	private static final HashMap<String, String> defaultAuthList = new HashMap<String, String>();
 
 	/**
 	 * config values initialized with a default value
 	 */
-	private static String serverList = "http://localhost/servers.php";
-	private static int port = 12345;
-	private static HashMap<String, String> authList = new HashMap<String, String>();
+	private static String serverList;
+	private static int port;
+	private static HashMap<String, String> authList;
+	
+	private static Server server;
 
 	/**
 	 * The main entry point of the server.
@@ -56,16 +64,20 @@ public class ServerMain {
 			public void run() {
 				try {
 					System.out.println("Delete entry from server list");
-					new URL(serverList + "?action=del&port=" + port).openStream();
+					new URL(serverList + "?action=del&p = defaultPortort=" + port).openStream();
 				} catch (Exception e) {
 					System.out.println("Could not contact master server");
 				}
 			}
 		});
 		
-		Server server = new Server();
+		server = new Server();
 		server.setAuthList(authList);
 		server.listen(port);
+		
+		Signal reloadSignal = new Signal("USR2");
+		ServerMain instance = new ServerMain();
+		Signal.handle(reloadSignal, instance);
 		
 		int count = 0;
 		while (true) {
@@ -85,7 +97,11 @@ public class ServerMain {
 	 */
 	private static boolean loadConfig() {
 		File file = new File("data/config/server.xml");
+		serverList = defaultServerList;
+		port = defaultPort;
+		authList = new HashMap<String, String>(defaultAuthList);
 		if (file.exists()) {
+			System.out.print("Load config ... ");
 			Document doc = null;
 			try {
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -118,9 +134,9 @@ public class ServerMain {
 				Node config = XMLUtil.getChildByName(node, "config");
 	
 				port = Integer.valueOf(XMLUtil.getAttributeValue(XMLUtil.getChildByName(config, "port"),
-						"number", Integer.toString(port)));
+						"number", Integer.toString(defaultPort)));
 				serverList = XMLUtil.getAttributeValue(XMLUtil.getChildByName(config, "serverlist"),
-						"url", serverList);
+						"url", defaultServerList);
 	
 				Node auth = XMLUtil.getChildByName(node, "auth");
 	
@@ -135,10 +151,14 @@ public class ServerMain {
 				}
 	
 			} catch (Exception e) {
+				System.out.println("failed!");
 				System.out.println("An error ocurred loading the config file");
 				e.printStackTrace();
 				return false;
 			}
+			System.out.println("done!");
+		} else {
+			System.out.println("No config file exists. Using default data.");
 		}
 		return true;
 	}
@@ -152,5 +172,16 @@ public class ServerMain {
 			System.out.println("Could not contact master server");
 		}
 	}
+	
+	@Override
+	public void handle(Signal signal) {
+        try {
+        	loadConfig();
+        	server.setAuthList(authList);
+        } catch (Exception e) {
+            System.out.println("handle|Signal handler failed, reason " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
 }
