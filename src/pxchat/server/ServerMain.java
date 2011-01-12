@@ -30,8 +30,10 @@ import pxchat.util.XMLUtil;
  */
 public class ServerMain {
 
-	private static String serverList = "http://localhost/servers.php?";
-
+	/**
+	 * config values initialized with a default value
+	 */
+	private static String serverList = "http://localhost/servers.php";
 	private static int port = 12345;
 	private static HashMap<String, String> authList = new HashMap<String, String>();
 
@@ -54,7 +56,7 @@ public class ServerMain {
 			public void run() {
 				try {
 					System.out.println("Delete entry from server list");
-					new URL(serverList + "action=del&port=" + port).openStream();
+					new URL(serverList + "?action=del&port=" + port).openStream();
 				} catch (Exception e) {
 					System.out.println("Could not contact master server");
 				}
@@ -84,7 +86,7 @@ public class ServerMain {
 	private static boolean loadConfig() {
 		File file = new File("data/config/server.xml");
 		if (file.exists()) {
-		Document doc = null;
+			Document doc = null;
 			try {
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 				factory.setValidating(true);
@@ -116,9 +118,9 @@ public class ServerMain {
 				Node config = XMLUtil.getChildByName(node, "config");
 	
 				port = Integer.valueOf(XMLUtil.getAttributeValue(XMLUtil.getChildByName(config, "port"),
-						"number", "12345"));
+						"number", Integer.toString(port)));
 				serverList = XMLUtil.getAttributeValue(XMLUtil.getChildByName(config, "serverlist"),
-						"url", "http://localhost/servers.php") + "?";
+						"url", serverList);
 	
 				Node auth = XMLUtil.getChildByName(node, "auth");
 	
@@ -144,7 +146,7 @@ public class ServerMain {
 	private static void updateServerList(String name) {
 		try {
 			System.out.println("Add entry to server list");
-			String url = serverList + "action=add&name=" + URLEncoder.encode(name, "UTF-8") + "&port=" + port;
+			String url = serverList + "?action=add&name=" + URLEncoder.encode(name, "UTF-8") + "&port=" + port;
 			new URL(url).openStream();
 		} catch (Exception e) {
 			System.out.println("Could not contact master server");
