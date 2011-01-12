@@ -54,28 +54,25 @@ public class ServerMain {
 			public void run() {
 				try {
 					System.out.println("Delete entry from server list");
-					new URL(serverList + "action=del").openStream();
+					new URL(serverList + "action=del&port=" + port).openStream();
 				} catch (Exception e) {
 					System.out.println("Could not contact master server");
 				}
 			}
 		});
 		
-		try {
-			System.out.println("Add entry to server list");
-			String name = (args.length == 0) ? "pxchat" : args[0];
-			String url = serverList + "action=add&name=" + URLEncoder.encode(name, "UTF-8") + "&port=" + port;
-			new URL(url).openStream();
-		} catch (Exception e) {
-			System.out.println("Could not contact master server");
-		}
-
 		Server server = new Server();
 		server.setAuthList(authList);
 		server.listen(port);
-
+		
+		int count = 0;
 		while (true) {
+			if (count % 6 == 0) {
+				updateServerList((args.length == 0) ? "pxchat" : args[0]);
+				count = 0;
+			}
 			System.out.println("Connected users: " + server.getUserList());
+			count++;
 			Thread.sleep(10000);
 		}
 	}
@@ -142,6 +139,16 @@ public class ServerMain {
 			}
 		}
 		return true;
+	}
+	
+	private static void updateServerList(String name) {
+		try {
+			System.out.println("Add entry to server list");
+			String url = serverList + "action=add&name=" + URLEncoder.encode(name, "UTF-8") + "&port=" + port;
+			new URL(url).openStream();
+		} catch (Exception e) {
+			System.out.println("Could not contact master server");
+		}
 	}
 
 }
