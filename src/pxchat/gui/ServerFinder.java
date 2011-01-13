@@ -60,7 +60,7 @@ public class ServerFinder extends JDialog {
 	 * 
 	 */
 	public ServerFinder(JFrame parent) {
-		super(parent, "Server Finder");
+		super(parent, I18n.getInstance().getString("sfTitle"));
 		setLayout(new BorderLayout());
 
 		table = new JTable();
@@ -139,7 +139,7 @@ public class ServerFinder extends JDialog {
 
 					if (user.equals("") || pass.equals("")) {
 						JOptionPane.showMessageDialog(ServerFinder.this, I18n.getInstance()
-								.getString("cdInputFail"));
+								.getString("inputFail"));
 						return;
 					}
 
@@ -147,7 +147,7 @@ public class ServerFinder extends JDialog {
 						Client.getInstance().connect(host, port, user, pass);
 					} catch (Exception ee) {
 						JOptionPane.showMessageDialog(ServerFinder.this, I18n.getInstance()
-								.getString("cdConnectFail"));
+								.getString("connectFail"));
 						return;
 					}
 					dispose();
@@ -215,13 +215,18 @@ public class ServerFinder extends JDialog {
 			table.setModel(new ServerTableModel(entries));
 		} catch (Exception e) {
 			JOptionPane
-					.showMessageDialog(this, I18n.getInstance().getString("sfServerUnavailable"));
+					.showMessageDialog(this, I18n.getInstance().getString("masterServerUnavailable"));
 			this.dispose();
 		}
 
 	}
 }
 
+/**
+ * @author Markus Döllinger
+ * 
+ * This class realizes the displaying of the server table.
+ */
 class ServerTableModel implements TableModel {
 
 	Vector<ServerEntry> data = new Vector<ServerEntry>();
