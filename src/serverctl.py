@@ -87,7 +87,7 @@ def start(pidfilename='server.pid'):
     pidfile.close()
 
 
-def stop(sig=9, pidfilename='server.pid'):
+def stop(sig=15, pidfilename='server.pid'):
     try:
         pidfile = file(pidfilename, 'r')
         pid = pidfile.read()
