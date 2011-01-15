@@ -375,8 +375,11 @@ public class Server {
 								// connected
 								// after this image transfer was initiated.
 								for (FrameAdapter ad : receiver.getLateReceivers()) {
-									imgSenders.get(ad).add(new ImageSender(receiver.getImageID()));
-									ad.send();
+									Integer id = receiver.getImageID();
+									if (ImageTable.getInstance().get(id) != null) {
+										imgSenders.get(ad).add(new ImageSender(receiver.getImageID()));
+										ad.send();
+									}
 								}
 
 								iterator.remove();
@@ -429,6 +432,15 @@ public class Server {
 					case Frame.ID_CLEAR:
 						paintObjectCache.clear();
 						serverFrameAdapter.broadcastToAuth(FrameQueue.from(frame), true);
+						// remove unused images
+						for (Iterator<Integer> i = ImageTable.getInstance().keySet().iterator(); i.hasNext(); ) {
+							Integer id = i.next();
+							if (backgroundCache == null || 
+									backgroundCache.getType() == BackgroundFrame.COLOR ||
+									!id.equals(backgroundCache.getImageID())) {
+								i.remove();
+							}
+						}
 						break;
 				}
 			}

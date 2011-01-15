@@ -9,6 +9,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -44,7 +45,7 @@ public class PaintBoard extends JPanel {
 	/**
 	 * The image id of the background image.
 	 */
-	private Integer backgroundImgID = -1;
+	private Integer backgroundImgID = null;
 
 	/**
 	 * The second level of the paint board. The paint objects will be drawn into
@@ -125,8 +126,25 @@ public class PaintBoard extends JPanel {
 	 * @param clearBackup If <code>true</code>, the backup will be cleared too
 	 */
 	public void clearBoard(boolean clearBackup) {
-		if (clearBackup)
+		if (clearBackup) {
 			backup.clear();
+			try {
+				// remove unused images
+				for (Iterator<Integer> i = ImageTable.getInstance().keySet().iterator(); i.hasNext(); ) {
+					Integer id = i.next();
+					if (backgroundImgID == null || !backgroundImgID.equals(id)) {
+						for (String bg : sentBackgrounds.keySet()) {
+							if (sentBackgrounds.get(bg).equals(id)) {
+								sentBackgrounds.remove(bg);
+								break;
+							}
+						}
+						i.remove();
+					}
+				}
+			} catch (Exception e) {
+			}
+		}
 		if (this.board == null)
 			return;
 		Graphics2D g = this.board.createGraphics();

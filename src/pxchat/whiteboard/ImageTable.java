@@ -65,6 +65,19 @@ public final class ImageTable {
 	}
 	
 	/**
+	 * Removes the key and its associated value from the image table.
+	 * 
+	 * @param key The key to delete
+	 */
+	public void remove(Integer key) {
+		BufferedImage img = table.get(key);
+		if (img != null) {
+			img.flush();
+			table.remove(key);
+		}
+	}
+	
+	/**
 	 * Returns all keys in this table.
 	 * 
 	 * @return The keys
