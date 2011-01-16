@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!ELEMENT server (config, auth)>
-<!ELEMENT config (port?, serverlist?)>
+<!ELEMENT config (name?, port?, serverlist?)>
 <!ELEMENT auth (user)*>
+<!ELEMENT name EMPTY>
 <!ELEMENT port EMPTY>
 <!ELEMENT serverlist EMPTY>
 <!ELEMENT user EMPTY>
 
-
+<!ATTLIST name
+	value	CDATA	#REQUIRED
+>
 <!ATTLIST port
 	number	CDATA	#REQUIRED
 >
-
 <!ATTLIST serverlist
 	url	CDATA	#REQUIRED
 >

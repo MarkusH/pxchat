@@ -38,6 +38,7 @@ public class ServerMain implements SignalHandler {
 	
 	private static final String defaultServerList = "http://localhost/servers.php";
 	private static final int defaultPort = 12345;
+	private static final String defaultName = "pxchat";
 	private static final HashMap<String, String> defaultAuthList = new HashMap<String, String>();
 
 	/**
@@ -45,9 +46,10 @@ public class ServerMain implements SignalHandler {
 	 */
 	private static String serverList;
 	private static int port;
-	private static String name = "pxchat";
+	private static String name = defaultName;
 	private static HashMap<String, String> authList;
 	
+	private static String configFilename = "data/config/server.xml";
 	private static Server server;
 	private static UDPServer udpServer = new UDPServer();
 
@@ -61,7 +63,9 @@ public class ServerMain implements SignalHandler {
 	public static void main(String[] args) throws IOException, InterruptedException {
 		System.out.println("Started pxchat server...");
 		
-		name = (args.length == 0) ? "pxchat" : args[0];
+		if (args.length > 0) {
+			configFilename = args[0];
+		}
 
 		if (!loadConfig())
 			return;
@@ -107,7 +111,7 @@ public class ServerMain implements SignalHandler {
 	 * @return True on success otherwise false
 	 */
 	private static boolean loadConfig() {
-		File file = new File("data/config/server.xml");
+		File file = new File(configFilename);
 		serverList = defaultServerList;
 		port = defaultPort;
 		authList = new HashMap<String, String>(defaultAuthList);
@@ -144,6 +148,8 @@ public class ServerMain implements SignalHandler {
 	
 				Node config = XMLUtil.getChildByName(node, "config");
 	
+				name = XMLUtil.getAttributeValue(XMLUtil.getChildByName(config, "name"),
+						"value", defaultName);
 				port = Integer.valueOf(XMLUtil.getAttributeValue(XMLUtil.getChildByName(config, "port"),
 						"number", Integer.toString(defaultPort)));
 				serverList = XMLUtil.getAttributeValue(XMLUtil.getChildByName(config, "serverlist"),
