@@ -11,8 +11,13 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -189,8 +194,11 @@ public class ServerFinder extends JDialog {
 	 * table, else it shows an error message and disposes the ServerFinder.
 	 */
 	private void updateEntries() {
-
-		Vector<ServerEntry> entries = new Vector<ServerEntry>();
+		
+		List<ServerEntry> entries = Collections.synchronizedList(new Vector<ServerEntry>());
+		
+		UDPClient client = new UDPClient(entries);
+		client.start();
 
 		try {
 			URL u = new URL(Config.get("masterServer"));
@@ -220,6 +228,61 @@ public class ServerFinder extends JDialog {
 		}
 
 	}
+	
+	class UDPClient extends Thread {
+		
+		private List<ServerEntry> entries;
+		
+		public UDPClient(List<ServerEntry> entries) {
+			this.entries = entries;
+		}
+
+		public void run() {
+			DatagramSocket socket = null;
+
+			try {
+				socket = new DatagramSocket(1338);
+				socket.setSoTimeout(100);
+
+				DatagramPacket request = new DatagramPacket("Request".getBytes(),
+						"Request".length(), new InetSocketAddress("255.255.255.255", 1337));
+				
+				socket.setBroadcast(true);
+				socket.send(request);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
+			
+			long start = System.currentTimeMillis();
+
+			while (!isInterrupted()) {
+				DatagramPacket packet = new DatagramPacket(new byte[256], 256);
+				try {
+					socket.receive(packet);
+					byte[] data = new byte[packet.getLength()];
+					System.arraycopy(packet.getData(), 0, data, 0, packet.getLength());
+					System.out.println(new String(data));
+					String[] response = new String(data).split(" ");
+					entries.add(new ServerEntry(response[1], packet.getAddress().getHostAddress(), response[0]));
+					SwingUtilities.invokeLater(new Runnable() {
+						
+						@Override
+						public void run() {
+							table.setModel(new ServerTableModel(entries));
+						}
+					});
+					
+				} catch (Exception e) {
+					return;
+				}
+				if (System.currentTimeMillis() - start > 3000)
+					interrupt();
+			}
+			socket.close();
+		}
+	}
 }
 
 /**
@@ -229,11 +292,11 @@ public class ServerFinder extends JDialog {
  */
 class ServerTableModel implements TableModel {
 
-	Vector<ServerEntry> data = new Vector<ServerEntry>();
+	List<ServerEntry> data;
 
 	String[] columns = new String[] { "Name", "Address", "Port" };
 
-	public ServerTableModel(Vector<ServerEntry> entries) {
+	public ServerTableModel(List<ServerEntry> entries) {
 		this.data = entries;
 	}
 

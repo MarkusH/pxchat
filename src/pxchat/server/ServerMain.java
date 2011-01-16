@@ -5,6 +5,10 @@ package pxchat.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -41,9 +45,11 @@ public class ServerMain implements SignalHandler {
 	 */
 	private static String serverList;
 	private static int port;
+	private static String name = "pxchat";
 	private static HashMap<String, String> authList;
 	
 	private static Server server;
+	private static UDPServer udpServer = new UDPServer();
 
 	/**
 	 * The main entry point of the server.
@@ -54,6 +60,8 @@ public class ServerMain implements SignalHandler {
 	 */
 	public static void main(String[] args) throws IOException, InterruptedException {
 		System.out.println("Started pxchat server...");
+		
+		name = (args.length == 0) ? "pxchat" : args[0];
 
 		if (!loadConfig())
 			return;
@@ -62,6 +70,7 @@ public class ServerMain implements SignalHandler {
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
+				udpServer.interrupt();
 				try {
 					System.out.println("Delete entry from server list");
 					new URL(serverList + "?action=del&p = defaultPortort=" + port).openStream();
@@ -79,10 +88,12 @@ public class ServerMain implements SignalHandler {
 		ServerMain instance = new ServerMain();
 		Signal.handle(reloadSignal, instance);
 		
+		udpServer.start();
+		
 		int count = 0;
 		while (true) {
 			if (count % 6 == 0) {
-				updateServerList((args.length == 0) ? "pxchat" : args[0]);
+				updateServerList(name);
 				count = 0;
 			}
 			System.out.println("Connected users: " + server.getUserList());
@@ -184,4 +195,40 @@ public class ServerMain implements SignalHandler {
         }
     }
 
+	/**
+	 * @author Markus Döllinger
+	 */
+	static class UDPServer extends Thread {
+
+		public void run() {
+			DatagramSocket socket = null;
+
+			try {
+				socket = new DatagramSocket(1337);
+				socket.setSoTimeout(100);
+			} catch (SocketException e1) {
+				e1.printStackTrace();
+			}
+			while (!isInterrupted()) {
+				DatagramPacket packet = new DatagramPacket(new byte[256], 256);
+				try {
+					socket.receive(packet);
+					byte[] data = new byte[packet.getLength()];
+					System.arraycopy(packet.getData(), 0, data, 0, packet.getLength());
+					System.out.println(new String(data));
+					String resp = port + " " + name;
+					DatagramPacket response = new DatagramPacket(resp.getBytes(), 
+							resp.length(), packet.getAddress(), 1338);
+					socket.send(response);
+				} catch (SocketTimeoutException e) {
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			socket.close();
+		}
+	}
+	
 }
+
+
