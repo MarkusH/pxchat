@@ -130,7 +130,8 @@ public class PaintBoard extends JPanel {
 			backup.clear();
 			try {
 				// remove unused images
-				for (Iterator<Integer> i = ImageTable.getInstance().keySet().iterator(); i.hasNext(); ) {
+				for (Iterator<Integer> i = ImageTable.getInstance().keySet().iterator(); i
+						.hasNext();) {
 					Integer id = i.next();
 					if (backgroundImgID == null || !backgroundImgID.equals(id)) {
 						for (String bg : sentBackgrounds.keySet()) {
@@ -193,7 +194,7 @@ public class PaintBoard extends JPanel {
 	 * @param file The file of the background image
 	 */
 	public void loadBackground(File file) {
-		if (sentBackgrounds.get(file.getAbsolutePath()) == null) {
+		if (sentBackgrounds.get(file.getAbsolutePath() + file.lastModified()) == null) {
 			BufferedImage img = null;
 			try {
 				img = ImageIO.read(file);
@@ -222,14 +223,14 @@ public class PaintBoard extends JPanel {
 			}
 
 			backgroundImgID = Client.getInstance().getNextImageID();
-			sentBackgrounds.put(file.getAbsolutePath(), backgroundImgID);
+			sentBackgrounds.put(file.getAbsolutePath() + file.lastModified(), backgroundImgID);
 
 			if (resized) {
 				BufferedImage downSampleImg = new BufferedImage((int) width, (int) height,
 						BufferedImage.TYPE_INT_RGB);
 				Graphics2D g = downSampleImg.createGraphics();
 				g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-						RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+					RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 				g.drawImage(img, 0, 0, (int) width, (int) height, null);
 				g.dispose();
 
@@ -241,7 +242,8 @@ public class PaintBoard extends JPanel {
 			Client.getInstance().sendChangeBackground(backgroundImgID);
 			Client.getInstance().sendImage(backgroundImgID);
 		} else {
-			Client.getInstance().sendChangeBackground(sentBackgrounds.get(file.getAbsolutePath()));
+			Client.getInstance().sendChangeBackground(
+				sentBackgrounds.get(file.getAbsolutePath() + file.lastModified()));
 		}
 	}
 
