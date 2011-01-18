@@ -74,6 +74,7 @@ public class ServerMain implements SignalHandler {
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
+				server.close();
 				udpServer.interrupt();
 				try {
 					System.out.println("Delete entry from server list");
