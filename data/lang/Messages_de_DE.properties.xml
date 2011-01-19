@@ -20,7 +20,7 @@
 	<entry key="aboutText">pxchat ist unter der Creative Commons Lizenz BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/de/) veröffentlicht.
 
 Die Autoren sind:
-Florian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tennberge, Robert Waury</entry>
+Florian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tenberge, Robert Waury</entry>
 
 	<entry key="wbTitle">pxchat - Whiteboard</entry>
 	<entry key="wbBackground">Hintergrund ändern</entry>
@@ -41,7 +41,7 @@ Florian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tennberge, Rober
 	<entry key="wbBackgroundColor">Hintergrundfarbe ändern</entry>
     
 	<entry key="ssEnterChat">pxchat betreten</entry>
-	<entry key="ssInfoText">Bitte überprüfen Sie mit Hilfe dieses Bildes ihre Bildschirmeinstellungen.</entry>
+	<entry key="ssInfoText">Bitte überprüfen Sie mit Hilfe dieses Bildes ihre Bildschirmeinstellungen. Zur genauen Beschreibung lesen Sie bitte das README.</entry>
     
 	<entry key="ccDialog">pxchat - Farbe wählen</entry>
     
