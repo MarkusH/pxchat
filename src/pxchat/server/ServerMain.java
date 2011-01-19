@@ -5,12 +5,6 @@ package pxchat.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -36,22 +30,17 @@ import sun.misc.SignalHandler;
  */
 public class ServerMain implements SignalHandler {
 	
-	private static final String defaultServerList = "http://localhost/servers.php";
 	private static final int defaultPort = 12345;
-	private static final String defaultName = "pxchat";
 	private static final HashMap<String, String> defaultAuthList = new HashMap<String, String>();
 
 	/**
 	 * config values initialized with a default value
 	 */
-	private static String serverList;
 	private static int port;
-	private static String name = defaultName;
 	private static HashMap<String, String> authList;
 	
 	private static String configFilename = "data/config/server.xml";
 	private static Server server;
-	private static UDPServer udpServer = new UDPServer();
 
 	/**
 	 * The main entry point of the server.
@@ -75,13 +64,6 @@ public class ServerMain implements SignalHandler {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				server.close();
-				udpServer.interrupt();
-				try {
-					System.out.println("Delete entry from server list");
-					new URL(serverList + "?action=del&p = defaultPortort=" + port).openStream();
-				} catch (Exception e) {
-					System.out.println("Could not contact master server");
-				}
 			}
 		});
 		
@@ -93,14 +75,8 @@ public class ServerMain implements SignalHandler {
 		ServerMain instance = new ServerMain();
 		Signal.handle(reloadSignal, instance);
 		
-		udpServer.start();
-		
 		int count = 0;
 		while (true) {
-			if (count % 6 == 0) {
-				updateServerList(name);
-				count = 0;
-			}
 			System.out.println("Connected users: " + server.getUserList());
 			count++;
 			Thread.sleep(10000);
@@ -113,7 +89,6 @@ public class ServerMain implements SignalHandler {
 	 */
 	private static boolean loadConfig() {
 		File file = new File(configFilename);
-		serverList = defaultServerList;
 		port = defaultPort;
 		authList = new HashMap<String, String>(defaultAuthList);
 		if (file.exists()) {
@@ -149,12 +124,8 @@ public class ServerMain implements SignalHandler {
 	
 				Node config = XMLUtil.getChildByName(node, "config");
 	
-				name = XMLUtil.getAttributeValue(XMLUtil.getChildByName(config, "name"),
-						"value", defaultName);
 				port = Integer.valueOf(XMLUtil.getAttributeValue(XMLUtil.getChildByName(config, "port"),
 						"number", Integer.toString(defaultPort)));
-				serverList = XMLUtil.getAttributeValue(XMLUtil.getChildByName(config, "serverlist"),
-						"url", defaultServerList);
 	
 				Node auth = XMLUtil.getChildByName(node, "auth");
 	
@@ -181,16 +152,6 @@ public class ServerMain implements SignalHandler {
 		return true;
 	}
 	
-	private static void updateServerList(String name) {
-		try {
-			System.out.println("Add entry to server list");
-			String url = serverList + "?action=add&name=" + URLEncoder.encode(name, "UTF-8") + "&port=" + port;
-			new URL(url).openStream();
-		} catch (Exception e) {
-			System.out.println("Could not contact master server");
-		}
-	}
-	
 	@Override
 	public void handle(Signal signal) {
         try {
@@ -202,40 +163,6 @@ public class ServerMain implements SignalHandler {
         }
     }
 
-	/**
-	 * @author Markus Döllinger
-	 */
-	static class UDPServer extends Thread {
-
-		public void run() {
-			DatagramSocket socket = null;
-
-			try {
-				socket = new DatagramSocket(1337);
-				socket.setSoTimeout(100);
-			} catch (SocketException e1) {
-				e1.printStackTrace();
-			}
-			while (!isInterrupted()) {
-				DatagramPacket packet = new DatagramPacket(new byte[256], 256);
-				try {
-					socket.receive(packet);
-					byte[] data = new byte[packet.getLength()];
-					System.arraycopy(packet.getData(), 0, data, 0, packet.getLength());
-					System.out.println(new String(data));
-					String resp = port + " " + name;
-					DatagramPacket response = new DatagramPacket(resp.getBytes(), 
-							resp.length(), packet.getAddress(), 1338);
-					socket.send(response);
-				} catch (SocketTimeoutException e) {
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			socket.close();
-		}
-	}
-	
 }
 
 
