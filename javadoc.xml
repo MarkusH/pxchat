@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="javadoc">
     <target name="javadoc">
-        <javadoc access="private" author="true" classpath="." destdir="docs" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="pxchat.net.protocol.frames,pxchat.gui,pxchat.net,pxchat.whiteboard,pxchat.net.tcp,pxchat.server,pxchat.net.protocol.core,pxchat.util" source="1.6" sourcepath="src" splitindex="true" use="true" version="true"/>
+        <javadoc access="private" author="true" classpath="." destdir="docs" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="pxchat.net,pxchat.net.tcp,pxchat.util,pxchat.whiteboard,pxchat.server,pxchat.gui,pxchat.net.protocol.core,pxchat.net.protocol.frames" source="1.6" sourcepath="src" splitindex="true" use="true" version="true"/>
     </target>
 </project>
