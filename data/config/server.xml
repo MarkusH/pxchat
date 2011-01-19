@@ -5,7 +5,16 @@
 		<port number="12345" />
 	</config>
 	<auth>
-		<user name="User1" password="password1" />
-		<user name="User2" password="password2" />
+		<user name="Kevin Articus" password="articus" />
+		<user name="Sebastian Biewer" password="biewer" />
+		<user name="Rene Engelmann" password="engelmann" />
+		<user name="Robert Genz" password="genz" />
+		<user name="Christian Jelitte" password="jelitte" />
+		<user name="Clemens Wolf" password="wolf" />
+		<user name="Florian Bausch" password="bausch" />
+		<user name="Markus Döllinger" password="döllinger" />
+		<user name="Markus Holtermann" password="holtermann" />
+		<user name="Alexander Tenberge" password="tenberge" />
+		<user name="Robert Waury" password="waury" />
 	</auth>
 </server>
