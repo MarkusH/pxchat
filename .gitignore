@@ -2,5 +2,4 @@ bin
 log/log*
 log/.*
 .*
-data/config/*
 pxchat-docs.zip

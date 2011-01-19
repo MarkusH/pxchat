@@ -78,7 +78,7 @@ public class ClientMain extends JFrame {
 	 */
 	private JMenuBar mBar;
 	private JMenu mFile, mHelp;
-	private JMenuItem mNewChat, mCloseChat, mFindServer, mExit, mAbout, mConfig;
+	private JMenuItem mNewChat, mCloseChat, mExit, mAbout;
 
 	private JTextArea inputArea;
 	private JTextPane chatLog;
@@ -155,17 +155,6 @@ public class ClientMain extends JFrame {
 		});
 		mFile.add(mNewChat);
 
-		mFindServer = new JMenuItem();
-		I18n.getInstance().getTextComps().put(mFindServer, "findServer");
-		mFindServer.setMnemonic('f');
-		mFindServer.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new ServerFinder(ClientMain.this);
-			}
-		});
-		mFile.add(mFindServer);
-
 		mCloseChat = new JMenuItem();
 		I18n.getInstance().getTextComps().put(mCloseChat, "closeChat");
 		mCloseChat.setMnemonic('d');
@@ -177,17 +166,6 @@ public class ClientMain extends JFrame {
 		});
 		mCloseChat.setEnabled(false);
 		mFile.add(mCloseChat);
-
-		mConfig = new JMenuItem();
-		I18n.getInstance().getTextComps().put(mConfig, "configDialog");
-		mConfig.setMnemonic('c');
-		mConfig.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				new ConfigurationDialog(ClientMain.this);
-			}
-		});
-		mFile.add(mConfig);
 
 		mExit = new JMenuItem(Icons.get("quit.png"));
 		I18n.getInstance().getTextComps().put(mExit, "quitProgram");
@@ -383,7 +361,6 @@ public class ClientMain extends JFrame {
 			public void clientConnect(String remoteAddress) {
 				chatLog.setText("");
 				mCloseChat.setEnabled(true);
-				mFindServer.setEnabled(false);
 				mNewChat.setEnabled(false);
 				whiteBoardButton.setEnabled(true);
 				sendButton.setEnabled(true);
@@ -407,7 +384,6 @@ public class ClientMain extends JFrame {
 						@Override
 						public void run() {
 							mNewChat.setEnabled(true);
-							mFindServer.setEnabled(true);
 							mCloseChat.setEnabled(false);
 							whiteBoardButton.setEnabled(false);
 							sendButton.setEnabled(false);
