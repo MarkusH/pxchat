@@ -1,0 +1,65 @@
+README
+======
+
+"pxchat" is a chatting software that supports:
+ * Chat conferencing
+ * Real-time collaborative drawing
+
+"pxchat" is a student's project at the DHBW Mannheim, Corporate State University.
+
+Requirements
+============
+
+JVM:
+- OpenJDK Runtime Environment (IcedTea6)
+
+Operating System:
+- Ubuntu Linux 10.04.1 LTS
+
+Configuration 
+=============
+
+data/config/server.xml
+
+Network
+-------
+
+The config tag defines listening port for new connections.
+
+<port number="12345" />
+
+supported values for number attribute:
+
+anything between "1024" to "65535" may be valid
+
+
+User Management
+---------------
+
+The auth tag defines users who are allowed to connect to the server.
+
+<user name="User1" password="password1" />
+
+name		- username
+password	- respective password
+
+Installation
+============
+
+The complete server program is provided as a single .tar.gz file.
+
+Extract from archive:
+tar -xzf server.tar.gz
+
+Proceed as described in Start.
+
+Start
+=====
+
+command line
+------------
+
+Go to directory of the server.jar (cd).
+
+issue command: java -jar server.jar
+
