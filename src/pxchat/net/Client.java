@@ -215,8 +215,8 @@ public final class Client {
 					case Frame.ID_MSG:
 						MessageFrame mf = (MessageFrame) frame;
 						for (ClientListener listener : clientListeners) {
-							listener.messageReceived(userList.get(mf.getSessionId()), mf
-									.getMessage());
+							listener.messageReceived(userList.get(mf.getSessionId()),
+									mf.getMessage());
 						}
 						break;
 
