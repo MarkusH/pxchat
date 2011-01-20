@@ -3,19 +3,16 @@ README
 
 "pxchat" is a chatting software that supports:
  * Chat conferencing
- * Private chats
- * File transfer
  * Real-time collaborative drawing
 
 "pxchat" is a student's project at the DHBW Mannheim, Corporate State University.
-
-Git repository: git://github.com/Markush2010/pxchat.git
 
 Requirements
 ============
 
 JVM:
 - OpenJDK Runtime Environment (IcedTea6)
+- Sun Java(TM) SE Runtime Environment
 
 Operating System:
 - Ubuntu Linux 9.04/9.10/10.04 LTS/10.10
@@ -27,7 +24,7 @@ Configuration
 All this preferences can also be changed at runtime via the GUI. 
 The XML files allow to change the default values at startup.
 
-client.xml
+data/config/client.xml
 
 Default Language
 ----------------
@@ -84,14 +81,16 @@ Proceed as described in Start.
 Start
 =====
 
-Double-click on client.jar
+Windows
+-------
 
-OR
+Double-click on pxchat.jar
 
-right-click and open with your JRE
+Linux
+-----
+
+Start "launch.sh" by double-click or command line
 
 Description of the Splash Screen
 ================================
-
-
 
