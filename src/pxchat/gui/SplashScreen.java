@@ -26,7 +26,11 @@ public class SplashScreen extends JDialog {
 
 	private JButton startButton;
 	private JLabel imageLabel;
-	private JFrame parent;
+	/**
+	 * This WindowAdapter enables quitting the program via the window's close
+	 * button. It is activated when constructing the SplashScreen window and
+	 * removed in {@link setReady}
+	 */
 	private WindowAdapter closeAdapter = new WindowAdapter() {
 		@Override
 		public void windowClosing(WindowEvent e) {
@@ -36,9 +40,12 @@ public class SplashScreen extends JDialog {
 
 	public SplashScreen(JFrame parent) {
 		super(parent, "pxchat", false);
-		this.parent = parent;
+
+		/**
+		 * Adds the closing window listener to SplashScreen. Will be removed in
+		 * {@link setReady}.
+		 */
 		this.addWindowListener(closeAdapter);
-		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout(10, 10));
@@ -52,7 +59,7 @@ public class SplashScreen extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				SplashScreen.this.dispose();
-				SplashScreen.this.parent.setVisible(true);
+				SplashScreen.this.getParent().setVisible(true);
 			}
 		});
 
@@ -68,8 +75,17 @@ public class SplashScreen extends JDialog {
 		this.setResizable(false);
 	}
 
+	/**
+	 * setReady enables the startButton so that (after loading the complete
+	 * class {@link ClientMain}) the user can enter the main window of the
+	 * program. It also removes the window listener so that the SplashScreen can
+	 * only be leaved via the startButton. This approach gives the opportunity
+	 * that the user can leave the program if the configuration data (./data)
+	 * cannot be found and therefore the {@link ClientMain} class stops running.
+	 */
 	public void setReady() {
 		startButton.setEnabled(true);
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.removeWindowListener(closeAdapter);
 	}
 }
