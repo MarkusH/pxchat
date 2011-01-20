@@ -41,7 +41,7 @@ Florian Bausch, Markus Döllinger, Markus Holtermann, Alexander Tenberge, Robert
 	<entry key="wbBackgroundColor">Change background color</entry>
 	
 	<entry key="ssEnterChat">enter pxchat</entry>
-	<entry key="ssInfoText">Please check your display settings with this image.</entry>
+	<entry key="ssInfoText">Please check your display settings with this image. For detailed information please see the README file.</entry>
 	
 	<entry key="ccDialog">pxchat - Choose color</entry>
 	

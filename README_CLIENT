@@ -94,3 +94,15 @@ Start "launch.sh" by double-click or command line
 Description of the Splash Screen
 ================================
 
+The Splash Screen can be used to choose the best settings for your monitor.
+
+First you should adjust the contrast of your monitor
+so that you see four rows and four columns in the lower right part.
+Than you need to change the brightness so that the field in the lower right corner
+nearly disappears and the upper left corner can be seen clearly.
+All the fields should display an increase in brightness and visibility from right to left and from bottom to top.
+
+After the brightness is correctly aligned you can go on to adjust the color values
+of your monitor in a way that all the different colors in the left part are easy to recognize.
+
+The upper right picture is supposed to assist you to decide whether your display configuration is suitable.
