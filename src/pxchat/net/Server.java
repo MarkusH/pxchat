@@ -131,8 +131,7 @@ public class Server {
 			lock.lock();
 			AuthFrameAdapter adapter = serverFrameAdapter.getAdapter(client);
 			serverFrameAdapter.delete(adapter);
-			System.out
-					.println(this + "> Client with id " + adapter.getSessionID() + " disconnected.");
+			System.out.println(this + "> Client with id " + adapter.getSessionID() + " disconnected.");
 			lock.unlock();
 		}
 
@@ -185,6 +184,7 @@ public class Server {
 
 		@Override
 		public void destroyAdapter(ServerFrameAdapter serverAdapter, AuthFrameAdapter adapter) {
+			// remove all data associated with the disconnected client
 			String name = userList.get(adapter.getSessionID());
 			imgSenders.remove(adapter);
 			if (name != null) {
@@ -193,8 +193,7 @@ public class Server {
 
 				if (name.equals(lockCache.getOwner())) {
 					lockCache = new LockFrame(false, "System");
-					serverAdapter.broadcast(FrameQueue.from(lockCache), true, adapter
-							.getSessionID());
+					serverAdapter.broadcast(FrameQueue.from(lockCache), true, adapter.getSessionID());
 				}
 			}
 			userList.remove(adapter.getSessionID());
@@ -216,8 +215,7 @@ public class Server {
 				// disconnect if the version is not verified and the frame is
 				// not a version frame
 				if (!adapter.isVersionVerified() && !(frame instanceof VersionFrame)) {
-					adapter.getOutgoing()
-							.add(new NotificationFrame(NotificationFrame.VERSION_FAIL));
+					adapter.getOutgoing().add(new NotificationFrame(NotificationFrame.VERSION_FAIL));
 					adapter.send();
 					adapter.disconnect();
 					return;
@@ -251,13 +249,11 @@ public class Server {
 						VersionFrame vf = (VersionFrame) frame;
 						if (!vf.isCompatible(VersionFrame.getCurrent())) {
 							System.out.println(this + "> Version control unsuccessful.");
-							adapter.getOutgoing().add(
-									new NotificationFrame(NotificationFrame.VERSION_FAIL));
+							adapter.getOutgoing().add(new NotificationFrame(NotificationFrame.VERSION_FAIL));
 							adapter.send();
 							adapter.disconnect();
 						} else {
-							System.out
-									.println(this + "> Version control successful, send sessionID");
+							System.out.println(this + "> Version control successful, send sessionID");
 							adapter.setVersionVerified(true);
 							adapter.getOutgoing().add(new SessionIDFrame(adapter.getSessionID()));
 							adapter.getOutgoing().add(new ImageIDFrame(getNextImageID()));
@@ -279,10 +275,9 @@ public class Server {
 
 						// reject access, if password is not matching (or null)
 						// or if the user name is already in use
-						if (!af.getPassword().equals(pwd) || userList.values().contains(
-								af.getUsername())) {
-							adapter.getOutgoing().add(
-									new NotificationFrame(NotificationFrame.AUTH_FAIL));
+						if (!af.getPassword().equals(pwd) || 
+								userList.values().contains(af.getUsername())) {
+							adapter.getOutgoing().add(new NotificationFrame(NotificationFrame.AUTH_FAIL));
 							adapter.send();
 							adapter.disconnect();
 						} else {
@@ -295,16 +290,16 @@ public class Server {
 
 							serverFrameAdapter.broadcast(FrameQueue.from(new NotificationFrame(
 									NotificationFrame.JOIN, af.getUsername())), false);
+							
 							userList.put(adapter.getSessionID(), af.getUsername());
+							
 							// send lock status of white-board to newly
-							// connected
-							// client
+							// connected client
 							serverFrameAdapter.broadcastTo(FrameQueue.from(lockCache), false,
 									adapter.getSessionID());
 
-							// Send images to the client. Note that this does
-							// not include
-							// images that are currently being received.
+							// Send images to the client. Note that this does not
+							// include images that are currently being received.
 							for (Integer imageID : ImageTable.getInstance().keySet()) {
 								imgSenders.get(adapter).add(new ImageSender(imageID));
 							}
@@ -321,8 +316,7 @@ public class Server {
 					case Frame.ID_MSG:
 						MessageFrame mf = (MessageFrame) frame;
 						mf.setSessionId(adapter.getSessionID());
-						serverFrameAdapter.broadcast(FrameQueue.from(mf), true, adapter
-								.getSessionID());
+						serverFrameAdapter.broadcast(FrameQueue.from(mf), true, adapter.getSessionID());
 						break;
 
 					/*
@@ -336,8 +330,7 @@ public class Server {
 						ImageStartFrame sf = (ImageStartFrame) frame;
 						adapter.getOutgoing().add(new ImageIDFrame(getNextImageID()));
 						adapter.send();
-						ServerImageReceiver newRecv = new ServerImageReceiver(sf, adapter,
-								serverFrameAdapter);
+						ServerImageReceiver newRecv = new ServerImageReceiver(sf, adapter, serverFrameAdapter);
 						imgReceivers.add(newRecv);
 						break;
 
@@ -372,12 +365,12 @@ public class Server {
 							if (receiver.process(adapter, spf)) {
 
 								// Check whether there is a client that
-								// connected
-								// after this image transfer was initiated.
+								// connected after this image transfer was initiated.
 								for (FrameAdapter ad : receiver.getLateReceivers()) {
 									Integer id = receiver.getImageID();
 									if (ImageTable.getInstance().get(id) != null) {
-										imgSenders.get(ad).add(new ImageSender(receiver.getImageID()));
+										imgSenders.get(ad).add(
+												new ImageSender(receiver.getImageID()));
 										ad.send();
 									}
 								}
@@ -404,8 +397,8 @@ public class Server {
 					 */
 					case Frame.ID_LOCK:
 						lockCache = (LockFrame) frame;
-						serverFrameAdapter.broadcast(FrameQueue.from(lockCache), true, adapter
-								.getSessionID());
+						serverFrameAdapter.broadcast(FrameQueue.from(lockCache), 
+								true, adapter.getSessionID());
 						break;
 
 					/*
@@ -432,11 +425,12 @@ public class Server {
 					case Frame.ID_CLEAR:
 						paintObjectCache.clear();
 						serverFrameAdapter.broadcastToAuth(FrameQueue.from(frame), true);
+						
 						// remove unused images
-						for (Iterator<Integer> i = ImageTable.getInstance().keySet().iterator(); i.hasNext(); ) {
+						Iterator<Integer> i = ImageTable.getInstance().keySet().iterator();
+						while (i.hasNext()) {
 							Integer id = i.next();
-							if (backgroundCache == null || 
-									backgroundCache.getType() == BackgroundFrame.COLOR ||
+							if (backgroundCache == null || backgroundCache.getType() == BackgroundFrame.COLOR || 
 									!id.equals(backgroundCache.getImageID())) {
 								i.remove();
 							}
@@ -445,7 +439,7 @@ public class Server {
 				}
 			}
 
-			// clear all processed frames
+			// remove all processed frames from the queue
 			adapter.getIncoming().clear();
 		}
 
@@ -456,6 +450,7 @@ public class Server {
 			if (senders == null)
 				return;
 
+			// iterate over the senders and send its next frame
 			Iterator<ImageSender> iterator = senders.iterator();
 			while (iterator.hasNext()) {
 				ImageSender sender = iterator.next();
@@ -468,7 +463,7 @@ public class Server {
 	};
 
 	/**
-	 * Constructs a new pxchat Server.
+	 * Constructs a new pxchat server.
 	 */
 	public Server() {
 		server = new TCPServer(tcpServerListener);
@@ -488,7 +483,7 @@ public class Server {
 	}
 
 	/**
-	 * Generates a unique image id.
+	 * Generates a unique image id by incrementing a counter.
 	 * 
 	 * @return The next image id
 	 */
@@ -497,7 +492,8 @@ public class Server {
 	}
 
 	/**
-	 * Returns the current user list of the server.
+	 * Returns the current user list of the server. THe user list is a mapping
+	 * of session id to user name.
 	 * 
 	 * @return The user list
 	 */
@@ -527,7 +523,7 @@ public class Server {
 	}
 
 	/**
-	 * Sets the authentication list of the server.
+	 * Sets the authentication list ({@link #authList}) of the server.
 	 * 
 	 * @param authList The new authentication list
 	 */
