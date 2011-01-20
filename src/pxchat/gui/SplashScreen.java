@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -21,20 +23,27 @@ import javax.swing.SwingConstants;
  */
 public class SplashScreen extends JDialog {
 	private static final long serialVersionUID = 8187513629570194009L;
-	
+
 	private JButton startButton;
 	private JLabel imageLabel;
 	private JFrame parent;
+	private WindowAdapter closeAdapter = new WindowAdapter() {
+		@Override
+		public void windowClosing(WindowEvent e) {
+			System.exit(0);
+		};
+	};
 
 	public SplashScreen(JFrame parent) {
 		super(parent, "pxchat", false);
 		this.parent = parent;
+		this.addWindowListener(closeAdapter);
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		
+
 		JPanel panel = new JPanel();
-		panel.setLayout(new BorderLayout(10,10));
+		panel.setLayout(new BorderLayout(10, 10));
 		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		
+
 		startButton = new JButton(I18n.getInstance().getString("ssEnterChat"));
 		startButton.setEnabled(false);
 		startButton.setPreferredSize(new Dimension(200, 30));
@@ -47,8 +56,7 @@ public class SplashScreen extends JDialog {
 			}
 		});
 
-		imageLabel = new JLabel(new ImageIcon("data/img/test-pattern.png"),
-				SwingConstants.LEFT);
+		imageLabel = new JLabel(new ImageIcon("data/img/test-pattern.png"), SwingConstants.LEFT);
 		imageLabel.setToolTipText(I18n.getInstance().getString("ssInfoText"));
 		panel.add(imageLabel, BorderLayout.CENTER);
 		panel.add(startButton, BorderLayout.SOUTH);
@@ -56,11 +64,12 @@ public class SplashScreen extends JDialog {
 		this.pack();
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(size.width / 2 - this.getWidth() / 2,
-				size.height / 2 - this.getHeight() / 2);
+			size.height / 2 - this.getHeight() / 2);
 		this.setResizable(false);
 	}
 
 	public void setReady() {
 		startButton.setEnabled(true);
+		this.removeWindowListener(closeAdapter);
 	}
 }
