@@ -255,9 +255,6 @@ public class Server {
 						} else {
 							System.out.println(this + "> Version control successful, send sessionID");
 							adapter.setVersionVerified(true);
-							adapter.getOutgoing().add(new SessionIDFrame(adapter.getSessionID()));
-							adapter.getOutgoing().add(new ImageIDFrame(getNextImageID()));
-							adapter.send();
 						}
 						break;
 
@@ -282,6 +279,9 @@ public class Server {
 							adapter.disconnect();
 						} else {
 							adapter.setAuthenticated(true);
+							
+							adapter.getOutgoing().add(new SessionIDFrame(adapter.getSessionID()));
+							adapter.getOutgoing().add(new ImageIDFrame(getNextImageID()));
 
 							// synchronize the white-board
 							adapter.getOutgoing().addAll(paintObjectCache);

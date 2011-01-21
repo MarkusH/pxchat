@@ -19,6 +19,7 @@ import pxchat.net.protocol.frames.ImageStopFrame;
 import pxchat.net.protocol.frames.LockFrame;
 import pxchat.net.protocol.frames.MessageFrame;
 import pxchat.net.protocol.frames.NotificationFrame;
+import pxchat.net.protocol.frames.SessionIDFrame;
 import pxchat.net.protocol.frames.UserListFrame;
 import pxchat.net.protocol.frames.VersionFrame;
 import pxchat.net.tcp.CustomSocket;
@@ -64,6 +65,11 @@ public final class Client {
 	 * The frame adapter controlling the data flow.
 	 */
 	private FrameAdapter frameAdapter;
+	
+	/**
+	 * Indicates if the client is authenticated.
+	 */
+	private boolean authenticated = false;
 
 	/**
 	 * The user list is a mapping of session id to user name of the clients
@@ -137,6 +143,7 @@ public final class Client {
 		public void clientConnecting(CustomSocket client) {
 			lock.lock();
 			System.out.println(this + "> Connecting to server");
+			authenticated = false;
 			frameAdapter.reset();
 			lock.unlock();
 		}
@@ -173,6 +180,15 @@ public final class Client {
 			for (Frame frame : adapter.getIncoming()) {
 
 				switch (frame.getId()) {
+					
+					/*
+					 * The server sent a session id. This means that the authentication
+					 * process was finished successfully.
+					 */
+					case Frame.ID_SID:
+						authenticated = true;
+						frameAdapter.setSessionID(((SessionIDFrame) frame).getSessionID());
+						break;
 
 					/*
 					 * A new notification was received from the server. A
@@ -399,6 +415,13 @@ public final class Client {
 	 */
 	public boolean isConnected() {
 		return client.isConnected();
+	}
+
+	/**
+	 * @return the authenticated
+	 */
+	public boolean isAuthenticated() {
+		return authenticated;
 	}
 
 	/**

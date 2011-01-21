@@ -402,6 +402,7 @@ public class ClientMain extends JFrame {
 			@Override
 			public void clientDisconnect() {
 				if (!closing) {
+					final boolean wasAuthenticated = Client.getInstance().isAuthenticated();
 					SwingUtilities.invokeLater(new Runnable() {
 
 						@Override
@@ -415,7 +416,8 @@ public class ClientMain extends JFrame {
 							writeNotification(I18n.getInstance()
 									.getString("disconnectedFromServer"));
 							userList.setListData(new Object[0]);
-							log.endLog();
+							if (wasAuthenticated)
+								log.endLog();
 							log = null;
 							wb.dispose();
 							wb = new WhiteBoard();
