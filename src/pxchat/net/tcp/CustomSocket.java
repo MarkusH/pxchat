@@ -154,6 +154,16 @@ public class CustomSocket {
 			if (this.connected) {
 				this.closing = true;
 
+				// try to send outgoing data for at most 10ms
+				if (writeThread != null) {
+					try {
+						writeThread.join(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					} finally {
+						writeThread = null;
+					}
+				}
 				if (readThread != null) {
 					readThread.interrupt();
 					readThread = null;
