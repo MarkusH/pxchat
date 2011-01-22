@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -474,7 +473,7 @@ public class ClientMain extends JFrame {
 		});
 
 		/**
-		 * and send a notifcation to the splashscreen that we are ready ;-)
+		 * and send a notification to the splashScreen that we are ready
 		 */
 		splashScreen.setReady();
 	}
@@ -483,12 +482,7 @@ public class ClientMain extends JFrame {
 	 * Scrolls to the end of the chatLog area.
 	 */
 	private void scrollChatLog() {
-		chatLog.scrollRectToVisible(new Rectangle(chatLog.getWidth() - chatLogPane.getWidth(),
-				chatLog.getHeight() - chatLogPane.getHeight(), chatLogPane.getWidth(), chatLogPane
-						.getHeight()));
-		chatLog.scrollRectToVisible(new Rectangle(chatLog.getWidth() - chatLogPane.getWidth(),
-				chatLog.getHeight() - chatLogPane.getHeight(), chatLogPane.getWidth(), chatLogPane
-						.getHeight()));
+		chatLog.setCaretPosition(chatLog.getText().length());
 	}
 
 	private void sendMessage() {
