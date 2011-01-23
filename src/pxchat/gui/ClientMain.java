@@ -482,12 +482,13 @@ public class ClientMain extends JFrame {
 	 * Scrolls to the end of the chatLog area if no text is selected.
 	 */
 	private void scrollChatLog() {
-		if(chatLog.getSelectedText() == null)
+		if (chatLog.getSelectedText() == null)
 			chatLog.setCaretPosition(chatLog.getText().length());
 	}
 
 	/**
-	 * Sends a message that was written in inputArea and writes it together with a time stamp to chatLog
+	 * Sends a message that was written in inputArea and writes it together with
+	 * a time stamp to chatLog
 	 */
 	private void sendMessage() {
 		String msg = inputArea.getText();
@@ -515,9 +516,9 @@ public class ClientMain extends JFrame {
 	}
 
 	/**
-	 * @param author	The author of the message
-	 * @param msg		The message
-	 * Writes an incoming text message to chatLog and adds the author and a time stamp to it.
+	 * @param author The author of the message
+	 * @param msg The message Writes an incoming text message to chatLog and
+	 *            adds the author and a time stamp to it.
 	 */
 	public void writeMessage(String author, String msg) {
 		try {
@@ -535,8 +536,8 @@ public class ClientMain extends JFrame {
 	}
 
 	/**
-	 * @param msg	The notification text.
-	 * Writes an incoming notification to chatLog and adds a time stamp to it.
+	 * @param msg The notification text. Writes an incoming notification to
+	 *            chatLog and adds a time stamp to it.
 	 */
 	public void writeNotification(String msg) {
 		try {
