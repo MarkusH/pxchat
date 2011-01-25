@@ -29,7 +29,7 @@ public class SplashScreen extends JDialog {
 	/**
 	 * This WindowAdapter enables quitting the program via the window's close
 	 * button. It is activated when constructing the SplashScreen window and
-	 * removed in {@link setReady}
+	 * removed in {@link #setReady()}
 	 */
 	private WindowAdapter closeAdapter = new WindowAdapter() {
 		@Override
