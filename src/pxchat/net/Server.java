@@ -110,16 +110,23 @@ public class Server {
 		@Override
 		public void clientClearToSend(CustomSocket client) {
 			lock.lock();
-			serverFrameAdapter.getAdapter(client).send();
-			lock.unlock();
+			try {
+				serverFrameAdapter.getAdapter(client).send();
+			} finally {
+				lock.unlock();
+			}
 		}
 
 		@Override
 		public void clientConnect(CustomSocket client) {
+			FrameAdapter adapter = null;
 			lock.lock();
-			FrameAdapter adapter = serverFrameAdapter.getAdapter(client);
+			try {
+				adapter = serverFrameAdapter.getAdapter(client);
+			} finally {
+				lock.unlock();
+			}
 			System.out.println(this + "> new connection " + client + " --> " + adapter);
-			lock.unlock();
 		}
 
 		@Override
@@ -128,19 +135,25 @@ public class Server {
 
 		@Override
 		public void clientDisconnect(CustomSocket client) {
+			AuthFrameAdapter adapter = null;
 			lock.lock();
-			AuthFrameAdapter adapter = serverFrameAdapter.getAdapter(client);
-			serverFrameAdapter.delete(adapter);
+			try {
+				adapter = serverFrameAdapter.getAdapter(client);
+				serverFrameAdapter.delete(adapter);
+			} finally {
+				lock.unlock();
+			}
 			System.out.println(this + "> Client with id " + adapter.getSessionID() + " disconnected.");
-			lock.unlock();
 		}
 
 		@Override
 		public void clientRead(CustomSocket client, Object data) {
 			lock.lock();
-			// pass the event to the corresponding adapter
-			serverFrameAdapter.getAdapter(client).receive(data);
-			lock.unlock();
+			try {
+				serverFrameAdapter.getAdapter(client).receive(data);
+			} finally {
+				lock.unlock();
+			}
 		}
 	};
 
@@ -253,11 +266,8 @@ public class Server {
 							adapter.send();
 							adapter.disconnect();
 						} else {
-							System.out.println(this + "> Version control successful, send sessionID");
+							System.out.println(this + "> Version control successful");
 							adapter.setVersionVerified(true);
-							adapter.getOutgoing().add(new SessionIDFrame(adapter.getSessionID()));
-							adapter.getOutgoing().add(new ImageIDFrame(getNextImageID()));
-							adapter.send();
 						}
 						break;
 
@@ -277,11 +287,16 @@ public class Server {
 						// or if the user name is already in use
 						if (!af.getPassword().equals(pwd) || 
 								userList.values().contains(af.getUsername())) {
+							System.out.println(this + "> Authentication unsuccessful");
 							adapter.getOutgoing().add(new NotificationFrame(NotificationFrame.AUTH_FAIL));
 							adapter.send();
 							adapter.disconnect();
 						} else {
+							System.out.println(this + "> Authentication successful");
 							adapter.setAuthenticated(true);
+							
+							adapter.getOutgoing().add(new SessionIDFrame(adapter.getSessionID()));
+							adapter.getOutgoing().add(new ImageIDFrame(getNextImageID()));
 
 							// synchronize the white-board
 							adapter.getOutgoing().addAll(paintObjectCache);
@@ -516,7 +531,8 @@ public class Server {
 	 * Sends the current user list to all clients
 	 */
 	private void sendUserList() {
-		// TODO: only send this to verified clients
+		// no lock required, because this method is
+		// called only when the thread owns the lock
 		FrameQueue queue = new FrameQueue();
 		queue.add(new UserListFrame(this.userList));
 		serverFrameAdapter.broadcast(queue, true);

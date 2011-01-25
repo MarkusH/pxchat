@@ -65,32 +65,33 @@ public class CustomSocket {
 		@Override
 		public void run() {
 			lock.lock();
-
-			if (cOut == null) {
-				try {
-					cOut = new CipherOutputStream(socket.getOutputStream(), cipherOut);
-				} catch (IOException e) {
-					e.printStackTrace();
+			try {
+				if (cOut == null) {
+					try {
+						cOut = new CipherOutputStream(socket.getOutputStream(), cipherOut);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
-			}
-
-			while (!outgoing.isEmpty()) {
-				try {
-					ObjectOutputStream stream = null;
-					stream = new ObjectOutputStream(cOut);
-
-					Object o = outgoing.poll();
-					stream.writeObject(o);
-
-				} catch (IOException e) {
-					e.printStackTrace();
-					outgoing.clear();
+	
+				while (!outgoing.isEmpty()) {
+					try {
+						ObjectOutputStream stream = null;
+						stream = new ObjectOutputStream(cOut);
+	
+						Object o = outgoing.poll();
+						stream.writeObject(o);
+	
+					} catch (IOException e) {
+						e.printStackTrace();
+						outgoing.clear();
+					}
 				}
+	
+				writeThread = null;
+			} finally {
+				lock.unlock();
 			}
-
-			writeThread = null;
-
-			lock.unlock();
 
 			if (tcpClientListener != null)
 				tcpClientListener.clientClearToSend(CustomSocket.this);
@@ -276,23 +277,26 @@ public class CustomSocket {
 			return false;
 
 		lock.lock();
-		outgoing.add(object);
-
-		if (writeThread == null) {
-			writeThread = new WriteThread();
-			writeThread.start();
-		} else {
-			// Comes here when the previous lock thread was started but did not
-			// invoke
-			// its run() method due to overhead
-			if (!writeThread.isAlive()) {
-				// Should never come here
-				System.out.println("-------------------not alive-------------");
+		try {
+			outgoing.add(object);
+	
+			if (writeThread == null) {
 				writeThread = new WriteThread();
 				writeThread.start();
+			} else {
+				// Comes here when the previous lock thread was started but did not
+				// invoke
+				// its run() method due to overhead
+				if (!writeThread.isAlive()) {
+					// Should never come here
+					System.out.println("-------------------not alive-------------");
+					writeThread = new WriteThread();
+					writeThread.start();
+				}
 			}
+		} finally {
+			lock.unlock();
 		}
-		lock.unlock();
 		return true;
 	}
 

@@ -102,7 +102,7 @@ public class PaintBoard extends JPanel {
 	 * 
 	 * @param obj The paint object to add.
 	 */
-	public void add(PaintObject obj) {
+	public synchronized void add(PaintObject obj) {
 		this.cache.remove(obj);
 		this.ingoing.add(obj);
 	}
@@ -124,13 +124,13 @@ public class PaintBoard extends JPanel {
 	 * 
 	 * @param clearBackup If <code>true</code>, the backup will be cleared too
 	 */
-	public void clearBoard(boolean clearBackup) {
+	public synchronized void clearBoard(boolean clearBackup) {
 		if (clearBackup) {
 			backup.clear();
 			try {
 				// remove unused images
-				for (Iterator<Integer> i = ImageTable.getInstance().keySet().iterator(); i
-						.hasNext();) {
+				Iterator<Integer> i = ImageTable.getInstance().keySet().iterator();
+				while(i.hasNext()) {
 					Integer id = i.next();
 					if (backgroundImgID == null || !backgroundImgID.equals(id)) {
 						for (String bg : sentBackgrounds.keySet()) {
@@ -178,7 +178,7 @@ public class PaintBoard extends JPanel {
 	 * 
 	 * @param c The new background color
 	 */
-	public void loadBackground(Color c) {
+	public synchronized void loadBackground(Color c) {
 		this.backgroundImgID = null;
 		this.setBackground(c);
 	}
@@ -251,7 +251,7 @@ public class PaintBoard extends JPanel {
 	 * 
 	 * @param imageID The image id of the new background image
 	 */
-	public void loadBackground(int imageID) {
+	public synchronized void loadBackground(int imageID) {
 		this.backgroundImgID = imageID;
 		this.setBackground(Color.WHITE);
 	}
@@ -262,7 +262,7 @@ public class PaintBoard extends JPanel {
 	 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
 	 */
 	@Override
-	protected void paintComponent(Graphics og) {
+	protected synchronized void paintComponent(Graphics og) {
 		super.paintComponent(og);
 		Graphics2D g = (Graphics2D) og;
 
@@ -290,7 +290,7 @@ public class PaintBoard extends JPanel {
 	 * 
 	 * @return The current PaintBoard
 	 */
-	public BufferedImage saveImage() {
+	public synchronized BufferedImage saveImage() {
 		BufferedImage result = new BufferedImage(getWidth(), getHeight(),
 				BufferedImage.TYPE_INT_BGR);
 
@@ -310,7 +310,6 @@ public class PaintBoard extends JPanel {
 
 		synchronized (this) {
 			if (doCompleteRepaint) {
-				System.out.println(backup);
 				for (PaintObject obj : backup) {
 					obj.draw(g);
 				}
@@ -333,7 +332,7 @@ public class PaintBoard extends JPanel {
 	 * 
 	 * @param complete Indicates whether a complete repaint should be performed
 	 */
-	public void repaint(boolean complete) {
+	public synchronized void repaint(boolean complete) {
 		this.doCompleteRepaint = complete;
 		if (complete)
 			clearBoard(false);
