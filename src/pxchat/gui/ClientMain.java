@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -379,6 +378,7 @@ public class ClientMain extends JFrame {
 			@Override
 			public void clientDisconnect() {
 				if (!closing) {
+					final boolean wasAuthenticated = Client.getInstance().isAuthenticated();
 					SwingUtilities.invokeLater(new Runnable() {
 
 						@Override
@@ -391,7 +391,8 @@ public class ClientMain extends JFrame {
 							writeNotification(I18n.getInstance()
 									.getString("disconnectedFromServer"));
 							userList.setListData(new Object[0]);
-							log.endLog();
+							if (wasAuthenticated)
+								log.endLog();
 							log = null;
 							wb.dispose();
 							wb = new WhiteBoard();
@@ -448,23 +449,23 @@ public class ClientMain extends JFrame {
 		});
 
 		/**
-		 * and send a notifcation to the splashscreen that we are ready ;-)
+		 * and send a notification to the splashScreen that we are ready
 		 */
 		splashScreen.setReady();
 	}
 
 	/**
-	 * Scrolls to the end of the chatLog area.
+	 * Scrolls to the end of the chatLog area if no text is selected.
 	 */
 	private void scrollChatLog() {
-		chatLog.scrollRectToVisible(new Rectangle(chatLog.getWidth() - chatLogPane.getWidth(),
-				chatLog.getHeight() - chatLogPane.getHeight(), chatLogPane.getWidth(), chatLogPane
-						.getHeight()));
-		chatLog.scrollRectToVisible(new Rectangle(chatLog.getWidth() - chatLogPane.getWidth(),
-				chatLog.getHeight() - chatLogPane.getHeight(), chatLogPane.getWidth(), chatLogPane
-						.getHeight()));
+		if (chatLog.getSelectedText() == null)
+			chatLog.setCaretPosition(chatLog.getText().length());
 	}
 
+	/**
+	 * Sends a message that was written in inputArea and writes it together with
+	 * a time stamp to chatLog
+	 */
 	private void sendMessage() {
 		String msg = inputArea.getText();
 		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
@@ -490,6 +491,11 @@ public class ClientMain extends JFrame {
 		}
 	}
 
+	/**
+	 * @param author The author of the message
+	 * @param msg The message Writes an incoming text message to chatLog and
+	 *            adds the author and a time stamp to it.
+	 */
 	public void writeMessage(String author, String msg) {
 		try {
 			chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
@@ -505,6 +511,10 @@ public class ClientMain extends JFrame {
 		log.logMessage(msg, author);
 	}
 
+	/**
+	 * @param msg The notification text. Writes an incoming notification to
+	 *            chatLog and adds a time stamp to it.
+	 */
 	public void writeNotification(String msg) {
 		try {
 			chatLog.getDocument().insertString(chatLog.getDocument().getLength(),
