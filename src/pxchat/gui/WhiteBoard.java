@@ -204,7 +204,8 @@ public class WhiteBoard extends JFrame {
 							freeHandStart = System.currentTimeMillis();
 							freeHand = new FreeHandObject(new GeneralPath(), color, strokeWidth);
 							freeHand.getPath().moveTo(e.getX(), e.getY());
-							paintBoard.setPreviewObject(freeHand);
+							if (tool == Tool.Freehand)
+								paintBoard.setPreviewObject(freeHand);
 							break;
 					}
 				}
@@ -296,9 +297,7 @@ public class WhiteBoard extends JFrame {
 						case Eraser:
 						case Freehand:
 							Point newPoint = new Point(e.getX(), e.getY());
-							if (newPoint.distance(currentPoint) > 10.0) {
-//								Client.getInstance().sendPaintObject(new LineObject(currentPoint, 
-//										newPoint, currentColor, currentStrokeWidth));
+							if (newPoint.distance(currentPoint) > 5.0) {
 								freeHand.getPath().lineTo(newPoint.x, newPoint.y);
 								if (System.currentTimeMillis() - freeHandStart > 100) {
 									paintBoard.setPreviewObject(null);
@@ -309,8 +308,9 @@ public class WhiteBoard extends JFrame {
 									Color color = (tool == Tool.Eraser) ? new Color(0, 0, 0, 0) : currentColor;
 									float strokeWidth = (tool == Tool.Eraser) ? currentStrokeWidth * 3f : currentStrokeWidth;
 									freeHand = new FreeHandObject(new GeneralPath(), color, strokeWidth);
-									freeHand.getPath().moveTo(newPoint.x, newPoint.y);		
-									paintBoard.setPreviewObject(freeHand);
+									freeHand.getPath().moveTo(newPoint.x, newPoint.y);
+									if (tool == Tool.Freehand)
+										paintBoard.setPreviewObject(freeHand);
 								}
 								paintBoard.repaint();
 								currentPoint = new Point(e.getX(), e.getY());
