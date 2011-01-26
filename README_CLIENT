@@ -5,18 +5,18 @@ README
  * Chat conferencing
  * Real-time collaborative drawing
 
-"pxchat" is a student's project at the DHBW Mannheim, Corporate State University.
+"pxchat" is a student's project at the Cooperative State University Mannheim.
 
 Requirements
 ============
 
 JVM:
-- OpenJDK Runtime Environment (IcedTea6)
-- Sun Java(TM) SE Runtime Environment
+ * OpenJDK Runtime Environment (IcedTea6)
+ * Sun Java(TM) SE Runtime Environment
 
 Operating System:
-- Ubuntu Linux 9.04/9.10/10.04 LTS/10.10
-- Windows 7
+ * Ubuntu Linux 9.04/9.10/10.04 LTS/10.10
+ * Windows 7
 
 Configuration
 =============
@@ -35,10 +35,10 @@ config tag
 
 Supported Values:
 
-en 	- for English 
-de_DE 	- for German
-ko_KR 	- for Korean
-es 	- for Spanish
+ * en    - for English 
+ * de_DE - for German
+ * ko_KR - for Korean
+ * es    - for Spanish
 
 Log-In Defaults
 ---------------
@@ -49,12 +49,12 @@ profiles tag
 
 All strings may be empty strings.
 
-host		- hostname of the default server
-name		- profile name
-password	- default password	 
-port		- default port to establish connection to server 
-		  (anything between "1024" to "65535" may be valid)
-username	- default username
+ * host     - hostname of the default server
+ * name     - profile name
+ * password - default password	 
+ * port     - default port to establish connection to server 
+              (anything between "1024" to "65535" may be valid)
+ * username - default username
 
 Installation
 ============
@@ -74,7 +74,7 @@ Linux
 The complete client program is provided as a single .tar.gz file.
 
 Extract from archive:
-tar -xzf client.tar.gz
+tar -xzf pxclient-VERSION.tar.gz
 
 Proceed as described in Start.
 
@@ -84,7 +84,7 @@ Start
 Windows
 -------
 
-Double-click on pxchat.jar
+Double-click on pxclient.jar
 
 Linux
 -----
@@ -96,13 +96,14 @@ Description of the Splash Screen
 
 The Splash Screen can be used to choose the best settings for your monitor.
 
-First you should adjust the contrast of your monitor
-so that you see four rows and four columns in the lower right part.
-Than you need to change the brightness so that the field in the lower right corner
-nearly disappears and the upper left corner can be seen clearly.
-All the fields should display an increase in brightness and visibility from right to left and from bottom to top.
+First you should adjust the contrast of your monitor so that you see four rows
+and four columns in the lower right part. Than you need to change the
+brightness so that the field in the lower right corner nearly disappears and
+the upper left corner can be seen clearly. All the fields should display an
+increase in brightness and visibility from right to left and from bottom to
+top. After the brightness is correctly aligned you can go on to adjust the
+color values of your monitor in a way that all the different colors in the left
+part are easy to recognize.
 
-After the brightness is correctly aligned you can go on to adjust the color values
-of your monitor in a way that all the different colors in the left part are easy to recognize.
-
-The upper right picture is supposed to assist you to decide whether your display configuration is suitable.
+The upper right picture is supposed to assist you to decide whether your
+display configuration is suitable.

@@ -5,16 +5,16 @@ README
  * Chat conferencing
  * Real-time collaborative drawing
 
-"pxchat" is a student's project at the DHBW Mannheim, Corporate State University.
+"pxchat" is a student's project at the Cooperative State University Mannheim.
 
 Requirements
 ============
 
 JVM:
-- OpenJDK Runtime Environment (IcedTea6)
+ * OpenJDK Runtime Environment (IcedTea6)
 
 Operating System:
-- Ubuntu Linux 10.04.1 LTS
+ * Ubuntu Linux 10.04.1 LTS
 
 Configuration 
 =============
@@ -40,8 +40,8 @@ The auth tag defines users who are allowed to connect to the server.
 
 <user name="User1" password="password1" />
 
-name		- username
-password	- respective password
+ * name     - username
+ * password - respective password	 
 
 Installation
 ============
@@ -49,7 +49,7 @@ Installation
 The complete server program is provided as a single .tar.gz file.
 
 Extract from archive:
-tar -xzf server.tar.gz
+tar -xzf pxserver-VERSION.tar.gz
 
 Proceed as described in Start.
 
@@ -61,5 +61,5 @@ command line
 
 Go to directory of the server.jar (cd).
 
-issue command: java -jar server.jar
+issue command: java -jar pxserver.jar
 
