@@ -248,7 +248,8 @@ public class WhiteBoard extends JFrame {
 							paintBoard.repaint();
 							break;
 						case Line:
-							tmp = new LineObject(startPoint, currentPoint, currentColor,
+							Point endPoint = e.isShiftDown() ? straightPoint(startPoint, currentPoint) : currentPoint;
+							tmp = new LineObject(startPoint, endPoint, currentColor,
 									currentStrokeWidth);
 							paintBoard.getCache().add(tmp);
 							Client.getInstance().sendPaintObject(tmp);
@@ -333,9 +334,10 @@ public class WhiteBoard extends JFrame {
 							break;
 						case Line:
 							currentPoint = new Point(e.getX(), e.getY());
+							Point endPoint = e.isShiftDown() ? straightPoint(startPoint, currentPoint) : currentPoint;
 							paintBoard.setPreviewObject(null);
 							paintBoard.setPreviewObject(
-									new LineObject(startPoint, currentPoint, currentColor,
+									new LineObject(startPoint, endPoint, currentColor,
 											currentStrokeWidth));
 							paintBoard.repaint();
 							break;
@@ -727,5 +729,11 @@ public class WhiteBoard extends JFrame {
 
 	public void unlockControls() {
 		lockControls(false);
+	}
+	
+	private static Point straightPoint(Point startPoint, Point currentPoint) {
+		if (Math.abs(startPoint.x - currentPoint.x) >= Math.abs(startPoint.y - currentPoint.y))
+			return new Point(currentPoint.x, startPoint.y);
+		return new Point(startPoint.x, currentPoint.y);
 	}
 }
