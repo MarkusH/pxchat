@@ -336,18 +336,18 @@ public final class Config {
 					}
 				}
 			}
-			boolean hasDefault = false;
-			for (Profile prof : profiles) {
-				if (prof.equals(config.get("defaultProfile"))) {
-					hasDefault = true;
-					break;
-				}
-			}
-			if (!hasDefault) {
-				profiles.add(new Profile(config.get("defaultProfile"), "localhost", "12345", "", ""));
-			}
 		} catch (Exception e) {
 			System.out.println("An error ocurred loading the config file");
+		}
+		boolean hasDefault = false;
+		for (Profile prof : profiles) {
+			if (prof.equals(config.get("defaultProfile"))) {
+				hasDefault = true;
+				break;
+			}
+		}
+		if (!hasDefault) {
+			profiles.add(new Profile(config.get("defaultProfile"), "localhost", "12345", "", ""));
 		}
 	}
 }
