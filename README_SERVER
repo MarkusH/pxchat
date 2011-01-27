@@ -41,7 +41,16 @@ The auth tag defines users who are allowed to connect to the server.
 <user name="User1" password="password1" />
 
  * name     - username
- * password - respective password	 
+ * password - respective password
+ 
+Reload Authentication List
+--------------------------
+
+You can reload the authentication list of pxserver by running the following
+command. Replace PID with the process id of the server:
+
+kill -s USR2 PID 
+ 
 
 Installation
 ============
@@ -61,5 +70,11 @@ command line
 
 Go to directory of the server.jar (cd).
 
-issue command: java -jar pxserver.jar
+issue command:
+java -jar pxserver.jar
+
+If you run into trouble, that e.g. the router does not support routing packages
+via IPv6, but your server support IPv6, you could try the following command to
+make java use the IPv4 stack:
+java -Djava.net.preferIPv4Stack=true -jar pxserver.jar
 
