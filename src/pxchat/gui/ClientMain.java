@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -482,8 +483,19 @@ public class ClientMain extends JFrame {
 	 * Scrolls to the end of the chatLog area if no text is selected.
 	 */
 	private void scrollChatLog() {
-		if (chatLog.getSelectedText() == null)
-			chatLog.setCaretPosition(chatLog.getText().length());
+		try {// The following autoscroll method works better, but only on Linux
+			if (chatLog.getSelectedText() == null)
+				chatLog.setCaretPosition(chatLog.getText().length());
+		} catch (Exception e) {// Scrolls chatLog on Windows
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					chatLog.scrollRectToVisible(new Rectangle(chatLog.getWidth() - chatLogPane
+							.getWidth(), chatLog.getHeight() - chatLogPane.getHeight(), chatLogPane
+							.getWidth(), chatLogPane.getHeight()));
+				}
+			});
+		}
 	}
 
 	/**
