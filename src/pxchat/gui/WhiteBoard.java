@@ -204,7 +204,8 @@ public class WhiteBoard extends JFrame {
 							freeHandStart = System.currentTimeMillis();
 							freeHand = new FreeHandObject(new GeneralPath(), color, strokeWidth);
 							freeHand.getPath().moveTo(e.getX(), e.getY());
-							paintBoard.setPreviewObject(freeHand);
+							if (tool == Tool.Freehand)
+								paintBoard.setPreviewObject(freeHand);
 							break;
 					}
 				}
@@ -247,7 +248,8 @@ public class WhiteBoard extends JFrame {
 							paintBoard.repaint();
 							break;
 						case Line:
-							tmp = new LineObject(startPoint, currentPoint, currentColor,
+							Point endPoint = e.isShiftDown() ? straightPoint(startPoint, currentPoint) : currentPoint;
+							tmp = new LineObject(startPoint, endPoint, currentColor,
 									currentStrokeWidth);
 							paintBoard.getCache().add(tmp);
 							Client.getInstance().sendPaintObject(tmp);
@@ -296,9 +298,7 @@ public class WhiteBoard extends JFrame {
 						case Eraser:
 						case Freehand:
 							Point newPoint = new Point(e.getX(), e.getY());
-							if (newPoint.distance(currentPoint) > 10.0) {
-//								Client.getInstance().sendPaintObject(new LineObject(currentPoint, 
-//										newPoint, currentColor, currentStrokeWidth));
+							if (newPoint.distance(currentPoint) > 5.0) {
 								freeHand.getPath().lineTo(newPoint.x, newPoint.y);
 								if (System.currentTimeMillis() - freeHandStart > 100) {
 									paintBoard.setPreviewObject(null);
@@ -309,8 +309,9 @@ public class WhiteBoard extends JFrame {
 									Color color = (tool == Tool.Eraser) ? new Color(0, 0, 0, 0) : currentColor;
 									float strokeWidth = (tool == Tool.Eraser) ? currentStrokeWidth * 3f : currentStrokeWidth;
 									freeHand = new FreeHandObject(new GeneralPath(), color, strokeWidth);
-									freeHand.getPath().moveTo(newPoint.x, newPoint.y);		
-									paintBoard.setPreviewObject(freeHand);
+									freeHand.getPath().moveTo(newPoint.x, newPoint.y);
+									if (tool == Tool.Freehand)
+										paintBoard.setPreviewObject(freeHand);
 								}
 								paintBoard.repaint();
 								currentPoint = new Point(e.getX(), e.getY());
@@ -333,9 +334,10 @@ public class WhiteBoard extends JFrame {
 							break;
 						case Line:
 							currentPoint = new Point(e.getX(), e.getY());
+							Point endPoint = e.isShiftDown() ? straightPoint(startPoint, currentPoint) : currentPoint;
 							paintBoard.setPreviewObject(null);
 							paintBoard.setPreviewObject(
-									new LineObject(startPoint, currentPoint, currentColor,
+									new LineObject(startPoint, endPoint, currentColor,
 											currentStrokeWidth));
 							paintBoard.repaint();
 							break;
@@ -727,5 +729,11 @@ public class WhiteBoard extends JFrame {
 
 	public void unlockControls() {
 		lockControls(false);
+	}
+	
+	private static Point straightPoint(Point startPoint, Point currentPoint) {
+		if (Math.abs(startPoint.x - currentPoint.x) >= Math.abs(startPoint.y - currentPoint.y))
+			return new Point(currentPoint.x, startPoint.y);
+		return new Point(startPoint.x, currentPoint.y);
 	}
 }
