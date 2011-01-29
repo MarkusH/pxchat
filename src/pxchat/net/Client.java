@@ -19,6 +19,7 @@ import pxchat.net.protocol.frames.ImageStopFrame;
 import pxchat.net.protocol.frames.LockFrame;
 import pxchat.net.protocol.frames.MessageFrame;
 import pxchat.net.protocol.frames.NotificationFrame;
+import pxchat.net.protocol.frames.SessionIDFrame;
 import pxchat.net.protocol.frames.UserListFrame;
 import pxchat.net.protocol.frames.VersionFrame;
 import pxchat.net.tcp.CustomSocket;
@@ -64,6 +65,11 @@ public final class Client {
 	 * The frame adapter controlling the data flow.
 	 */
 	private FrameAdapter frameAdapter;
+	
+	/**
+	 * Indicates if the client is authenticated.
+	 */
+	private boolean authenticated = false;
 
 	/**
 	 * The user list is a mapping of session id to user name of the clients
@@ -115,47 +121,61 @@ public final class Client {
 		@Override
 		public void clientClearToSend(CustomSocket client) {
 			lock.lock();
-			frameAdapter.send();
-			lock.unlock();
+			try {
+				frameAdapter.send();
+			} finally {
+				lock.unlock();
+			}
 		}
 
 		@Override
 		public void clientConnect(CustomSocket client) {
-			lock.lock();
 			System.out.println(this + "> Conntected to server: " + client.getRemoteAddress());
-
-			for (ClientListener listener : clientListeners)
-				listener.clientConnect(client.getRemoteAddress());
-
-			frameAdapter.getOutgoing().add(VersionFrame.getCurrent());
-			frameAdapter.getOutgoing().add(new AuthenticationFrame(loginName, loginPassword));
-			frameAdapter.send();
-			lock.unlock();
+			lock.lock();
+			try {
+				for (ClientListener listener : clientListeners)
+					listener.clientConnect(client.getRemoteAddress());
+	
+				frameAdapter.getOutgoing().add(VersionFrame.getCurrent());
+				frameAdapter.getOutgoing().add(new AuthenticationFrame(loginName, loginPassword));
+				frameAdapter.send();
+			} finally {
+				lock.unlock();
+			}
 		}
 
 		@Override
 		public void clientConnecting(CustomSocket client) {
-			lock.lock();
 			System.out.println(this + "> Connecting to server");
-			frameAdapter.reset();
-			lock.unlock();
+			lock.lock();
+			try {
+				authenticated = false;
+				frameAdapter.reset();
+			} finally {
+				lock.unlock();
+			}
 		}
 
 		@Override
 		public void clientDisconnect(CustomSocket client) {
-			lock.lock();
 			System.out.println(this + "> Client disconnected");
-
-			for (ClientListener listener : clientListeners)
-				listener.clientDisconnect();
-			lock.unlock();
+			lock.lock();
+			try {
+				for (ClientListener listener : clientListeners)
+					listener.clientDisconnect();
+			} finally {
+				lock.unlock();
+			}
 		}
 
 		@Override
 		public void clientRead(CustomSocket client, Object data) {
 			lock.lock();
-			frameAdapter.receive(data);
-			lock.unlock();
+			try {
+				frameAdapter.receive(data);
+			} finally {
+				lock.unlock();
+			}
 		}
 	};
 
@@ -173,6 +193,15 @@ public final class Client {
 			for (Frame frame : adapter.getIncoming()) {
 
 				switch (frame.getId()) {
+					
+					/*
+					 * The server sent a session id. This means that the authentication
+					 * process was finished successfully.
+					 */
+					case Frame.ID_SID:
+						authenticated = true;
+						frameAdapter.setSessionID(((SessionIDFrame) frame).getSessionID());
+						break;
 
 					/*
 					 * A new notification was received from the server. A
@@ -402,6 +431,13 @@ public final class Client {
 	}
 
 	/**
+	 * @return the authenticated
+	 */
+	public boolean isAuthenticated() {
+		return authenticated;
+	}
+
+	/**
 	 * Registers a new client listener.
 	 * 
 	 * @param listener A new listener
@@ -459,9 +495,12 @@ public final class Client {
 	public void sendChangeBackground(int imageID) {
 		if (isConnected()) {
 			lock.lock();
-			frameAdapter.getOutgoing().add(new BackgroundFrame(imageID));
-			frameAdapter.send();
-			lock.unlock();
+			try {
+				frameAdapter.getOutgoing().add(new BackgroundFrame(imageID));
+				frameAdapter.send();
+			} finally {
+				lock.unlock();
+			}
 		}
 	}
 
@@ -473,9 +512,12 @@ public final class Client {
 	public void sendImage(int imageID) {
 		if (isConnected()) {
 			lock.lock();
-			imgSenders.add(new ImageSender(imageID));
-			frameAdapter.send();
-			lock.unlock();
+			try {
+				imgSenders.add(new ImageSender(imageID));
+				frameAdapter.send();
+			} finally {
+				lock.unlock();
+			}
 		}
 	}
 
@@ -487,9 +529,12 @@ public final class Client {
 	public void sendMessage(String message) {
 		if (isConnected()) {
 			lock.lock();
-			frameAdapter.getOutgoing().add(new MessageFrame(message));
-			frameAdapter.send();
-			lock.unlock();
+			try {
+				frameAdapter.getOutgoing().add(new MessageFrame(message));
+				frameAdapter.send();
+			} finally {
+				lock.unlock();
+			}
 		}
 	}
 
@@ -501,9 +546,12 @@ public final class Client {
 	public void sendPaintObject(PaintObject object) {
 		if (isConnected()) {
 			lock.lock();
-			frameAdapter.getOutgoing().add(object);
-			frameAdapter.send();
-			lock.unlock();
+			try {
+				frameAdapter.getOutgoing().add(object);
+				frameAdapter.send();
+			} finally {
+				lock.unlock();
+			}
 		}
 	}
 
@@ -515,9 +563,12 @@ public final class Client {
 	public void sendWhiteboardControlsLock(boolean doLock) {
 		if (isConnected()) {
 			lock.lock();
-			frameAdapter.getOutgoing().add(new LockFrame(doLock, loginName));
-			frameAdapter.send();
-			lock.unlock();
+			try {
+				frameAdapter.getOutgoing().add(new LockFrame(doLock, loginName));
+				frameAdapter.send();
+			} finally {
+				lock.unlock();
+			}
 		}
 	}
 
@@ -527,9 +578,12 @@ public final class Client {
 	public void sendImageClear() {
 		if (isConnected()) {
 			lock.lock();
-			frameAdapter.getOutgoing().add(new ImageClearFrame());
-			frameAdapter.send();
-			lock.unlock();
+			try {
+				frameAdapter.getOutgoing().add(new ImageClearFrame());
+				frameAdapter.send();
+			} finally {
+				lock.unlock();
+			}
 		}
 	}
 }
