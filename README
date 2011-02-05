@@ -2,10 +2,10 @@ README
 ======
 "pxchat" is a chatting software that supports:
  * Chat conferencing
- * Private chats
- * File transfer
  * Real-time collaborative drawing
 
 "pxchat" is a student's project at the DHBW Mannheim, Corporate State University.
 
 Git repository: git://github.com/Markush2010/pxchat.git
+
+See the README_CLIENT or README_SERVER for additional information about the client or server application.
