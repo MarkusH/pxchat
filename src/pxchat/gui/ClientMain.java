@@ -407,6 +407,7 @@ public class ClientMain extends JFrame {
 
 						@Override
 						public void run() {
+							inputArea.setText("");
 							mNewChat.setEnabled(true);
 							mFindServer.setEnabled(true);
 							mCloseChat.setEnabled(false);
